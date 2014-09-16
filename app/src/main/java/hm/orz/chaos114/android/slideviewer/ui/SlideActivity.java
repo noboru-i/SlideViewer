@@ -16,7 +16,7 @@ import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -158,7 +158,7 @@ public class SlideActivity extends Activity {
         public Object instantiateItem(ViewGroup container, int position) {
             Log.d(TAG, "position = " + position);
             Slide slide = mTalk.getSlides().get(position);
-            LinearLayout layout = (LinearLayout) mInflater.inflate(R.layout.slide, null);
+            FrameLayout layout = (FrameLayout) mInflater.inflate(R.layout.slide, null);
             NetworkImageView imageView = (NetworkImageView) layout.findViewById(R.id.slide_image);
             imageView.setImageUrl(slide.getOriginal(), new ImageLoader(mQueue, mImageCache));
             container.addView(layout);
