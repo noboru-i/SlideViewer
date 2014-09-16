@@ -34,6 +34,7 @@ import java.net.URLDecoder;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
+import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 
 public class SlideActivity extends Activity {
     private static final String TAG = SlideActivity.class.getSimpleName();
@@ -51,7 +52,10 @@ public class SlideActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AnalyticsManager.initializeAnalyticsTracker(getApplication());
         setContentView(R.layout.activity_slide);
+
+        AnalyticsManager.sendScreenView(TAG);
 
         mHandler = new Handler();
 
@@ -103,7 +107,7 @@ public class SlideActivity extends Activity {
     }
 
     private void loadAd() {
-        AdRequest adRequest = new AdRequest.Builder().build();
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6B74A80630FD70AC2DC27C79CE02AEC9").build();
         mAdView.loadAd(adRequest);
     }
 
@@ -144,6 +148,7 @@ public class SlideActivity extends Activity {
                         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                         .create();
                 mTalk = gson.fromJson(URLDecoder.decode(talk, "UTF-8"), Talk.class);
+                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), mTalk.getUrl());
                 Log.d(TAG, "talkObject = " + mTalk);
                 mHandler.post(new Runnable() {
                     @Override
@@ -191,6 +196,7 @@ public class SlideActivity extends Activity {
             NetworkImageView imageView = (NetworkImageView) layout.findViewById(R.id.slide_image);
             imageView.setImageUrl(slide.getOriginal(), new ImageLoader(mQueue, mImageCache));
             container.addView(layout);
+            AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.CHANGE_PAGE.name(), Integer.toString(position));
             return layout;
         }
 

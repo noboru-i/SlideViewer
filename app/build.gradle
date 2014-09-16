@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 20
+    compileSdkVersion 19
     buildToolsVersion "20.0.0"
 
     defaultConfig {
         applicationId "hm.orz.chaos114.android.slideviewer"
         minSdkVersion 15
-        targetSdkVersion 20
+        targetSdkVersion 19
         versionCode 1
         versionName "1.0"
     }
@@ -21,7 +21,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:support-v4:20.+'
+    compile 'com.android.support:support-v4:19.+'
 
 
     // JSONとPOJOのマッピングを行うため
@@ -31,5 +31,5 @@ dependencies {
     // lombok
     provided 'org.projectlombok:lombok:1.14.+'
     // AdMob
-    compile 'com.google.android.gms:play-services:5+'
+    compile 'com.google.android.gms:play-services:5.0.89'
 }
