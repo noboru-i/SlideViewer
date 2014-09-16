@@ -27,4 +27,6 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3'
     // NetworkImageViewを利用するため
     compile 'com.mcxiaoke.volley:library:1.0.+'
+    // lombok
+    provided 'org.projectlombok:lombok:1.14.+'
 }
