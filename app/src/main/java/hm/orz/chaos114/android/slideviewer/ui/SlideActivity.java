@@ -22,6 +22,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -40,6 +42,7 @@ public class SlideActivity extends Activity {
 
     private WebView mWebView;
     private ViewPager mViewPager;
+    private AdView mAdView;
     private SlideAdapter mSlideAdapter;
     private LoadingDialogFragment mLoadingDialog;
 
@@ -54,6 +57,7 @@ public class SlideActivity extends Activity {
 
         mWebView = (WebView) findViewById(R.id.slide_web_view);
         mViewPager = (ViewPager) findViewById(R.id.slide_view_pager);
+        mAdView = (AdView) findViewById(R.id.slide_ad_view);
         mSlideAdapter = new SlideAdapter(this);
         mLoadingDialog = LoadingDialogFragment.newInstance();
 
@@ -76,6 +80,31 @@ public class SlideActivity extends Activity {
         mWebView.loadUrl(url);
 
         mLoadingDialog.show(getFragmentManager(), null);
+
+        loadAd();
+    }
+
+    @Override
+    protected void onPause() {
+        mAdView.pause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAdView.resume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mAdView.destroy();
+        super.onDestroy();
+    }
+
+    private void loadAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
     }
 
     class MyWebViewClient extends WebViewClient {
