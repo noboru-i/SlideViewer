@@ -17,6 +17,7 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
@@ -43,6 +44,7 @@ public class SlideActivity extends Activity {
 
     private WebView mWebView;
     private ViewPager mViewPager;
+    private TextView mPageNumbers;
     private AdView mAdView;
     private SlideAdapter mSlideAdapter;
     private LoadingDialogFragment mLoadingDialog;
@@ -61,11 +63,28 @@ public class SlideActivity extends Activity {
 
         mWebView = (WebView) findViewById(R.id.slide_web_view);
         mViewPager = (ViewPager) findViewById(R.id.slide_view_pager);
+        mPageNumbers = (TextView) findViewById(R.id.slide_page_numbers);
         mAdView = (AdView) findViewById(R.id.slide_ad_view);
         mSlideAdapter = new SlideAdapter(this);
         mLoadingDialog = LoadingDialogFragment.newInstance();
 
         mViewPager.setAdapter(mSlideAdapter);
+        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                final int page = position + 1;
+                setPageNumbers(page, mTalk.getSlides().size());
+                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.CHANGE_PAGE.name(), Integer.toString(page));
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
 
         String url;
         Intent intent = getIntent();
@@ -75,7 +94,7 @@ public class SlideActivity extends Activity {
             Log.d(TAG, "uri = " + uri.toString());
             url = uri.toString();
         } else {
-            url = "https://speakerdeck.com/sys1yagi/eclipsedeandroidapurikesiyonkai-fa-gaxu-sarerufalsehaxiao-xue-sheng-madedayone";
+            url = "https://speakerdeck.com/speakerdeck/introduction-to-speakerdeck";
         }
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setBuiltInZoomControls(false);
@@ -109,6 +128,10 @@ public class SlideActivity extends Activity {
     private void loadAd() {
         AdRequest adRequest = new AdRequest.Builder().addTestDevice("6B74A80630FD70AC2DC27C79CE02AEC9").build();
         mAdView.loadAd(adRequest);
+    }
+
+    private void setPageNumbers(int current, int max) {
+        mPageNumbers.setText(current + "/" + max);
     }
 
     class MyWebViewClient extends WebViewClient {
@@ -154,6 +177,7 @@ public class SlideActivity extends Activity {
                     @Override
                     public void run() {
                         mLoadingDialog.dismiss();
+                        setPageNumbers(1, mTalk.getSlides().size());
                         mSlideAdapter.notifyDataSetChanged();
                     }
                 });
@@ -196,7 +220,6 @@ public class SlideActivity extends Activity {
             NetworkImageView imageView = (NetworkImageView) layout.findViewById(R.id.slide_image);
             imageView.setImageUrl(slide.getOriginal(), new ImageLoader(mQueue, mImageCache));
             container.addView(layout);
-            AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.CHANGE_PAGE.name(), Integer.toString(position));
             return layout;
         }
 
