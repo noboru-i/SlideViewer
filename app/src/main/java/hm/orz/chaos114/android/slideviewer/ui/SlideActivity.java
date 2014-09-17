@@ -43,6 +43,9 @@ public class SlideActivity extends Activity {
     private Handler mHandler;
 
     private WebView mWebView;
+    private TextView mTitleView;
+    private TextView mByView;
+    private TextView mUserView;
     private ViewPager mViewPager;
     private TextView mPageNumbers;
     private AdView mAdView;
@@ -62,6 +65,9 @@ public class SlideActivity extends Activity {
         mHandler = new Handler();
 
         mWebView = (WebView) findViewById(R.id.slide_web_view);
+        mTitleView = (TextView) findViewById(R.id.slide_title);
+        mByView = (TextView) findViewById(R.id.slide_by);
+        mUserView = (TextView) findViewById(R.id.slide_user);
         mViewPager = (ViewPager) findViewById(R.id.slide_view_pager);
         mPageNumbers = (TextView) findViewById(R.id.slide_page_numbers);
         mAdView = (AdView) findViewById(R.id.slide_ad_view);
@@ -142,7 +148,7 @@ public class SlideActivity extends Activity {
             Log.d(TAG, "path  = " + uri.getPath());
             if (!path.startsWith("/player/")) {
                 // 初回の読み込み
-                view.loadUrl("javascript:srcHolder.setSrc($('.speakerdeck-iframe').attr('src'))");
+                view.loadUrl("javascript:srcHolder.setSrc($('.speakerdeck-iframe').attr('src'), $('#talk-details header h1').text(), $('#talk-details header h2 a').text())");
             } else {
                 // playerの読み込み
                 view.loadUrl("javascript:srcHolder.setTalk(JSON.stringify(talk))");
@@ -152,13 +158,16 @@ public class SlideActivity extends Activity {
 
     class SrcHolderInterface {
         @JavascriptInterface
-        public void setSrc(String src) {
+        public void setSrc(final String src, final String title, final String user) {
             final String url = "https:" + src;
             Log.d(TAG, "src = " + src);
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
                     mWebView.loadUrl(url);
+                    mTitleView.setText(title);
+                    mByView.setVisibility(View.VISIBLE);
+                    mUserView.setText(user);
                 }
             });
         }
