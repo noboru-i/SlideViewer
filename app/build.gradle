@@ -32,4 +32,6 @@ dependencies {
     provided 'org.projectlombok:lombok:1.14.+'
     // AdMob
     compile 'com.google.android.gms:play-services:5.0.89'
+    // DI
+    compile 'com.jakewharton:butterknife:5.1.2'
 }

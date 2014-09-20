@@ -37,6 +37,8 @@ import com.google.gson.GsonBuilder;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
@@ -47,14 +49,15 @@ public class SlideActivity extends Activity {
 
     private Handler mHandler;
 
+    @InjectView(R.id.slide_web_view) WebView mWebView;
+    @InjectView(R.id.slide_title) TextView mTitleView;
+    @InjectView(R.id.slide_by) TextView mByView;
+    @InjectView(R.id.slide_user) TextView mUserView;
+    @InjectView(R.id.slide_view_pager) ViewPager mViewPager;
+    @InjectView(R.id.slide_page_numbers) TextView mPageNumbers;
+    @InjectView(R.id.slide_ad_view) AdView mAdView;
+
     private Menu mMainMenu;
-    private WebView mWebView;
-    private TextView mTitleView;
-    private TextView mByView;
-    private TextView mUserView;
-    private ViewPager mViewPager;
-    private TextView mPageNumbers;
-    private AdView mAdView;
     private SlideAdapter mSlideAdapter;
     private LoadingDialogFragment mLoadingDialog;
     private InterstitialAd mInterstitialAd;
@@ -72,13 +75,8 @@ public class SlideActivity extends Activity {
 
         mHandler = new Handler();
 
-        mWebView = (WebView) findViewById(R.id.slide_web_view);
-        mTitleView = (TextView) findViewById(R.id.slide_title);
-        mByView = (TextView) findViewById(R.id.slide_by);
-        mUserView = (TextView) findViewById(R.id.slide_user);
-        mViewPager = (ViewPager) findViewById(R.id.slide_view_pager);
-        mPageNumbers = (TextView) findViewById(R.id.slide_page_numbers);
-        mAdView = (AdView) findViewById(R.id.slide_ad_view);
+        ButterKnife.inject(this);
+
         mSlideAdapter = new SlideAdapter(this);
         mLoadingDialog = LoadingDialogFragment.newInstance();
 
