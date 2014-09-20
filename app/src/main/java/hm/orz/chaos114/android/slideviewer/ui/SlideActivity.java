@@ -10,7 +10,10 @@ import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
@@ -25,6 +28,7 @@ import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -42,6 +46,7 @@ public class SlideActivity extends Activity {
 
     private Handler mHandler;
 
+    private Menu mMainMenu;
     private WebView mWebView;
     private TextView mTitleView;
     private TextView mByView;
@@ -51,6 +56,7 @@ public class SlideActivity extends Activity {
     private AdView mAdView;
     private SlideAdapter mSlideAdapter;
     private LoadingDialogFragment mLoadingDialog;
+    private InterstitialAd mInterstitialAd;
 
     private Talk mTalk;
 
@@ -131,9 +137,54 @@ public class SlideActivity extends Activity {
         super.onDestroy();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        final MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.slide_activity_menus, menu);
+        mMainMenu = menu;
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_UP) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_MENU:
+                    // Menuボタン押下
+                    if (mMainMenu != null) {
+                        mMainMenu.performIdentifierAction(R.id.overflow_options, 0);
+                    }
+                    return true;
+            }
+        }
+        return super.dispatchKeyEvent(event);
+    }
+
+    @Override
+    public void onBackPressed() {
+        displayInterstitial();
+        super.onBackPressed();
+    }
+
     private void loadAd() {
         AdRequest adRequest = new AdRequest.Builder().addTestDevice("6B74A80630FD70AC2DC27C79CE02AEC9").build();
         mAdView.loadAd(adRequest);
+
+        // インタースティシャルを作成する。
+        mInterstitialAd = new InterstitialAd(this);
+        mInterstitialAd.setAdUnitId(getString(R.string.admob_unit_id));
+        mInterstitialAd.loadAd(adRequest);
+    }
+
+
+    /**
+     * インタースティシャルを表示する準備ができたら、displayInterstitial() を呼び出す。
+     */
+    public void displayInterstitial() {
+        if (mInterstitialAd.isLoaded()) {
+            mInterstitialAd.show();
+        }
     }
 
     private void setPageNumbers(int current, int max) {
