@@ -14,6 +14,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
@@ -58,6 +59,7 @@ public class SlideActivity extends Activity {
     private LoadingDialogFragment mLoadingDialog;
     private InterstitialAd mInterstitialAd;
 
+    private String mUrl;
     private Talk mTalk;
 
     @Override
@@ -98,25 +100,22 @@ public class SlideActivity extends Activity {
             }
         });
 
-        String url;
         Intent intent = getIntent();
         String action = intent.getAction();
         if (Intent.ACTION_VIEW.equals(action)) {
             Uri uri = intent.getData();
             Log.d(TAG, "uri = " + uri.toString());
-            url = uri.toString();
+            mUrl = uri.toString();
         } else {
-            url = "https://speakerdeck.com/speakerdeck/introduction-to-speakerdeck";
+            mUrl = "https://speakerdeck.com/speakerdeck/introduction-to-speakerdeck";
         }
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setBuiltInZoomControls(false);
         mWebView.addJavascriptInterface(new SrcHolderInterface(), "srcHolder");
         mWebView.setWebViewClient(new MyWebViewClient());
-        mWebView.loadUrl(url);
-
-        mLoadingDialog.show(getFragmentManager(), null);
 
         loadAd();
+        startLoad();
     }
 
     @Override
@@ -167,6 +166,24 @@ public class SlideActivity extends Activity {
         super.onBackPressed();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_reload:
+                mViewPager.setCurrentItem(0);
+                startLoad();
+                return true;
+            case R.id.menu_share:
+                shareUrl();
+                return true;
+            case R.id.menu_show_by_browser:
+                shareBrowser();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     private void loadAd() {
         AdRequest adRequest = new AdRequest.Builder().addTestDevice("6B74A80630FD70AC2DC27C79CE02AEC9").build();
         mAdView.loadAd(adRequest);
@@ -177,9 +194,13 @@ public class SlideActivity extends Activity {
         mInterstitialAd.loadAd(adRequest);
     }
 
+    private void startLoad() {
+        mWebView.loadUrl(mUrl);
+        mLoadingDialog.show(getFragmentManager(), null);
+    }
 
     /**
-     * インタースティシャルを表示する準備ができたら、displayInterstitial() を呼び出す。
+     * インタースティシャルを表示する準備が出来ていたら表示する。
      */
     public void displayInterstitial() {
         if (mInterstitialAd.isLoaded()) {
@@ -189,6 +210,21 @@ public class SlideActivity extends Activity {
 
     private void setPageNumbers(int current, int max) {
         mPageNumbers.setText(current + "/" + max);
+    }
+
+    private void shareUrl() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, mUrl);
+        startActivity(intent);
+    }
+
+    private void shareBrowser() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(mUrl));
+        startActivity(intent);
     }
 
     class MyWebViewClient extends WebViewClient {

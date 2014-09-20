@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- 共有 -->
+    <!-- Reload -->
     <item
-        android:id="@+id/menu_share"
+        android:id="@+id/menu_reload"
         android:title="Reload"
         android:showAsAction="ifRoom"/>
 
@@ -14,6 +14,12 @@
         android:title="Menu"
         android:showAsAction="always">
         <menu>
+
+            <!-- シェアする -->
+            <item
+                android:id="@+id/menu_share"
+                android:title="シェアする"
+                android:showAsAction="never"/>
 
             <!-- ブラウザで開く -->
             <item
