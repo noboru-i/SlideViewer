@@ -29,8 +29,10 @@
                     android:scheme="https"/>
             </intent-filter>
         </activity>
+        <activity android:name=".ui.AboutActivity">
+        </activity>
         <activity
-            android:name=".ui.AboutActivity">
+            android:name=".ui.LicenseActivity">
         </activity>
         <activity
             android:name="com.google.android.gms.ads.AdActivity"

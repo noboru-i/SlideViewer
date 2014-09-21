@@ -61,4 +61,10 @@ public class AboutActivity extends Activity {
         intent.setData(Uri.parse("https://play.google.com/store/apps/developer?id=noboru"));
         startActivity(intent);
     }
+
+    @OnClick(R.id.about_license)
+    void viewLicense() {
+        Intent intent = new Intent(this, LicenseActivity.class);
+        startActivity(intent);
+    }
 }
