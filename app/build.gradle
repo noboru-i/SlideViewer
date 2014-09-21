@@ -9,7 +9,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 19
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
     }
     buildTypes {
         release {
@@ -22,7 +22,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:support-v4:19.+'
-
 
     // JSONとPOJOのマッピングを行うため
     compile 'com.google.code.gson:gson:2.3'

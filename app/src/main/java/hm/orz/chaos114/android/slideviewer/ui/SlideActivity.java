@@ -49,13 +49,20 @@ public class SlideActivity extends Activity {
 
     private Handler mHandler;
 
-    @InjectView(R.id.slide_web_view) WebView mWebView;
-    @InjectView(R.id.slide_title) TextView mTitleView;
-    @InjectView(R.id.slide_by) TextView mByView;
-    @InjectView(R.id.slide_user) TextView mUserView;
-    @InjectView(R.id.slide_view_pager) ViewPager mViewPager;
-    @InjectView(R.id.slide_page_numbers) TextView mPageNumbers;
-    @InjectView(R.id.slide_ad_view) AdView mAdView;
+    @InjectView(R.id.slide_web_view)
+    WebView mWebView;
+    @InjectView(R.id.slide_title)
+    TextView mTitleView;
+    @InjectView(R.id.slide_by)
+    TextView mByView;
+    @InjectView(R.id.slide_user)
+    TextView mUserView;
+    @InjectView(R.id.slide_view_pager)
+    ViewPager mViewPager;
+    @InjectView(R.id.slide_page_numbers)
+    TextView mPageNumbers;
+    @InjectView(R.id.slide_ad_view)
+    AdView mAdView;
 
     private Menu mMainMenu;
     private SlideAdapter mSlideAdapter;
@@ -177,6 +184,9 @@ public class SlideActivity extends Activity {
             case R.id.menu_show_by_browser:
                 shareBrowser();
                 return true;
+            case R.id.menu_about:
+                startAboutActivity();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -222,6 +232,11 @@ public class SlideActivity extends Activity {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(Uri.parse(mUrl));
+        startActivity(intent);
+    }
+
+    private void startAboutActivity() {
+        Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
     }
 
