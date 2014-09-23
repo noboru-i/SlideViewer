@@ -2,6 +2,13 @@
 <resources>
 
     <string name="app_name">SlideViewer</string>
-    <string name="admob_unit_id">ca-app-pub-9518171426809425/7249812991</string>
+    <string name="menu_reload">Reload</string>
+    <string name="menu_menu">Menu</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_show_by_browser">Show by browser</string>
+    <string name="menu_about">About</string>
+    <string name="about_git_hub">View on GitHub</string>
+    <string name="about_other_app">View other Android app</string>
+    <string name="about_license">License</string>
 
 </resources>

@@ -1,36 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Reload -->
     <item
         android:id="@+id/menu_reload"
-        android:title="Reload"
+        android:title="@string/menu_reload"
         android:showAsAction="ifRoom"/>
 
     <!-- Options -->
     <item
         android:id="@+id/overflow_options"
         android:icon="@android:drawable/ic_menu_more"
-        android:title="Menu"
+        android:title="@string/menu_menu"
         android:showAsAction="always">
         <menu>
 
-            <!-- シェアする -->
             <item
                 android:id="@+id/menu_share"
-                android:title="シェアする"
+                android:title="@string/menu_share"
                 android:showAsAction="never"/>
 
-            <!-- ブラウザで開く -->
             <item
                 android:id="@+id/menu_show_by_browser"
-                android:title="ブラウザで開く"
+                android:title="@string/menu_show_by_browser"
                 android:showAsAction="never"/>
 
-            <!-- URLの確認 -->
             <item
                 android:id="@+id/menu_about"
-                android:title="このアプリについて"
+                android:title="@string/menu_about"
                 android:showAsAction="never"/>
         </menu>
     </item>

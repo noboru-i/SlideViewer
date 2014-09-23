@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SlideViewer</string>
+    <string name="menu_reload">Reload</string>
+    <string name="menu_menu">Menu</string>
+    <string name="menu_share">シェアする</string>
+    <string name="menu_show_by_browser">ブラウザで開く</string>
+    <string name="menu_about">このアプリについて</string>
+    <string name="about_git_hub">GitHubで見る</string>
+    <string name="about_other_app">他のAndroidアプリを見る</string>
+    <string name="about_license">ライセンス</string>
+
+</resources>

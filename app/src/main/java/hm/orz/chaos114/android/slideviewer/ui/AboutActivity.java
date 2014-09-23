@@ -29,7 +29,7 @@ public class AboutActivity extends Activity {
         ButterKnife.inject(this);
 
         ActionBar actionBar = getActionBar();
-        actionBar.setTitle("About");
+        actionBar.setTitle(getString(R.string.menu_about));
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         mVersionTextView.setText("version: " + BuildConfig.VERSION_NAME);

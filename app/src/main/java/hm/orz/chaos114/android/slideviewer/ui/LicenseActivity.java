@@ -24,7 +24,7 @@ public class LicenseActivity extends Activity {
         ButterKnife.inject(this);
 
         ActionBar actionBar = getActionBar();
-        actionBar.setTitle("License");
+        actionBar.setTitle(getString(R.string.about_license));
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         mWebView.loadUrl("file:///android_asset/license.html");
