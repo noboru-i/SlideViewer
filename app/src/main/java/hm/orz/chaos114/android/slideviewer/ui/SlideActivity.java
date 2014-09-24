@@ -91,6 +91,7 @@ public class SlideActivity extends Activity {
         mSlideAdapter = new SlideAdapter(this);
         mLoadingDialog = LoadingDialogFragment.newInstance();
 
+        mViewPager.setOffscreenPageLimit(5);
         mViewPager.setAdapter(mSlideAdapter);
         mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
