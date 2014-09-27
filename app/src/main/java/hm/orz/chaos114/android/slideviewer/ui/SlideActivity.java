@@ -34,16 +34,21 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.j256.ormlite.dao.Dao;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.sql.SQLException;
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import hm.orz.chaos114.android.slideviewer.R;
+import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
+import hm.orz.chaos114.android.slideviewer.util.DatabaseHelper;
 import hm.orz.chaos114.android.slideviewer.util.LruCache;
 
 public class SlideActivity extends Activity {
@@ -214,6 +219,14 @@ public class SlideActivity extends Activity {
     }
 
     private void startLoad() {
+        TalkDao dao = new TalkDao(this);
+        mTalk = dao.findByUrl(mUrl);
+        if (mTalk != null) {
+            Log.d("hoge", "mTalk = " + mTalk);
+            // TODO 描画処理
+            return;
+        }
+
         mWebView.loadUrl(mUrl);
         mLoadingDialog.show(getFragmentManager(), null);
     }
@@ -293,6 +306,11 @@ public class SlideActivity extends Activity {
                 mTalk = gson.fromJson(URLDecoder.decode(talk, "UTF-8"), Talk.class);
                 AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), mTalk.getUrl());
                 Log.d(TAG, "talkObject = " + mTalk);
+
+                // TODO
+                TalkDao dao = new TalkDao(SlideActivity.this);
+                dao.saveIfNotExists(mTalk);
+
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {

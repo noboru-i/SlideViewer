@@ -11,13 +11,17 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".ui.SlideActivity"
+            android:name=".ui.SlideListActivity"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.SlideActivity"
+            android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
 
@@ -31,8 +35,7 @@
         </activity>
         <activity android:name=".ui.AboutActivity">
         </activity>
-        <activity
-            android:name=".ui.LicenseActivity">
+        <activity android:name=".ui.LicenseActivity">
         </activity>
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
