@@ -17,6 +17,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 import java.util.List;
 
@@ -33,6 +35,11 @@ public class SlideListActivity extends Activity {
 
     @InjectView(R.id.slide_list_list_view)
     ListView mListView;
+    @InjectView(R.id.slide_list_ad_view)
+    AdView mAdView;
+
+    private RequestQueue mQueue;
+    private ImageLoader.ImageCache mImageCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +47,9 @@ public class SlideListActivity extends Activity {
         setContentView(R.layout.activity_slide_list);
 
         ButterKnife.inject(this);
+
+        mQueue = Volley.newRequestQueue(this);
+        mImageCache = new LruCache();
 
         TalkDao dao = new TalkDao(this);
         List<Talk> talks = dao.list();
@@ -55,19 +65,46 @@ public class SlideListActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        loadAd();
+    }
+
+    @Override
+    protected void onPause() {
+        mAdView.pause();
+        super.onPause();
+        if (mQueue != null) {
+            mQueue.stop();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mAdView.resume();
+        if (mQueue != null) {
+            mQueue.start();
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        mAdView.destroy();
+        super.onDestroy();
+    }
+
+    private void loadAd() {
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6B74A80630FD70AC2DC27C79CE02AEC9").build();
+        mAdView.loadAd(adRequest);
     }
 
     class SlideListAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
         private List<Talk> mTalks;
-        private RequestQueue mQueue;
-        private ImageLoader.ImageCache mImageCache;
 
         SlideListAdapter(List<Talk> talks) {
             mTalks = talks;
             mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            mQueue = Volley.newRequestQueue(SlideListActivity.this);
-            mImageCache = new LruCache();
         }
 
         @Override
