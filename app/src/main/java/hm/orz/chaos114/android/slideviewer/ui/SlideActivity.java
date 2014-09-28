@@ -37,6 +37,7 @@ import com.google.gson.GsonBuilder;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.sql.DatabaseMetaData;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -120,7 +121,7 @@ public class SlideActivity extends Activity {
             Log.d(TAG, "uri = " + uri.toString());
             mUrl = uri.toString();
         } else {
-            mUrl = "https://speakerdeck.com/speakerdeck/introduction-to-speakerdeck";
+            throw new RuntimeException("invalid intent.");
         }
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setBuiltInZoomControls(false);
@@ -220,7 +221,13 @@ public class SlideActivity extends Activity {
         TalkDao dao = new TalkDao(this);
         mTalk = dao.findByUrl(mUrl);
         if (mTalk != null) {
-            // TODO 描画処理
+            // DBにデータがある場合の描画処理
+            TalkMetaData talkMetaData = mTalk.getTalkMetaData().iterator().next();
+            mTitleView.setText(talkMetaData.getTitle());
+            mByView.setVisibility(View.VISIBLE);
+            mUserView.setText(talkMetaData.getUser());
+            setPageNumbers(1, mTalk.getSlides().size());
+            mSlideAdapter.notifyDataSetChanged();
             return;
         }
 

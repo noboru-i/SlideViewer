@@ -30,11 +30,11 @@ public class Talk implements Serializable {
     private float ratio;
 
     @Expose
-    @ForeignCollectionField
+    @ForeignCollectionField(eager = true)
     private ForeignCollection<Slide> slideCollection;
 
     @Expose
-    @ForeignCollectionField
+    @ForeignCollectionField(eager = true)
     private ForeignCollection<TalkMetaData> talkMetaData;
 
     private List<Slide> slides;
