@@ -86,7 +86,7 @@ public class TalkDao {
         DatabaseHelper helper = new DatabaseHelper(mContext);
         try {
             Dao<Talk, Integer> dao = helper.getDao(Talk.class);
-            List<Talk> talks = dao.query(dao.queryBuilder().orderBy("id", false).prepare());
+            List<Talk> talks = dao.query(dao.queryBuilder().orderBy("id", false).limit(50L).prepare());
             for (Talk talk : talks) {
                 setTalkInfo(talk);
             }
