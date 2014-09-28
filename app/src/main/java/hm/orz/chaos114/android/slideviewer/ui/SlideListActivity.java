@@ -2,10 +2,13 @@ package hm.orz.chaos114.android.slideviewer.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -40,8 +43,18 @@ public class SlideListActivity extends Activity {
 
         TalkDao dao = new TalkDao(this);
         List<Talk> talks = dao.list();
-        SlideListAdapter adapter = new SlideListAdapter(talks);
+        final SlideListAdapter adapter = new SlideListAdapter(talks);
         mListView.setAdapter(adapter);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Talk talk = adapter.getItem(position);
+                Intent intent = new Intent(SlideListActivity.this, SlideActivity.class);
+                intent.setAction(Intent.ACTION_VIEW);
+                intent.setData(Uri.parse(talk.getUrl()));
+                startActivity(intent);
+            }
+        });
     }
 
     class SlideListAdapter extends BaseAdapter {
