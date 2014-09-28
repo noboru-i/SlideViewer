@@ -34,12 +34,9 @@ import com.google.android.gms.ads.InterstitialAd;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.j256.ormlite.dao.Dao;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.sql.SQLException;
-import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -47,8 +44,8 @@ import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
+import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
-import hm.orz.chaos114.android.slideviewer.util.DatabaseHelper;
 import hm.orz.chaos114.android.slideviewer.util.LruCache;
 
 public class SlideActivity extends Activity {
@@ -79,6 +76,7 @@ public class SlideActivity extends Activity {
 
     private String mUrl;
     private Talk mTalk;
+    private TalkMetaData mTalkMetaData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -222,7 +220,6 @@ public class SlideActivity extends Activity {
         TalkDao dao = new TalkDao(this);
         mTalk = dao.findByUrl(mUrl);
         if (mTalk != null) {
-            Log.d("hoge", "mTalk = " + mTalk);
             // TODO 描画処理
             return;
         }
@@ -285,6 +282,9 @@ public class SlideActivity extends Activity {
         public void setSrc(final String src, final String title, final String user) {
             final String url = "https:" + src;
             Log.d(TAG, "src = " + src);
+            mTalkMetaData = new TalkMetaData();
+            mTalkMetaData.setTitle(title);
+            mTalkMetaData.setUser(user);
             mHandler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -304,12 +304,17 @@ public class SlideActivity extends Activity {
                         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                         .create();
                 mTalk = gson.fromJson(URLDecoder.decode(talk, "UTF-8"), Talk.class);
-                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), mTalk.getUrl());
                 Log.d(TAG, "talkObject = " + mTalk);
+                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), mTalk.getUrl());
 
                 // TODO
-                TalkDao dao = new TalkDao(SlideActivity.this);
-                dao.saveIfNotExists(mTalk);
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        TalkDao dao = new TalkDao(SlideActivity.this);
+                        dao.saveIfNotExists(mTalk, mTalk.getSlides(), mTalkMetaData);
+                    }
+                });
 
                 mHandler.post(new Runnable() {
                     @Override

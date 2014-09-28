@@ -1,27 +1,32 @@
 package hm.orz.chaos114.android.slideviewer.model;
 
-import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.table.DatabaseTable;
 
-import java.io.Serializable;
+import com.j256.ormlite.field.DatabaseField;
+
+import java.util.Date;
 
 import lombok.Data;
 
 @Data
-@DatabaseTable
-public class Slide implements Serializable {
+public class TalkMetaData {
     @DatabaseField(generatedId = true)
-    private int id;
+    private Integer id;
 
     @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "talk_id")
     private Talk talk;
 
     @DatabaseField
-    private String original;
+    private Date createdAt;
 
     @DatabaseField
-    private String preview;
+    private Date updatedAt;
 
     @DatabaseField
-    private String thumb;
+    private Date recentViewedAt;
+
+    @DatabaseField
+    private String title;
+
+    @DatabaseField
+    private String user;
 }

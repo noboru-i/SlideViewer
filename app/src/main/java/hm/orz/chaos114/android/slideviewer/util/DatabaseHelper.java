@@ -10,7 +10,9 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
+import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
+import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
 
 public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String TAG = DatabaseHelper.class.getSimpleName();
@@ -26,6 +28,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase, ConnectionSource connectionSource) {
         try {
             TableUtils.createTable(connectionSource, Talk.class);
+            TableUtils.createTable(connectionSource, Slide.class);
+            TableUtils.createTable(connectionSource, TalkMetaData.class);
         } catch (SQLException e) {
             Log.e(TAG, "データベースを作成できませんでした。", e);
         }

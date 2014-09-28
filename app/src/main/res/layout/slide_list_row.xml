@@ -3,12 +3,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="horizontal"
               android:layout_width="match_parent"
-              android:layout_height="match_parent"
+              android:layout_height="wrap_content"
               android:background="#333333">
 
-    <TextView
-        android:id="@+id/slide_list_row_title"
-        android:layout_width="wrap_content"
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/slide_list_row_image"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_margin="8dp"
+        android:layout_gravity="center_vertical"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="@android:color/white"/>
+        android:layout_margin="8dp"
+        android:orientation="vertical"
+        android:layout_gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/slide_list_row_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="24sp"/>
+
+        <TextView
+            android:id="@+id/slide_list_row_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="16dp"/>
+    </LinearLayout>
 </LinearLayout>

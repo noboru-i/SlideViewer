@@ -1,17 +1,22 @@
 package hm.orz.chaos114.android.slideviewer.model;
 
-import com.google.gson.Gson;
+import com.google.gson.annotations.Expose;
+import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.io.Serializable;
 import java.util.List;
 
-import hm.orz.chaos114.android.slideviewer.util.DatabaseHelper;
 import lombok.Data;
+import lombok.ToString;
 
 @Data
+@DatabaseTable
+@ToString(exclude = {"slideCollection", "talkMetaData", "slides"})
 public class Talk implements Serializable {
+
     @DatabaseField(generatedId = true)
     private Integer id;
 
@@ -24,22 +29,13 @@ public class Talk implements Serializable {
     @DatabaseField
     private float ratio;
 
+    @Expose
+    @ForeignCollectionField
+    private ForeignCollection<Slide> slideCollection;
+
+    @Expose
+    @ForeignCollectionField
+    private ForeignCollection<TalkMetaData> talkMetaData;
+
     private List<Slide> slides;
-
-    @DatabaseField
-    private String slidesJson;
-
-    public void setSlides(List<Slide> slides) {
-        this.slides = slides;
-
-        Gson gson = new Gson();
-        slidesJson = gson.toJson(slides);
-    }
-
-    public void setSlidesJson(String slidesJson) {
-        this.slidesJson = slidesJson;
-
-        Gson gson = new Gson();
-        this.slides = gson.fromJson(slidesJson, List.class);
-    }
 }

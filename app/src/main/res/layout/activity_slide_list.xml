@@ -1,12 +1,13 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="hm.orz.chaos114.android.slideviewer.ui.SlideListActivity">
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="hm.orz.chaos114.android.slideviewer.ui.SlideListActivity">
 
     <ListView
         android:id="@+id/slide_list_list_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="#333333"/>
 
 </FrameLayout>
