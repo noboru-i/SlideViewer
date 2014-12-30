@@ -30,7 +30,8 @@
 
                 <data
                     android:host="speakerdeck.com"
-                    android:scheme="https"/>
+                    android:scheme="https"
+                    android:pathPattern=".*"/>
             </intent-filter>
         </activity>
         <activity android:name=".ui.AboutActivity">
