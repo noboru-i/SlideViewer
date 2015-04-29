@@ -10,13 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.NetworkImageView;
-import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -29,7 +27,6 @@ import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
-import hm.orz.chaos114.android.slideviewer.util.LruCache;
 
 public class SlideListActivity extends Activity {
 
@@ -38,18 +35,12 @@ public class SlideListActivity extends Activity {
     @InjectView(R.id.slide_list_ad_view)
     AdView mAdView;
 
-    private RequestQueue mQueue;
-    private ImageLoader.ImageCache mImageCache;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_list);
 
         ButterKnife.inject(this);
-
-        mQueue = Volley.newRequestQueue(this);
-        mImageCache = new LruCache();
 
         TalkDao dao = new TalkDao(this);
         List<Talk> talks = dao.list();
@@ -73,18 +64,12 @@ public class SlideListActivity extends Activity {
     protected void onPause() {
         mAdView.pause();
         super.onPause();
-        if (mQueue != null) {
-            mQueue.stop();
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mAdView.resume();
-        if (mQueue != null) {
-            mQueue.start();
-        }
     }
 
     @Override
@@ -133,8 +118,8 @@ public class SlideListActivity extends Activity {
                 v = mInflater.inflate(R.layout.slide_list_row, null);
             }
 
-            NetworkImageView slideImage = (NetworkImageView) v.findViewById(R.id.slide_list_row_image);
-            slideImage.setImageUrl(slides.get(0).getPreview(), new ImageLoader(mQueue, mImageCache));
+            ImageView slideImage = (ImageView) v.findViewById(R.id.slide_list_row_image);
+            Glide.with(SlideListActivity.this).load(slides.get(0).getPreview()).into(slideImage);
             if (talkMetaData != null) {
                 TextView titleView = (TextView) v.findViewById(R.id.slide_list_row_title);
                 titleView.setText(talkMetaData.getTitle());

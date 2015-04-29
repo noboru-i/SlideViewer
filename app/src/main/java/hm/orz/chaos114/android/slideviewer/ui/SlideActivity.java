@@ -21,13 +21,9 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.ImageLoader;
-import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -37,7 +33,6 @@ import com.google.gson.GsonBuilder;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.sql.DatabaseMetaData;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -47,7 +42,6 @@ import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
-import hm.orz.chaos114.android.slideviewer.util.LruCache;
 
 public class SlideActivity extends Activity {
     private static final String TAG = SlideActivity.class.getSimpleName();
@@ -73,7 +67,6 @@ public class SlideActivity extends Activity {
     private SlideAdapter mSlideAdapter;
     private LoadingDialogFragment mLoadingDialog;
     private InterstitialAd mInterstitialAd;
-    private RequestQueue mQueue;
 
     private String mUrl;
     private Talk mTalk;
@@ -88,7 +81,6 @@ public class SlideActivity extends Activity {
         AnalyticsManager.sendScreenView(TAG);
 
         mHandler = new Handler();
-        mQueue = Volley.newRequestQueue(this);
 
         ButterKnife.inject(this);
 
@@ -136,18 +128,12 @@ public class SlideActivity extends Activity {
     protected void onPause() {
         mAdView.pause();
         super.onPause();
-        if (mQueue != null) {
-            mQueue.stop();
-        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         mAdView.resume();
-        if (mQueue != null) {
-            mQueue.start();
-        }
     }
 
     @Override
@@ -339,12 +325,10 @@ public class SlideActivity extends Activity {
 
     class SlideAdapter extends PagerAdapter {
         private LayoutInflater mInflater;
-        private ImageLoader mImageLoader;
 
         SlideAdapter(Context c) {
             super();
             mInflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            mImageLoader = new ImageLoader(mQueue, new LruCache());
         }
 
         @Override
@@ -365,24 +349,9 @@ public class SlideActivity extends Activity {
             Log.d(TAG, "position = " + position);
             Slide slide = mTalk.getSlides().get(position);
             final FrameLayout layout = (FrameLayout) mInflater.inflate(R.layout.slide, null);
-            final ProgressBar progressBar = (ProgressBar) layout.findViewById(R.id.slide_image_progress);
             final ImageView imageView = (ImageView) layout.findViewById(R.id.slide_image);
-            ImageLoader.ImageListener imageListener = new ImageLoader.ImageListener() {
-                @Override
-                public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
-                    if (response.getBitmap() != null) {
-                        progressBar.setVisibility(View.INVISIBLE);
-                        imageView.setImageBitmap(response.getBitmap());
-                    }
-                }
 
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    // no-op
-                }
-            };
-
-            mImageLoader.get(slide.getOriginal(), imageListener);
+            Glide.with(SlideActivity.this).load(slide.getOriginal()).into(imageView);
 
             container.addView(layout);
             return layout;
