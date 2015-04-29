@@ -45,6 +45,8 @@ public class SlideListActivity extends Activity {
         TalkDao dao = new TalkDao(this);
         List<Talk> talks = dao.list();
         final SlideListAdapter adapter = new SlideListAdapter(talks);
+        View footer = getLayoutInflater().inflate(R.layout.footer, null);
+        mListView.addFooterView(footer);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
