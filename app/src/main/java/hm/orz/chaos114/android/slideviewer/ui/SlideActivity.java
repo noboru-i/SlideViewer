@@ -254,7 +254,7 @@ public class SlideActivity extends Activity {
         startActivity(intent);
     }
 
-    class MyWebViewClient extends WebViewClient {
+    private static class MyWebViewClient extends WebViewClient {
         @Override
         public void onPageFinished(WebView view, String url) {
             Uri uri = Uri.parse(url);
@@ -348,7 +348,7 @@ public class SlideActivity extends Activity {
         public Object instantiateItem(ViewGroup container, int position) {
             Log.d(TAG, "position = " + position);
             Slide slide = mTalk.getSlides().get(position);
-            final FrameLayout layout = (FrameLayout) mInflater.inflate(R.layout.slide, null);
+            final FrameLayout layout = (FrameLayout) mInflater.inflate(R.layout.slide, container, false);
             final ImageView imageView = (ImageView) layout.findViewById(R.id.slide_image);
 
             Glide.with(SlideActivity.this).load(slide.getOriginal()).into(imageView);
