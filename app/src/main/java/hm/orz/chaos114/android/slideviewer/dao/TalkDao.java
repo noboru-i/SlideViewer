@@ -1,7 +1,6 @@
 package hm.orz.chaos114.android.slideviewer.dao;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
@@ -101,7 +100,7 @@ public class TalkDao {
     private void setTalkInfo(Talk talk) {
         CloseableIterator<Slide> iterator = talk.getSlideCollection().closeableIterator();
         try {
-            List<Slide> slides = new ArrayList<Slide>();
+            List<Slide> slides = new ArrayList<>();
             while (iterator.hasNext()) {
                 Slide slide = iterator.next();
                 slides.add(slide);
