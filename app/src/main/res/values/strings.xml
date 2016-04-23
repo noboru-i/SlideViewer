@@ -11,4 +11,6 @@
     <string name="about_other_app">View other Android app</string>
     <string name="about_license">License</string>
 
+    <string name="slide_list_author">by %s</string>
+
 </resources>

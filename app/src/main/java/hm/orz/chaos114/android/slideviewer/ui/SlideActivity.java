@@ -1,6 +1,5 @@
 package hm.orz.chaos114.android.slideviewer.ui;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -8,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -44,7 +44,7 @@ import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 
-public class SlideActivity extends Activity {
+public class SlideActivity extends AppCompatActivity {
     private static final String TAG = SlideActivity.class.getSimpleName();
 
     private Handler mHandler;

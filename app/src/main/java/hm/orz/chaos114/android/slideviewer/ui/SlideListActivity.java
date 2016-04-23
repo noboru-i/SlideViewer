@@ -1,10 +1,9 @@
 package hm.orz.chaos114.android.slideviewer.ui;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +27,7 @@ import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
 
-public class SlideListActivity extends Activity {
+public class SlideListActivity extends AppCompatActivity {
 
     @Bind(R.id.slide_list_list_view)
     ListView mListView;
@@ -45,7 +44,7 @@ public class SlideListActivity extends Activity {
         TalkDao dao = new TalkDao(this);
         List<Talk> talks = dao.list();
         final SlideListAdapter adapter = new SlideListAdapter(talks);
-        View footer = getLayoutInflater().inflate(R.layout.footer, null);
+        View footer = getLayoutInflater().inflate(R.layout.footer, mListView, false);
         mListView.addFooterView(footer);
         mListView.setAdapter(adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -85,13 +84,11 @@ public class SlideListActivity extends Activity {
         mAdView.loadAd(adRequest);
     }
 
-    class SlideListAdapter extends BaseAdapter {
-        private LayoutInflater mInflater;
+    private static class SlideListAdapter extends BaseAdapter {
         private List<Talk> mTalks;
 
-        SlideListAdapter(List<Talk> talks) {
+        private SlideListAdapter(List<Talk> talks) {
             mTalks = talks;
-            mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @Override
@@ -114,19 +111,19 @@ public class SlideListActivity extends Activity {
             View v = convertView;
             Talk item = getItem(position);
             List<Slide> slides = item.getSlides();
-            TalkDao dao = new TalkDao(SlideListActivity.this);
-            TalkMetaData talkMetaData = dao.findMetaData(item);
             if (v == null) {
-                v = mInflater.inflate(R.layout.slide_list_row, null);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.slide_list_row, parent, false);
             }
+            TalkDao dao = new TalkDao(v.getContext());
+            TalkMetaData talkMetaData = dao.findMetaData(item);
 
             ImageView slideImage = (ImageView) v.findViewById(R.id.slide_list_row_image);
-            Glide.with(SlideListActivity.this).load(slides.get(0).getPreview()).into(slideImage);
+            Glide.with(slideImage.getContext()).load(slides.get(0).getPreview()).into(slideImage);
             if (talkMetaData != null) {
                 TextView titleView = (TextView) v.findViewById(R.id.slide_list_row_title);
                 titleView.setText(talkMetaData.getTitle());
                 TextView userView = (TextView) v.findViewById(R.id.slide_list_row_user);
-                userView.setText("by " + talkMetaData.getUser());
+                userView.setText(parent.getContext().getString(R.string.slide_list_author, talkMetaData.getUser()));
             }
 
             return v;
