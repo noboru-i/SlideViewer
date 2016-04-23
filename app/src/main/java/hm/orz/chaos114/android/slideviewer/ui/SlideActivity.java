@@ -374,7 +374,7 @@ public class SlideActivity extends AppCompatActivity {
         public Object instantiateItem(ViewGroup container, int position) {
             Log.d(TAG, "position = " + position);
             Slide slide = mTalk.getSlides().get(position);
-            final FrameLayout layout = (FrameLayout) mInflater.inflate(R.layout.slide, container, false);
+            final FrameLayout layout = (FrameLayout) mInflater.inflate(R.layout.view_slide, container, false);
             final ImageView imageView = (ImageView) layout.findViewById(R.id.slide_image);
 
             Glide.with(SlideActivity.this).load(slide.getOriginal()).into(imageView);

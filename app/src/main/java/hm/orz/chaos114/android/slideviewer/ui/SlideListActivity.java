@@ -110,7 +110,7 @@ public class SlideListActivity extends AppCompatActivity {
             Talk item = getItem(position);
             List<Slide> slides = item.getSlides();
             if (v == null) {
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.slide_list_row, parent, false);
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_slide_list_row, parent, false);
             }
             TalkDao dao = new TalkDao(v.getContext());
             TalkMetaData talkMetaData = dao.findMetaData(item);
