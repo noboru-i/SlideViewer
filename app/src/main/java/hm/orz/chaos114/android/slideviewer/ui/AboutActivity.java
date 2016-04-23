@@ -5,20 +5,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.webkit.WebView;
 import android.widget.TextView;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 import hm.orz.chaos114.android.slideviewer.BuildConfig;
 import hm.orz.chaos114.android.slideviewer.R;
 
 public class AboutActivity extends Activity {
 
-    @InjectView(R.id.about_version)
+    @Bind(R.id.about_version)
     TextView mVersionTextView;
 
     @Override
@@ -26,7 +24,7 @@ public class AboutActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         ActionBar actionBar = getActionBar();
         actionBar.setTitle(getString(R.string.menu_about));

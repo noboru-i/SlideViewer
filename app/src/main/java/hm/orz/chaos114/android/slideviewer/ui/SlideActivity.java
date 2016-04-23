@@ -22,6 +22,7 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
@@ -34,8 +35,8 @@ import com.google.gson.GsonBuilder;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
@@ -48,19 +49,19 @@ public class SlideActivity extends Activity {
 
     private Handler mHandler;
 
-    @InjectView(R.id.slide_web_view)
+    @Bind(R.id.slide_web_view)
     WebView mWebView;
-    @InjectView(R.id.slide_title)
+    @Bind(R.id.slide_title)
     TextView mTitleView;
-    @InjectView(R.id.slide_by)
+    @Bind(R.id.slide_by)
     TextView mByView;
-    @InjectView(R.id.slide_user)
+    @Bind(R.id.slide_user)
     TextView mUserView;
-    @InjectView(R.id.slide_view_pager)
+    @Bind(R.id.slide_view_pager)
     ViewPager mViewPager;
-    @InjectView(R.id.slide_page_numbers)
+    @Bind(R.id.slide_page_numbers)
     TextView mPageNumbers;
-    @InjectView(R.id.slide_ad_view)
+    @Bind(R.id.slide_ad_view)
     AdView mAdView;
 
     private Menu mMainMenu;
@@ -82,7 +83,7 @@ public class SlideActivity extends Activity {
 
         mHandler = new Handler();
 
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         mSlideAdapter = new SlideAdapter(this);
         mLoadingDialog = LoadingDialogFragment.newInstance();
@@ -112,8 +113,16 @@ public class SlideActivity extends Activity {
             Uri uri = intent.getData();
             Log.d(TAG, "uri = " + uri.toString());
             mUrl = uri.toString();
+        } else if (Intent.ACTION_SEND.equals(action)) {
+            String uri = intent.getStringExtra(Intent.EXTRA_TEXT);
+            Log.d(TAG, "uri = " + uri);
+            mUrl = uri;
         } else {
             throw new RuntimeException("invalid intent.");
+        }
+        if (!isSpeakerDeckUrl(mUrl)) {
+            Toast.makeText(this, "Unsupported url.", Toast.LENGTH_LONG).show();
+            finish();
         }
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setBuiltInZoomControls(false);
@@ -252,6 +261,23 @@ public class SlideActivity extends Activity {
     private void startAboutActivity() {
         Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
+    }
+
+    private boolean isSpeakerDeckUrl(String uriString) {
+        Uri uri = Uri.parse(uriString);
+        if (!"https".equals(uri.getScheme())) {
+            Log.d(TAG, "unexpected scheme");
+            return false;
+        }
+        if (!"speakerdeck.com".equals(uri.getHost())) {
+            Log.d(TAG, "unexpected host");
+            return false;
+        }
+        if (uri.getPathSegments().size() < 2) {
+            Log.d(TAG, "unexpected path segments");
+            return false;
+        }
+        return true;
     }
 
     private static class MyWebViewClient extends WebViewClient {

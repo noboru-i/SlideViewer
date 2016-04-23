@@ -20,8 +20,8 @@ import com.google.android.gms.ads.AdView;
 
 import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
@@ -30,9 +30,9 @@ import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
 
 public class SlideListActivity extends Activity {
 
-    @InjectView(R.id.slide_list_list_view)
+    @Bind(R.id.slide_list_list_view)
     ListView mListView;
-    @InjectView(R.id.slide_list_ad_view)
+    @Bind(R.id.slide_list_ad_view)
     AdView mAdView;
 
     @Override
@@ -40,7 +40,7 @@ public class SlideListActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_list);
 
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         TalkDao dao = new TalkDao(this);
         List<Talk> talks = dao.list();
