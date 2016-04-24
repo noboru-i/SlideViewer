@@ -1,39 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="horizontal"
-              android:layout_width="match_parent"
-              android:layout_height="wrap_content"
-              android:background="#333333">
-
-    <ImageView
-        android:id="@+id/slide_list_row_image"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_margin="8dp"
-        android:layout_gravity="center_vertical"/>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:orientation="vertical"
-        android:layout_gravity="center_vertical">
+        android:orientation="horizontal"
+        android:padding="8dp">
 
-        <TextView
-            android:id="@+id/slide_list_row_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"/>
+        <ImageView
+            android:id="@+id/slide_list_row_image"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_vertical"/>
 
-        <TextView
-            android:id="@+id/slide_list_row_user"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:textSize="12sp"
-            android:layout_marginTop="4dp"
-            android:layout_marginLeft="16dp"/>
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/slide_list_row_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                tools:text="Slide name"/>
+
+            <TextView
+                android:id="@+id/slide_list_row_user"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@android:color/white"
+                android:textSize="14sp"
+                tools:text="by name"/>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</layout>

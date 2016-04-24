@@ -30,6 +30,9 @@ android {
             signingConfig signingConfigs.releaseConfig
         }
     }
+    dataBinding {
+        enabled = true
+    }
 }
 
 dependencies {

@@ -4,16 +4,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -26,6 +22,7 @@ import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
+import hm.orz.chaos114.android.slideviewer.widget.SlideListRowView;
 
 public class SlideListActivity extends AppCompatActivity {
 
@@ -105,24 +102,17 @@ public class SlideListActivity extends AppCompatActivity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View v = convertView;
+        public SlideListRowView getView(int position, View convertView, ViewGroup parent) {
+            SlideListRowView v = (SlideListRowView) convertView;
+            if (v == null) {
+                v = new SlideListRowView(parent.getContext());
+            }
             Talk item = getItem(position);
             List<Slide> slides = item.getSlides();
-            if (v == null) {
-                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_slide_list_row, parent, false);
-            }
             TalkDao dao = new TalkDao(v.getContext());
             TalkMetaData talkMetaData = dao.findMetaData(item);
 
-            ImageView slideImage = (ImageView) v.findViewById(R.id.slide_list_row_image);
-            Glide.with(slideImage.getContext()).load(slides.get(0).getPreview()).into(slideImage);
-            if (talkMetaData != null) {
-                TextView titleView = (TextView) v.findViewById(R.id.slide_list_row_title);
-                titleView.setText(talkMetaData.getTitle());
-                TextView userView = (TextView) v.findViewById(R.id.slide_list_row_user);
-                userView.setText(parent.getContext().getString(R.string.slide_list_author, talkMetaData.getUser()));
-            }
+            v.bind(slides, talkMetaData);
 
             return v;
         }
