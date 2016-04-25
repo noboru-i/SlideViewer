@@ -19,12 +19,14 @@ import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -90,7 +92,7 @@ public class SlideActivity extends AppCompatActivity {
 
         mViewPager.setOffscreenPageLimit(5);
         mViewPager.setAdapter(mSlideAdapter);
-        mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
@@ -372,12 +374,28 @@ public class SlideActivity extends AppCompatActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            Log.d(TAG, "position = " + position);
             Slide slide = mTalk.getSlides().get(position);
-            final FrameLayout layout = (FrameLayout) mInflater.inflate(R.layout.view_slide, container, false);
+            final View layout = mInflater.inflate(R.layout.view_slide, container, false);
             final ImageView imageView = (ImageView) layout.findViewById(R.id.slide_image);
 
-            Glide.with(SlideActivity.this).load(slide.getOriginal()).into(imageView);
+            Glide.with(SlideActivity.this)
+                    .load(slide.getOriginal())
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
+                            params.width = mViewPager.getWidth();
+                            params.height = (int) ((float) resource.getIntrinsicHeight() / resource.getIntrinsicWidth() * mViewPager.getWidth());
+                            mViewPager.setLayoutParams(params);
+                            return false;
+                        }
+                    })
+                    .into(imageView);
 
             container.addView(layout);
             return layout;
