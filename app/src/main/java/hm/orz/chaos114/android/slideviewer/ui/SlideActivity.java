@@ -2,13 +2,16 @@ package hm.orz.chaos114.android.slideviewer.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -51,12 +55,14 @@ public class SlideActivity extends AppCompatActivity {
 
     private Handler mHandler;
 
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
     @Bind(R.id.slide_web_view)
     WebView mWebView;
+    @Bind(R.id.layout_info)
+    View mInfoLayout;
     @Bind(R.id.slide_title)
     TextView mTitleView;
-    @Bind(R.id.slide_by)
-    TextView mByView;
     @Bind(R.id.slide_user)
     TextView mUserView;
     @Bind(R.id.slide_view_pager)
@@ -86,6 +92,8 @@ public class SlideActivity extends AppCompatActivity {
         mHandler = new Handler();
 
         ButterKnife.bind(this);
+
+        setSupportActionBar(mToolbar);
 
         mSlideAdapter = new SlideAdapter(this);
         mLoadingDialog = LoadingDialogFragment.newInstance();
@@ -221,7 +229,6 @@ public class SlideActivity extends AppCompatActivity {
             // DBにデータがある場合の描画処理
             TalkMetaData talkMetaData = mTalk.getTalkMetaData().iterator().next();
             mTitleView.setText(talkMetaData.getTitle());
-            mByView.setVisibility(View.VISIBLE);
             mUserView.setText(talkMetaData.getUser());
             setPageNumbers(1, mTalk.getSlides().size());
             mSlideAdapter.notifyDataSetChanged();
@@ -311,7 +318,6 @@ public class SlideActivity extends AppCompatActivity {
                 public void run() {
                     mWebView.loadUrl(url);
                     mTitleView.setText(title);
-                    mByView.setVisibility(View.VISIBLE);
                     mUserView.setText(user);
                 }
             });
@@ -389,8 +395,19 @@ public class SlideActivity extends AppCompatActivity {
                         @Override
                         public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                             ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
-                            params.width = mViewPager.getWidth();
-                            params.height = (int) ((float) resource.getIntrinsicHeight() / resource.getIntrinsicWidth() * mViewPager.getWidth());
+
+                            WindowManager wm = getWindowManager();
+                            Display display = wm.getDefaultDisplay();
+                            Point size = new Point();
+                            display.getSize(size);
+                            float aspect = (float) size.x / size.y;
+                            if (aspect < 1) {
+                                params.width = mViewPager.getWidth();
+                                params.height = (int) ((float) resource.getIntrinsicHeight() / resource.getIntrinsicWidth() * mViewPager.getWidth());
+                            } else {
+                                params.width = (int) ((float) resource.getIntrinsicWidth() / resource.getIntrinsicHeight() * mViewPager.getHeight());
+                                params.height = mViewPager.getHeight();
+                            }
                             mViewPager.setLayoutParams(params);
                             return false;
                         }

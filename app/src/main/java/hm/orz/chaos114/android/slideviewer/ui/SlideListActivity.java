@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,6 +27,8 @@ import hm.orz.chaos114.android.slideviewer.widget.SlideListRowView;
 
 public class SlideListActivity extends AppCompatActivity {
 
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
     @Bind(R.id.slide_list_list_view)
     ListView mListView;
     @Bind(R.id.slide_list_ad_view)
@@ -37,6 +40,8 @@ public class SlideListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_slide_list);
 
         ButterKnife.bind(this);
+
+        setSupportActionBar(mToolbar);
 
         TalkDao dao = new TalkDao(this);
         List<Talk> talks = dao.list();

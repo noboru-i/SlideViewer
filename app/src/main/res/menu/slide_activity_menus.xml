@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/menu_reload"
         android:title="@string/menu_reload"
-        android:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"/>
 
     <!-- Options -->
     <item
         android:id="@+id/overflow_options"
         android:icon="@android:drawable/ic_menu_more"
         android:title="@string/menu_menu"
-        android:showAsAction="always">
+        app:showAsAction="always">
         <menu>
 
             <item
                 android:id="@+id/menu_share"
                 android:title="@string/menu_share"
-                android:showAsAction="never"/>
+                app:showAsAction="never"/>
 
             <item
                 android:id="@+id/menu_show_by_browser"
                 android:title="@string/menu_show_by_browser"
-                android:showAsAction="never"/>
+                app:showAsAction="never"/>
 
             <item
                 android:id="@+id/menu_about"
                 android:title="@string/menu_about"
-                android:showAsAction="never"/>
+                app:showAsAction="never"/>
         </menu>
     </item>
 </menu>
