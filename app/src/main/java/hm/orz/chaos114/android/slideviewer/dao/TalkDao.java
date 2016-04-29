@@ -40,6 +40,28 @@ public class TalkDao {
         }
     }
 
+    public void deleteByUrl(String url) {
+        DatabaseHelper helper = new DatabaseHelper(mContext);
+        try {
+            Dao<Talk, Integer> talkDao = helper.getDao(Talk.class);
+            Dao<Slide, Integer> slideDao = helper.getDao(Slide.class);
+            Dao<TalkMetaData, Integer> talkMetaDataDao = helper.getDao(TalkMetaData.class);
+            Talk oldTalk = findByUrl(url);
+            if (oldTalk == null) {
+                return;
+            }
+            setTalkInfo(oldTalk);
+            TalkMetaData meta = findMetaData(oldTalk);
+            talkDao.deleteById(oldTalk.getId());
+            slideDao.delete(oldTalk.getSlides());
+            talkMetaDataDao.delete(meta);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            helper.close();
+        }
+    }
+
     public TalkMetaData findMetaData(Talk talk) {
         DatabaseHelper helper = new DatabaseHelper(mContext);
         try {

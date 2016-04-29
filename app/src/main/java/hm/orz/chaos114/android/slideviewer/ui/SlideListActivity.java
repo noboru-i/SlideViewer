@@ -12,8 +12,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 
-import com.google.android.gms.ads.AdRequest;
-
 import java.util.List;
 
 import hm.orz.chaos114.android.slideviewer.R;
@@ -22,6 +20,7 @@ import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideListBinding;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
+import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.widget.SlideListRowView;
 
 public class SlideListActivity extends AppCompatActivity {
@@ -111,10 +110,7 @@ public class SlideListActivity extends AppCompatActivity {
     }
 
     private void loadAd() {
-        // TODO 共通化
-        String testDeviceId = getString(R.string.admob_test_device);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice(testDeviceId).build();
-        binding.adView.loadAd(adRequest);
+        binding.adView.loadAd(AdRequestGenerator.generate(this));
     }
 
     private static class SlideListAdapter extends BaseAdapter {

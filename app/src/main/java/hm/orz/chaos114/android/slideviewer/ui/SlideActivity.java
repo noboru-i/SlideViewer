@@ -49,6 +49,7 @@ import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
+import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
 
@@ -156,7 +157,7 @@ public class SlideActivity extends AppCompatActivity {
         mWebView.setWebViewClient(new MyWebViewClient());
 
         loadAd();
-        startLoad();
+        startLoad(false);
     }
 
     @Override
@@ -212,7 +213,7 @@ public class SlideActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.menu_reload:
                 mViewPager.setCurrentItem(0);
-                startLoad();
+                startLoad(true);
                 return true;
             case R.id.menu_share:
                 shareUrl();
@@ -229,9 +230,7 @@ public class SlideActivity extends AppCompatActivity {
     }
 
     private void loadAd() {
-        // TODO 共通化
-        String testDeviceId = getString(R.string.admob_test_device);
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice(testDeviceId).build();
+        AdRequest adRequest = AdRequestGenerator.generate(this);
         mAdView.loadAd(adRequest);
 
         // インタースティシャルを作成する。
@@ -240,8 +239,13 @@ public class SlideActivity extends AppCompatActivity {
         mInterstitialAd.loadAd(adRequest);
     }
 
-    private void startLoad() {
+    private void startLoad(boolean refresh) {
         TalkDao dao = new TalkDao(this);
+        if (refresh) {
+            mTalk = null;
+            mSlideAdapter.notifyDataSetChanged();
+            dao.deleteByUrl(mUrl.toString());
+        }
         mTalk = dao.findByUrl(mUrl.toString());
         if (mTalk != null) {
             // DBにデータがある場合の描画処理
