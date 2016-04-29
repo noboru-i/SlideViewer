@@ -213,7 +213,9 @@ public class SlideActivity extends AppCompatActivity {
     }
 
     private void loadAd() {
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6B74A80630FD70AC2DC27C79CE02AEC9").build();
+        // TODO 共通化
+        String testDeviceId = getString(R.string.admob_test_device);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice(testDeviceId).build();
         mAdView.loadAd(adRequest);
 
         // インタースティシャルを作成する。

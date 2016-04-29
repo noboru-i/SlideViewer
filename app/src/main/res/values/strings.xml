@@ -11,6 +11,7 @@
     <string name="about_other_app">View other Android app</string>
     <string name="about_license">License</string>
 
-    <string name="slide_list_author">by %s</string>
+    <string name="slide_list_author" translatable="false">by %s</string>
 
+    <string name="slide_list_empty_message">Browsing history is empty.\n\nOpen Speaker Deck site in browser, show slide page, back to this app by "Share page" menu.</string>
 </resources>

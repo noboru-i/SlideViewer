@@ -18,6 +18,8 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnItemClick;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
@@ -31,8 +33,12 @@ public class SlideListActivity extends AppCompatActivity {
     Toolbar mToolbar;
     @Bind(R.id.slide_list_list_view)
     ListView mListView;
+    @Bind(R.id.layout_empty)
+    View mEmptyView;
     @Bind(R.id.slide_list_ad_view)
     AdView mAdView;
+
+    private SlideListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,20 +49,9 @@ public class SlideListActivity extends AppCompatActivity {
 
         setSupportActionBar(mToolbar);
 
-        TalkDao dao = new TalkDao(this);
-        List<Talk> talks = dao.list();
-        final SlideListAdapter adapter = new SlideListAdapter(talks);
+        adapter = new SlideListAdapter();
         mListView.setAdapter(adapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Talk talk = adapter.getItem(position);
-                Intent intent = new Intent(SlideListActivity.this, SlideActivity.class);
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(talk.getUrl()));
-                startActivity(intent);
-            }
-        });
+        mListView.setEmptyView(mEmptyView);
 
         loadAd();
     }
@@ -71,6 +66,10 @@ public class SlideListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mAdView.resume();
+
+        TalkDao dao = new TalkDao(this);
+        List<Talk> talks = dao.list();
+        adapter.updateData(talks);
     }
 
     @Override
@@ -79,20 +78,41 @@ public class SlideListActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    @OnItemClick(R.id.slide_list_list_view)
+    void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Talk talk = adapter.getItem(position);
+        Intent intent = new Intent(SlideListActivity.this, SlideActivity.class);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(talk.getUrl()));
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.layout_empty)
+    void onClickEmpty() {
+        Uri uri = Uri.parse("https://speakerdeck.com/");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
     private void loadAd() {
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6B74A80630FD70AC2DC27C79CE02AEC9").build();
+        // TODO 共通化
+        String testDeviceId = getString(R.string.admob_test_device);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice(testDeviceId).build();
         mAdView.loadAd(adRequest);
     }
 
     private static class SlideListAdapter extends BaseAdapter {
         private List<Talk> mTalks;
 
-        private SlideListAdapter(List<Talk> talks) {
-            mTalks = talks;
+        private SlideListAdapter() {
+            // no-op
         }
 
         @Override
         public int getCount() {
+            if (mTalks == null) {
+                return 0;
+            }
             return mTalks.size();
         }
 
@@ -120,6 +140,11 @@ public class SlideListActivity extends AppCompatActivity {
             v.bind(slides, talkMetaData);
 
             return v;
+        }
+
+        void updateData(List<Talk> talks) {
+            mTalks = talks;
+            notifyDataSetChanged();
         }
     }
 }
