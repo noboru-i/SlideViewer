@@ -1,6 +1,5 @@
 package hm.orz.chaos114.android.slideviewer.ui;
 
-import android.app.ActionBar;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,10 +24,6 @@ public class AboutActivity extends AppCompatActivity {
         setContentView(R.layout.activity_about);
 
         ButterKnife.bind(this);
-
-        ActionBar actionBar = getActionBar();
-        actionBar.setTitle(getString(R.string.menu_about));
-        actionBar.setDisplayHomeAsUpEnabled(true);
 
         mVersionTextView.setText("version: " + BuildConfig.VERSION_NAME);
     }
