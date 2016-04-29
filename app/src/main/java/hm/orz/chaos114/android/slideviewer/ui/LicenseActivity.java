@@ -1,19 +1,18 @@
 package hm.orz.chaos114.android.slideviewer.ui;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.os.Bundle;
-import android.view.Menu;
+import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.webkit.WebView;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import hm.orz.chaos114.android.slideviewer.R;
 
-public class LicenseActivity extends Activity {
+public class LicenseActivity extends AppCompatActivity {
 
-    @InjectView(R.id.license_web_view)
+    @Bind(R.id.license_web_view)
     WebView mWebView;
 
     @Override
@@ -21,7 +20,7 @@ public class LicenseActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_license);
 
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         ActionBar actionBar = getActionBar();
         actionBar.setTitle(getString(R.string.about_license));

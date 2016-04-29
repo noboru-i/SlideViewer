@@ -1,63 +1,57 @@
 package hm.orz.chaos114.android.slideviewer.ui;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.OnClick;
+import butterknife.OnItemClick;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
+import hm.orz.chaos114.android.slideviewer.widget.SlideListRowView;
 
-public class SlideListActivity extends Activity {
+public class SlideListActivity extends AppCompatActivity {
 
-    @InjectView(R.id.slide_list_list_view)
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+    @Bind(R.id.slide_list_list_view)
     ListView mListView;
-    @InjectView(R.id.slide_list_ad_view)
+    @Bind(R.id.layout_empty)
+    View mEmptyView;
+    @Bind(R.id.slide_list_ad_view)
     AdView mAdView;
+
+    private SlideListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_slide_list);
 
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
-        TalkDao dao = new TalkDao(this);
-        List<Talk> talks = dao.list();
-        final SlideListAdapter adapter = new SlideListAdapter(talks);
-        View footer = getLayoutInflater().inflate(R.layout.footer, null);
-        mListView.addFooterView(footer);
+        setSupportActionBar(mToolbar);
+
+        adapter = new SlideListAdapter();
         mListView.setAdapter(adapter);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Talk talk = adapter.getItem(position);
-                Intent intent = new Intent(SlideListActivity.this, SlideActivity.class);
-                intent.setAction(Intent.ACTION_VIEW);
-                intent.setData(Uri.parse(talk.getUrl()));
-                startActivity(intent);
-            }
-        });
+        mListView.setEmptyView(mEmptyView);
 
         loadAd();
     }
@@ -72,6 +66,10 @@ public class SlideListActivity extends Activity {
     protected void onResume() {
         super.onResume();
         mAdView.resume();
+
+        TalkDao dao = new TalkDao(this);
+        List<Talk> talks = dao.list();
+        adapter.updateData(talks);
     }
 
     @Override
@@ -80,22 +78,41 @@ public class SlideListActivity extends Activity {
         super.onDestroy();
     }
 
+    @OnItemClick(R.id.slide_list_list_view)
+    void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Talk talk = adapter.getItem(position);
+        Intent intent = new Intent(SlideListActivity.this, SlideActivity.class);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(talk.getUrl()));
+        startActivity(intent);
+    }
+
+    @OnClick(R.id.layout_empty)
+    void onClickEmpty() {
+        Uri uri = Uri.parse("https://speakerdeck.com/");
+        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+        startActivity(intent);
+    }
+
     private void loadAd() {
-        AdRequest adRequest = new AdRequest.Builder().addTestDevice("6B74A80630FD70AC2DC27C79CE02AEC9").build();
+        // TODO 共通化
+        String testDeviceId = getString(R.string.admob_test_device);
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice(testDeviceId).build();
         mAdView.loadAd(adRequest);
     }
 
-    class SlideListAdapter extends BaseAdapter {
-        private LayoutInflater mInflater;
+    private static class SlideListAdapter extends BaseAdapter {
         private List<Talk> mTalks;
 
-        SlideListAdapter(List<Talk> talks) {
-            mTalks = talks;
-            mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        private SlideListAdapter() {
+            // no-op
         }
 
         @Override
         public int getCount() {
+            if (mTalks == null) {
+                return 0;
+            }
             return mTalks.size();
         }
 
@@ -110,26 +127,24 @@ public class SlideListActivity extends Activity {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View v = convertView;
+        public SlideListRowView getView(int position, View convertView, ViewGroup parent) {
+            SlideListRowView v = (SlideListRowView) convertView;
+            if (v == null) {
+                v = new SlideListRowView(parent.getContext());
+            }
             Talk item = getItem(position);
             List<Slide> slides = item.getSlides();
-            TalkDao dao = new TalkDao(SlideListActivity.this);
+            TalkDao dao = new TalkDao(v.getContext());
             TalkMetaData talkMetaData = dao.findMetaData(item);
-            if (v == null) {
-                v = mInflater.inflate(R.layout.slide_list_row, null);
-            }
 
-            ImageView slideImage = (ImageView) v.findViewById(R.id.slide_list_row_image);
-            Glide.with(SlideListActivity.this).load(slides.get(0).getPreview()).into(slideImage);
-            if (talkMetaData != null) {
-                TextView titleView = (TextView) v.findViewById(R.id.slide_list_row_title);
-                titleView.setText(talkMetaData.getTitle());
-                TextView userView = (TextView) v.findViewById(R.id.slide_list_row_user);
-                userView.setText("by " + talkMetaData.getUser());
-            }
+            v.bind(slides, talkMetaData);
 
             return v;
+        }
+
+        void updateData(List<Talk> talks) {
+            mTalks = talks;
+            notifyDataSetChanged();
         }
     }
 }
