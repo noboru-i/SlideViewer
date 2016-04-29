@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">SlideViewer</string>
+    <string name="menu_search">Search</string>
     <string name="menu_reload">Reload</string>
     <string name="menu_menu">Menu</string>
     <string name="menu_share">Share</string>

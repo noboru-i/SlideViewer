@@ -1,26 +1,24 @@
 package hm.orz.chaos114.android.slideviewer.ui;
 
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnItemClick;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
+import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideListBinding;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
@@ -28,48 +26,50 @@ import hm.orz.chaos114.android.slideviewer.widget.SlideListRowView;
 
 public class SlideListActivity extends AppCompatActivity {
 
-    @Bind(R.id.toolbar)
-    Toolbar mToolbar;
-    @Bind(R.id.slide_list_list_view)
-    ListView mListView;
-    @Bind(R.id.layout_empty)
-    View mEmptyView;
-    @Bind(R.id.slide_list_ad_view)
-    AdView mAdView;
-
+    private ActivitySlideListBinding binding;
     private SlideListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_slide_list);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_slide_list);
 
-        ButterKnife.bind(this);
-
-        setSupportActionBar(mToolbar);
+        setSupportActionBar(binding.toolbar);
         ActionBar bar = getSupportActionBar();
         if (bar != null) {
             bar.setDisplayShowTitleEnabled(false);
         }
-        mToolbar.setTitle(R.string.slide_list_title);
+        binding.toolbar.setTitle(R.string.slide_list_title);
 
         adapter = new SlideListAdapter();
-        mListView.setAdapter(adapter);
-        mListView.setEmptyView(mEmptyView);
+        binding.list.setAdapter(adapter);
+        binding.list.setEmptyView(binding.emptyLayout);
+        binding.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                onSlideClick(position);
+            }
+        });
+        binding.emptyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openSpeakerDeck();
+            }
+        });
 
         loadAd();
     }
 
     @Override
     protected void onPause() {
-        mAdView.pause();
+        binding.adView.pause();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mAdView.resume();
+        binding.adView.resume();
 
         TalkDao dao = new TalkDao(this);
         List<Talk> talks = dao.list();
@@ -78,18 +78,35 @@ public class SlideListActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        mAdView.destroy();
+        binding.adView.destroy();
         super.onDestroy();
     }
 
-    @OnItemClick(R.id.slide_list_list_view)
-    void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        final MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.slide_list_activity_menus, menu);
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_search:
+                openSpeakerDeck();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void onSlideClick(int position) {
         Talk talk = adapter.getItem(position);
         SlideActivity.start(this, talk.getUrl());
     }
 
-    @OnClick(R.id.layout_empty)
-    void onClickEmpty() {
+    private void openSpeakerDeck() {
         WebViewActivity.start(this, "https://speakerdeck.com/");
     }
 
@@ -97,7 +114,7 @@ public class SlideListActivity extends AppCompatActivity {
         // TODO 共通化
         String testDeviceId = getString(R.string.admob_test_device);
         AdRequest adRequest = new AdRequest.Builder().addTestDevice(testDeviceId).build();
-        mAdView.loadAd(adRequest);
+        binding.adView.loadAd(adRequest);
     }
 
     private static class SlideListAdapter extends BaseAdapter {
