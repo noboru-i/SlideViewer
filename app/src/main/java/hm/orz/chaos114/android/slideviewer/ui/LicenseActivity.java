@@ -1,6 +1,5 @@
 package hm.orz.chaos114.android.slideviewer.ui;
 
-import android.app.ActionBar;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -22,11 +21,7 @@ public class LicenseActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        ActionBar actionBar = getActionBar();
-        actionBar.setTitle(getString(R.string.about_license));
-        actionBar.setDisplayHomeAsUpEnabled(true);
-
-        mWebView.loadUrl("file:///android_asset/license.html");
+        mWebView.loadUrl("file:///android_asset/licenses.html");
     }
 
     @Override

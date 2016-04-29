@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">SlideViewer</string>
+    <string name="menu_search">Search</string>
     <string name="menu_reload">Reload</string>
     <string name="menu_menu">Menu</string>
     <string name="menu_share">Share</string>
@@ -14,4 +15,5 @@
     <string name="slide_list_author" translatable="false">by %s</string>
 
     <string name="slide_list_empty_message">Browsing history is empty.\n\nOpen Speaker Deck site in browser, show slide page, back to this app by "Share page" menu.</string>
+    <string name="slide_list_title">History</string>
 </resources>

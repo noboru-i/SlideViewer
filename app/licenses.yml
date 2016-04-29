@@ -1,0 +1,23 @@
+- artifact: com.android.databinding:+:+
+  skip: true
+- artifact: com.android.support:+:+
+  name: Android Support Libraries
+  copyrightHolder: The Android Open Source Project
+  license: apache2
+- artifact: com.jakewharton:butterknife:+
+  name: Butter Knife
+  copyrightHolder: Jake Wharton
+  license: apache2
+- artifact: com.github.bumptech.glide:glide:+
+  name: Glide
+  copyrightHolder: Google, Inc.
+  license: Simplified BSD License
+  url: https://github.com/bumptech/glide
+- artifact: com.google.code.gson:gson:+
+  name: Gson
+  copyrightHolder: Google Inc.
+  license: apache2
+- artifact: com.j256.ormlite:+:+
+  skip: true
+- artifact: com.google.android.gms:+:+
+  skip: true
