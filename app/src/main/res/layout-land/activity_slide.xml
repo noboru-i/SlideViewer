@@ -22,7 +22,7 @@
         android:visibility="gone"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
 
-    <android.support.v4.view.ViewPager
+    <hm.orz.chaos114.android.slideviewer.widget.ViewPagerFixed
         android:id="@+id/slide_view_pager"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
