@@ -21,7 +21,7 @@ public class LicenseActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
-        mWebView.loadUrl("file:///android_asset/license.html");
+        mWebView.loadUrl("file:///android_asset/licenses.html");
     }
 
     @Override
