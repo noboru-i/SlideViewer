@@ -1,8 +1,7 @@
 package hm.orz.chaos114.android.slideviewer.ui;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -48,6 +47,11 @@ public class SlideListActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setDisplayShowTitleEnabled(false);
+        }
+        mToolbar.setTitle(R.string.slide_list_title);
 
         adapter = new SlideListAdapter();
         mListView.setAdapter(adapter);
@@ -81,17 +85,12 @@ public class SlideListActivity extends AppCompatActivity {
     @OnItemClick(R.id.slide_list_list_view)
     void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         Talk talk = adapter.getItem(position);
-        Intent intent = new Intent(SlideListActivity.this, SlideActivity.class);
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(talk.getUrl()));
-        startActivity(intent);
+        SlideActivity.start(this, talk.getUrl());
     }
 
     @OnClick(R.id.layout_empty)
     void onClickEmpty() {
-        Uri uri = Uri.parse("https://speakerdeck.com/");
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(intent);
+        WebViewActivity.start(this, "https://speakerdeck.com/");
     }
 
     private void loadAd() {

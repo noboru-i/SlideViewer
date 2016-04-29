@@ -6,6 +6,7 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -49,6 +50,7 @@ import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
+import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
 
 public class SlideActivity extends AppCompatActivity {
     private static final String TAG = SlideActivity.class.getSimpleName();
@@ -77,9 +79,16 @@ public class SlideActivity extends AppCompatActivity {
     private LoadingDialogFragment mLoadingDialog;
     private InterstitialAd mInterstitialAd;
 
-    private String mUrl;
+    private Uri mUrl;
     private Talk mTalk;
     private TalkMetaData mTalkMetaData;
+
+    static void start(Context context, @NonNull String url) {
+        Intent intent = new Intent(context, SlideActivity.class);
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,18 +131,25 @@ public class SlideActivity extends AppCompatActivity {
         if (Intent.ACTION_VIEW.equals(action)) {
             Uri uri = intent.getData();
             Log.d(TAG, "uri = " + uri.toString());
-            mUrl = uri.toString();
+            mUrl = uri;
         } else if (Intent.ACTION_SEND.equals(action)) {
             String uri = intent.getStringExtra(Intent.EXTRA_TEXT);
             Log.d(TAG, "uri = " + uri);
-            mUrl = uri;
+            mUrl = Uri.parse(uri);
         } else {
             throw new RuntimeException("invalid intent.");
         }
-        if (!isSpeakerDeckUrl(mUrl)) {
-            Toast.makeText(this, "Unsupported url.", Toast.LENGTH_LONG).show();
+        if (!UrlHelper.isSpeakerDeckUrl(mUrl)) {
+            Toast.makeText(this, "Unsupported url.", Toast.LENGTH_SHORT).show();
             finish();
+            return;
         }
+        if (!UrlHelper.canOpen(mUrl)) {
+            WebViewActivity.start(this, mUrl.toString());
+            finish();
+            return;
+        }
+
         mWebView.getSettings().setJavaScriptEnabled(true);
         mWebView.getSettings().setBuiltInZoomControls(false);
         mWebView.addJavascriptInterface(new SrcHolderInterface(), "srcHolder");
@@ -226,7 +242,7 @@ public class SlideActivity extends AppCompatActivity {
 
     private void startLoad() {
         TalkDao dao = new TalkDao(this);
-        mTalk = dao.findByUrl(mUrl);
+        mTalk = dao.findByUrl(mUrl.toString());
         if (mTalk != null) {
             // DBにデータがある場合の描画処理
             TalkMetaData talkMetaData = mTalk.getTalkMetaData().iterator().next();
@@ -237,7 +253,7 @@ public class SlideActivity extends AppCompatActivity {
             return;
         }
 
-        mWebView.loadUrl(mUrl);
+        mWebView.loadUrl(mUrl.toString());
         mLoadingDialog.show(getFragmentManager(), null);
     }
 
@@ -265,30 +281,13 @@ public class SlideActivity extends AppCompatActivity {
     private void shareBrowser() {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(mUrl));
+        intent.setData(mUrl);
         startActivity(intent);
     }
 
     private void startAboutActivity() {
         Intent intent = new Intent(this, AboutActivity.class);
         startActivity(intent);
-    }
-
-    private boolean isSpeakerDeckUrl(String uriString) {
-        Uri uri = Uri.parse(uriString);
-        if (!"https".equals(uri.getScheme())) {
-            Log.d(TAG, "unexpected scheme");
-            return false;
-        }
-        if (!"speakerdeck.com".equals(uri.getHost())) {
-            Log.d(TAG, "unexpected host");
-            return false;
-        }
-        if (uri.getPathSegments().size() < 2) {
-            Log.d(TAG, "unexpected path segments");
-            return false;
-        }
-        return true;
     }
 
     private static class MyWebViewClient extends WebViewClient {

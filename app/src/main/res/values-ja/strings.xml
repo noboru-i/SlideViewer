@@ -12,4 +12,5 @@
     <string name="about_license">ライセンス</string>
 
     <string name="slide_list_empty_message">閲覧履歴が空です。\n\nブラウザでSpeaker Deckのページを表示、スライドを表示し、共有よりこのアプリに戻ってきて下さい。</string>
+    <string name="slide_list_title">履歴</string>
 </resources>
