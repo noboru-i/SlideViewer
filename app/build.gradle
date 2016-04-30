@@ -20,8 +20,8 @@ android {
         applicationId "hm.orz.chaos114.android.slideviewer"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 3
-        versionName "1.1.0"
+        versionCode 4
+        versionName "2.0.0"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
