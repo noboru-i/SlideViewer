@@ -6,3 +6,11 @@ dependencies:
   pre:
     - echo y | android update sdk --no-ui --all --filter "tools"
     - echo y | android update sdk --no-ui --all --filter "build-tools-23.0.3,extra-google-m2repository,extra-android-m2repository"
+test:
+  override:
+    - echo 1
+deployment:
+  master:
+    branch: master
+    commands:
+      - ./gradlew :app:checkLicenses

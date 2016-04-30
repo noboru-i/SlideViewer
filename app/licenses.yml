@@ -21,3 +21,8 @@
   skip: true
 - artifact: com.google.android.gms:+:+
   skip: true
+- artifact: com.github.chrisbanes:PhotoView:+
+  name: chrisbanes/PhotoView
+  copyrightHolder: Chris Banes
+  license: Apache License 2.0
+  url: https://github.com/chrisbanes/PhotoView

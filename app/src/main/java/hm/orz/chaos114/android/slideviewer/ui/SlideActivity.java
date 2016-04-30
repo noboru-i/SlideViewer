@@ -391,32 +391,6 @@ public class SlideActivity extends AppCompatActivity {
 
             Glide.with(SlideActivity.this)
                     .load(slide.getOriginal())
-                    .listener(new RequestListener<String, GlideDrawable>() {
-                        @Override
-                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
-                            return false;
-                        }
-
-                        @Override
-                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                            ViewGroup.LayoutParams params = mViewPager.getLayoutParams();
-
-                            WindowManager wm = getWindowManager();
-                            Display display = wm.getDefaultDisplay();
-                            Point size = new Point();
-                            display.getSize(size);
-                            float aspect = (float) size.x / size.y;
-                            if (aspect < 1) {
-                                params.width = mViewPager.getWidth();
-                                params.height = (int) ((float) resource.getIntrinsicHeight() / resource.getIntrinsicWidth() * mViewPager.getWidth());
-                            } else {
-                                params.width = (int) ((float) resource.getIntrinsicWidth() / resource.getIntrinsicHeight() * mViewPager.getHeight());
-                                params.height = mViewPager.getHeight();
-                            }
-                            mViewPager.setLayoutParams(params);
-                            return false;
-                        }
-                    })
                     .into(imageView);
 
             container.addView(layout);
