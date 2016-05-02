@@ -5,13 +5,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.webkit.WebView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import hm.orz.chaos114.android.slideviewer.R;
 
 public class LicenseActivity extends AppCompatActivity {
 
-    @Bind(R.id.license_web_view)
+    @BindView(R.id.license_web_view)
     WebView mWebView;
 
     @Override

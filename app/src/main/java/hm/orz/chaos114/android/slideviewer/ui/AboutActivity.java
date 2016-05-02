@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import hm.orz.chaos114.android.slideviewer.BuildConfig;
@@ -15,7 +15,7 @@ import hm.orz.chaos114.android.slideviewer.R;
 
 public class AboutActivity extends AppCompatActivity {
 
-    @Bind(R.id.about_version)
+    @BindView(R.id.about_version)
     TextView mVersionTextView;
 
     @Override

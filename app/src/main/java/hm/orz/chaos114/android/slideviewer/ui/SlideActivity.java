@@ -2,7 +2,6 @@ package hm.orz.chaos114.android.slideviewer.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,7 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -29,9 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
@@ -42,7 +36,7 @@ import com.google.gson.GsonBuilder;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
@@ -58,21 +52,21 @@ public class SlideActivity extends AppCompatActivity {
 
     private Handler mHandler;
 
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar mToolbar;
-    @Bind(R.id.slide_web_view)
+    @BindView(R.id.slide_web_view)
     WebView mWebView;
-    @Bind(R.id.layout_info)
+    @BindView(R.id.layout_info)
     View mInfoLayout;
-    @Bind(R.id.slide_title)
+    @BindView(R.id.slide_title)
     TextView mTitleView;
-    @Bind(R.id.slide_user)
+    @BindView(R.id.slide_user)
     TextView mUserView;
-    @Bind(R.id.slide_view_pager)
+    @BindView(R.id.slide_view_pager)
     ViewPager mViewPager;
-    @Bind(R.id.slide_page_numbers)
+    @BindView(R.id.slide_page_numbers)
     TextView mPageNumbers;
-    @Bind(R.id.slide_ad_view)
+    @BindView(R.id.slide_ad_view)
     AdView mAdView;
 
     private Menu mMainMenu;

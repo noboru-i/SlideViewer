@@ -2,6 +2,10 @@ machine:
   java:
     version: oraclejdk8
   timezone: Asia/Tokyo
+  environment:
+    TERM: "dumb"
+    JAVA_OPTS: "-Xms512m -Xmx1024m"
+    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
 dependencies:
   pre:
     - echo y | android update sdk --no-ui --all --filter "tools"
@@ -13,4 +17,6 @@ deployment:
   master:
     branch: master
     commands:
-      - ./gradlew :app:checkLicenses
+      - ./gradlew :app:checkLicenses -PdisablePreDex
+      - ./gradlew :app:assembleRelease -PdisablePreDex
+      - cp app/build/outputs/apk/app-release.apk $CIRCLE_ARTIFACTS/

@@ -3,12 +3,14 @@ buildscript {
         jcenter()
     }
     dependencies {
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         classpath 'com.cookpad.android.licensetools:license-tools-plugin:0.12.0'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.12.0'
     }
 }
 
 apply plugin: 'com.android.application'
+apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'com.cookpad.android.licensetools'
 apply plugin: 'com.github.ben-manes.versions'
 
@@ -28,18 +30,26 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
     signingConfigs {
-//        releaseConfig {
-//            storeFile=file(project.properties.storeFile)
-//            storePassword=project.properties.storePassword
-//            keyAlias=project.properties.keyAlias
-//            keyPassword=project.properties.keyPassword
-//        }
+        releaseConfig {
+            storeFile file("keystore")
+            storePassword System.getenv("STORE_PASSWORD")
+            keyAlias "chaos114"
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
     }
     buildTypes {
-        release {
+        debug {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-//            signingConfig signingConfigs.releaseConfig
+            shrinkResources false
+            debuggable true
+            applicationIdSuffix '.debug'
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            debuggable false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseConfig
         }
     }
     dataBinding {
@@ -59,7 +69,8 @@ dependencies {
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.google.android.gms:play-services-ads:8.4.0'
     compile 'com.google.android.gms:play-services-analytics:8.4.0'
-    compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.jakewharton:butterknife:8.0.1'
+    apt 'com.jakewharton:butterknife-compiler:8.0.1'
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
     provided 'org.projectlombok:lombok:1.16.8'
