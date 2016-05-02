@@ -30,12 +30,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_7
     }
     signingConfigs {
-//        releaseConfig {
-//            storeFile=file(project.properties.storeFile)
-//            storePassword=project.properties.storePassword
-//            keyAlias=project.properties.keyAlias
-//            keyPassword=project.properties.keyPassword
-//        }
+        releaseConfig {
+            storeFile file("keystore")
+            storePassword System.getenv("STORE_PASSWORD")
+            keyAlias "chaos114"
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
     }
     buildTypes {
         debug {
@@ -49,7 +49,7 @@ android {
             shrinkResources true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-//            signingConfig signingConfigs.releaseConfig
+            signingConfig signingConfigs.releaseConfig
         }
     }
     dataBinding {

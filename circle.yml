@@ -10,7 +10,15 @@ test:
   override:
     - echo 1
 deployment:
+  set-proguard:
+    branch: set-proguard
+    commands:
+      - ./gradlew :app:checkLicenses -PdisablePreDex
+      - ./gradlew :app:assembleRelease -PdisablePreDex
+      - cp app/build/outputs/apk/app-release.apk $CIRCLE_ARTIFACTS/
   master:
     branch: master
     commands:
-      - ./gradlew :app:checkLicenses
+      - ./gradlew :app:checkLicenses -PdisablePreDex
+      - ./gradlew :app:assembleRelease -PdisablePreDex
+      - cp app/build/outputs/apk/app-release.apk $CIRCLE_ARTIFACTS/
