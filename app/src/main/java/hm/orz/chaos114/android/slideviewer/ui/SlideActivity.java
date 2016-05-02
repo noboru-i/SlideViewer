@@ -334,21 +334,15 @@ public class SlideActivity extends AppCompatActivity {
                 AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), mTalk.getUrl());
 
                 // TODO
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        TalkDao dao = new TalkDao(SlideActivity.this);
-                        dao.saveIfNotExists(mTalk, mTalk.getSlides(), mTalkMetaData);
-                    }
+                mHandler.post(() -> {
+                    TalkDao dao = new TalkDao(SlideActivity.this);
+                    dao.saveIfNotExists(mTalk, mTalk.getSlides(), mTalkMetaData);
                 });
 
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mLoadingDialog.dismiss();
-                        setPageNumbers(1, mTalk.getSlides().size());
-                        mSlideAdapter.notifyDataSetChanged();
-                    }
+                mHandler.post(() -> {
+                    mLoadingDialog.dismiss();
+                    setPageNumbers(1, mTalk.getSlides().size());
+                    mSlideAdapter.notifyDataSetChanged();
                 });
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);

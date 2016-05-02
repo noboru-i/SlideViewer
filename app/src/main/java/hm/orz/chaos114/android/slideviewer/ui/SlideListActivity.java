@@ -43,18 +43,8 @@ public class SlideListActivity extends AppCompatActivity {
         adapter = new SlideListAdapter();
         binding.list.setAdapter(adapter);
         binding.list.setEmptyView(binding.emptyLayout);
-        binding.list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onSlideClick(position);
-            }
-        });
-        binding.emptyLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                openSpeakerDeck();
-            }
-        });
+        binding.list.setOnItemClickListener((parent, view, position, id) -> onSlideClick(position));
+        binding.emptyLayout.setOnClickListener(v -> openSpeakerDeck());
 
         loadAd();
     }
