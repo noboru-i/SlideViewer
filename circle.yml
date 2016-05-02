@@ -2,6 +2,8 @@ machine:
   java:
     version: oraclejdk8
   timezone: Asia/Tokyo
+  environment:
+    TERM: "dumb"
 dependencies:
   pre:
     - echo y | android update sdk --no-ui --all --filter "tools"
