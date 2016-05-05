@@ -5,23 +5,30 @@
         xmlns:tools="http://schemas.android.com/tools"
         tools:context=".ui.SlideListActivity">
 
-    <RelativeLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+            android:layout_height="wrap_content">
 
-        <ListView
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
         <LinearLayout
             android:id="@+id/empty_layout"
@@ -42,8 +49,12 @@
             android:id="@+id/ad_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
             ads:adSize="SMART_BANNER"
-            ads:adUnitId="@string/admob_unit_id"/>
-    </RelativeLayout>
+            ads:adUnitId="@string/admob_unit_id"
+            app:layout_anchor="@id/list"
+            app:layout_anchorGravity="bottom"
+            app:layout_behavior="hm.orz.chaos114.android.slideviewer.widget.BottomBarBehavior"
+            app:layout_scrollFlags="scroll|enterAlways"/>
+
+    </android.support.design.widget.CoordinatorLayout>
 </layout>
