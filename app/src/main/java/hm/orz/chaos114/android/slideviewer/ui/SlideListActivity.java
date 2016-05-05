@@ -1,17 +1,19 @@
 package hm.orz.chaos114.android.slideviewer.ui;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
 import java.util.List;
 
@@ -43,8 +45,7 @@ public class SlideListActivity extends AppCompatActivity {
 
         adapter = new SlideListAdapter();
         binding.list.setAdapter(adapter);
-        binding.list.setEmptyView(binding.emptyLayout);
-        binding.list.setOnItemClickListener((parent, view, position, id) -> onSlideClick(position));
+        binding.list.setLayoutManager(new LinearLayoutManager(this));
         binding.emptyLayout.setOnClickListener(v -> openSpeakerDeck());
 
         loadAd();
@@ -63,6 +64,13 @@ public class SlideListActivity extends AppCompatActivity {
 
         TalkDao dao = new TalkDao(this);
         List<Talk> talks = dao.list();
+        if (talks.size() == 0) {
+            binding.emptyLayout.setVisibility(View.VISIBLE);
+            binding.list.setVisibility(View.GONE);
+        } else {
+            binding.emptyLayout.setVisibility(View.GONE);
+            binding.list.setVisibility(View.VISIBLE);
+        }
         adapter.updateData(talks);
     }
 
@@ -123,7 +131,7 @@ public class SlideListActivity extends AppCompatActivity {
         binding.adView.loadAd(AdRequestGenerator.generate(this));
     }
 
-    private static class SlideListAdapter extends BaseAdapter {
+    private static class SlideListAdapter extends RecyclerView.Adapter<ViewHolder> {
         private List<Talk> mTalks;
 
         private SlideListAdapter() {
@@ -131,42 +139,53 @@ public class SlideListActivity extends AppCompatActivity {
         }
 
         @Override
-        public int getCount() {
-            if (mTalks == null) {
-                return 0;
-            }
-            return mTalks.size();
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            SlideListRowView view = new SlideListRowView(parent.getContext());
+            view.setOnClickListener(v -> onClick(parent.getContext(), (Talk) view.getTag()));
+            return new ViewHolder(view);
         }
 
         @Override
+        public void onBindViewHolder(ViewHolder holder, int position) {
+            Talk item = getItem(position);
+            List<Slide> slides = item.getSlides();
+            TalkDao dao = new TalkDao(holder.itemView.getContext());
+            TalkMetaData talkMetaData = dao.findMetaData(item);
+
+            ((SlideListRowView) holder.itemView).bind(slides, talkMetaData);
+            holder.itemView.setTag(talkMetaData.getTalk());
+        }
+
         public Talk getItem(int position) {
             return mTalks.get(position);
         }
 
         @Override
         public long getItemId(int position) {
-            return getItem(position).getId();
+            return position;
         }
 
         @Override
-        public SlideListRowView getView(int position, View convertView, ViewGroup parent) {
-            SlideListRowView v = (SlideListRowView) convertView;
-            if (v == null) {
-                v = new SlideListRowView(parent.getContext());
+        public int getItemCount() {
+            if (mTalks == null) {
+                return 0;
             }
-            Talk item = getItem(position);
-            List<Slide> slides = item.getSlides();
-            TalkDao dao = new TalkDao(v.getContext());
-            TalkMetaData talkMetaData = dao.findMetaData(item);
-
-            v.bind(slides, talkMetaData);
-
-            return v;
+            return mTalks.size();
         }
 
         void updateData(List<Talk> talks) {
             mTalks = talks;
             notifyDataSetChanged();
+        }
+
+        private void onClick(Context context, Talk talk) {
+            SlideActivity.start(context, talk.getUrl());
+        }
+    }
+
+    private static class ViewHolder extends RecyclerView.ViewHolder {
+        public ViewHolder(View itemView) {
+            super(itemView);
         }
     }
 }
