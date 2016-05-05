@@ -16,4 +16,6 @@
 
     <string name="slide_list_empty_message">Browsing history is empty.\n\nOpen Speaker Deck site in browser, show slide page, back to this app by "Share page" menu.</string>
     <string name="slide_list_title">History</string>
+
+    <string name="about_version" translatable="false">version: %s</string>
 </resources>

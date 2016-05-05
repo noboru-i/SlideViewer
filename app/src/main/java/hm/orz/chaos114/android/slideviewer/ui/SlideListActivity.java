@@ -1,6 +1,8 @@
 package hm.orz.chaos114.android.slideviewer.ui;
 
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,7 +11,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 
 import java.util.List;
@@ -85,9 +86,28 @@ public class SlideListActivity extends AppCompatActivity {
             case R.id.menu_search:
                 openSpeakerDeck();
                 return true;
+            case R.id.menu_share:
+                shareUrl();
+                return true;
+            case R.id.menu_about:
+                startAboutActivity();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void shareUrl() {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, Uri.parse("https://play.google.com/store/apps/details?id=hm.orz.chaos114.android.slideviewer"));
+        startActivity(intent);
+    }
+
+    private void startAboutActivity() {
+        Intent intent = new Intent(this, AboutActivity.class);
+        startActivity(intent);
     }
 
     private void onSlideClick(int position) {

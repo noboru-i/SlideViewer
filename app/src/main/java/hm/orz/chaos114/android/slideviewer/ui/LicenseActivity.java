@@ -1,5 +1,7 @@
 package hm.orz.chaos114.android.slideviewer.ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -13,6 +15,11 @@ public class LicenseActivity extends AppCompatActivity {
 
     @BindView(R.id.license_web_view)
     WebView mWebView;
+
+    public static void start(Context context) {
+        Intent intent = new Intent(context, LicenseActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
