@@ -1,5 +1,7 @@
 package hm.orz.chaos114.android.slideviewer.ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -14,6 +16,11 @@ import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
 public class AboutActivity extends AppCompatActivity {
 
     private ActivityAboutBinding binding;
+
+    public static void start(Context context) {
+        Intent intent = new Intent(context, AboutActivity.class);
+        context.startActivity(intent);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

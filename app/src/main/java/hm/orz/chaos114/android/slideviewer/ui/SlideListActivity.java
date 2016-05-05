@@ -48,7 +48,7 @@ public class SlideListActivity extends AppCompatActivity {
         binding.list.setLayoutManager(new LinearLayoutManager(this));
         binding.emptyLayout.setOnClickListener(v -> openSpeakerDeck());
 
-        loadAd();
+        binding.adView.loadAd(AdRequestGenerator.generate(this));
     }
 
     @Override
@@ -98,7 +98,7 @@ public class SlideListActivity extends AppCompatActivity {
                 shareUrl();
                 return true;
             case R.id.menu_about:
-                startAboutActivity();
+                AboutActivity.start(this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -113,22 +113,8 @@ public class SlideListActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void startAboutActivity() {
-        Intent intent = new Intent(this, AboutActivity.class);
-        startActivity(intent);
-    }
-
-    private void onSlideClick(int position) {
-        Talk talk = adapter.getItem(position);
-        SlideActivity.start(this, talk.getUrl());
-    }
-
     private void openSpeakerDeck() {
         WebViewActivity.start(this, "https://speakerdeck.com/");
-    }
-
-    private void loadAd() {
-        binding.adView.loadAd(AdRequestGenerator.generate(this));
     }
 
     private static class SlideListAdapter extends RecyclerView.Adapter<ViewHolder> {
@@ -147,17 +133,13 @@ public class SlideListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            Talk item = getItem(position);
+            Talk item = mTalks.get(position);
             List<Slide> slides = item.getSlides();
             TalkDao dao = new TalkDao(holder.itemView.getContext());
             TalkMetaData talkMetaData = dao.findMetaData(item);
 
             ((SlideListRowView) holder.itemView).bind(slides, talkMetaData);
             holder.itemView.setTag(talkMetaData.getTalk());
-        }
-
-        public Talk getItem(int position) {
-            return mTalks.get(position);
         }
 
         @Override
