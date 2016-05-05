@@ -1,31 +1,27 @@
 package hm.orz.chaos114.android.slideviewer.ui;
 
-import android.content.Intent;
-import android.net.Uri;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.widget.TextView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import hm.orz.chaos114.android.slideviewer.BuildConfig;
 import hm.orz.chaos114.android.slideviewer.R;
+import hm.orz.chaos114.android.slideviewer.databinding.ActivityAboutBinding;
+import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
 
 public class AboutActivity extends AppCompatActivity {
 
-    @BindView(R.id.about_version)
-    TextView mVersionTextView;
+    private ActivityAboutBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_about);
 
-        ButterKnife.bind(this);
-
-        mVersionTextView.setText("version: " + BuildConfig.VERSION_NAME);
+        initToolbar();
+        initActions();
     }
 
     @Override
@@ -39,25 +35,27 @@ public class AboutActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.about_git_hub)
-    void viewGitHub() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("https://github.com/noboru-i/SlideViewer"));
-        startActivity(intent);
+    private void initToolbar() {
+        setSupportActionBar(binding.toolbar);
+        ActionBar bar = getSupportActionBar();
+        if (bar != null) {
+            bar.setDisplayHomeAsUpEnabled(true);
+            bar.setDisplayShowHomeEnabled(true);
+            bar.setDisplayShowTitleEnabled(false);
+            bar.setHomeButtonEnabled(true);
+        }
     }
 
-    @OnClick(R.id.about_other_app)
-    void viewOtherApp() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse("https://play.google.com/store/apps/developer?id=noboru"));
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.about_license)
-    void viewLicense() {
-        Intent intent = new Intent(this, LicenseActivity.class);
-        startActivity(intent);
+    private void initActions() {
+        binding.aboutVersion.setText(getString(R.string.about_version, BuildConfig.VERSION_NAME));
+        binding.aboutGitHub.setOnClickListener(v ->
+                IntentUtil.browse(this, "https://github.com/noboru-i/SlideViewer")
+        );
+        binding.aboutOtherApp.setOnClickListener(v ->
+                IntentUtil.browse(this, "https://play.google.com/store/apps/developer?id=noboru")
+        );
+        binding.aboutLicense.setOnClickListener(v ->
+                LicenseActivity.start(this)
+        );
     }
 }

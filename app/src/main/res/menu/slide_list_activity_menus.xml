@@ -5,5 +5,25 @@
         android:id="@+id/menu_search"
         android:icon="@android:drawable/ic_menu_search"
         android:title="@string/menu_reload"
-        app:showAsAction="always"/>
+        app:showAsAction="ifRoom"/>
+
+    <!-- Options -->
+    <item
+        android:id="@+id/overflow_options"
+        android:icon="@android:drawable/ic_menu_more"
+        android:title="@string/menu_menu"
+        app:showAsAction="always">
+        <menu>
+
+            <item
+                android:id="@+id/menu_share"
+                android:title="@string/menu_share"
+                app:showAsAction="never"/>
+
+            <item
+                android:id="@+id/menu_about"
+                android:title="@string/menu_about"
+                app:showAsAction="never"/>
+        </menu>
+    </item>
 </menu>

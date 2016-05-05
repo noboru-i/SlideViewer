@@ -7,8 +7,7 @@ import android.os.Bundle;
 
 public class LoadingDialogFragment extends DialogFragment {
     public static LoadingDialogFragment newInstance() {
-        LoadingDialogFragment fragment = new LoadingDialogFragment();
-        return fragment;
+        return new LoadingDialogFragment();
     }
 
     @Override

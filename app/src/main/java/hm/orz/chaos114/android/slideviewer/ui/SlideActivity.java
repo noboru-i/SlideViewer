@@ -2,6 +2,7 @@ package hm.orz.chaos114.android.slideviewer.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -22,12 +22,10 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -36,10 +34,9 @@ import com.google.gson.GsonBuilder;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
+import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideBinding;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
@@ -50,33 +47,18 @@ import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
 public class SlideActivity extends AppCompatActivity {
     private static final String TAG = SlideActivity.class.getSimpleName();
 
-    private Handler mHandler;
+    private Handler handler;
 
-    @BindView(R.id.toolbar)
-    Toolbar mToolbar;
-    @BindView(R.id.slide_web_view)
-    WebView mWebView;
-    @BindView(R.id.layout_info)
-    View mInfoLayout;
-    @BindView(R.id.slide_title)
-    TextView mTitleView;
-    @BindView(R.id.slide_user)
-    TextView mUserView;
-    @BindView(R.id.slide_view_pager)
-    ViewPager mViewPager;
-    @BindView(R.id.slide_page_numbers)
-    TextView mPageNumbers;
-    @BindView(R.id.slide_ad_view)
-    AdView mAdView;
+    private ActivitySlideBinding binding;
 
-    private Menu mMainMenu;
-    private SlideAdapter mSlideAdapter;
-    private LoadingDialogFragment mLoadingDialog;
-    private InterstitialAd mInterstitialAd;
+    private Menu menu;
+    private SlideAdapter adapter;
+    private LoadingDialogFragment loadingDialog;
+    private InterstitialAd interstitialAd;
 
-    private Uri mUrl;
-    private Talk mTalk;
-    private TalkMetaData mTalkMetaData;
+    private Uri uri;
+    private Talk talk;
+    private TalkMetaData talkMetaData;
 
     static void start(Context context, @NonNull String url) {
         Intent intent = new Intent(context, SlideActivity.class);
@@ -89,22 +71,20 @@ public class SlideActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AnalyticsManager.initializeAnalyticsTracker(getApplication());
-        setContentView(R.layout.activity_slide);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_slide);
 
         AnalyticsManager.sendScreenView(TAG);
 
-        mHandler = new Handler();
+        handler = new Handler();
 
-        ButterKnife.bind(this);
+        setSupportActionBar(binding.toolbar);
 
-        setSupportActionBar(mToolbar);
+        adapter = new SlideAdapter(this);
+        loadingDialog = LoadingDialogFragment.newInstance();
 
-        mSlideAdapter = new SlideAdapter(this);
-        mLoadingDialog = LoadingDialogFragment.newInstance();
-
-        mViewPager.setOffscreenPageLimit(5);
-        mViewPager.setAdapter(mSlideAdapter);
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+        binding.slideViewPager.setOffscreenPageLimit(5);
+        binding.slideViewPager.setAdapter(adapter);
+        binding.slideViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
             }
@@ -112,7 +92,7 @@ public class SlideActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 final int page = position + 1;
-                setPageNumbers(page, mTalk.getSlides().size());
+                setPageNumbers(page, talk.getSlides().size());
                 AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.CHANGE_PAGE.name(), Integer.toString(page));
             }
 
@@ -126,29 +106,29 @@ public class SlideActivity extends AppCompatActivity {
         if (Intent.ACTION_VIEW.equals(action)) {
             Uri uri = intent.getData();
             Log.d(TAG, "uri = " + uri.toString());
-            mUrl = uri;
+            this.uri = uri;
         } else if (Intent.ACTION_SEND.equals(action)) {
             String uri = intent.getStringExtra(Intent.EXTRA_TEXT);
             Log.d(TAG, "uri = " + uri);
-            mUrl = Uri.parse(uri);
+            this.uri = Uri.parse(uri);
         } else {
             throw new RuntimeException("invalid intent.");
         }
-        if (!UrlHelper.isSpeakerDeckUrl(mUrl)) {
+        if (!UrlHelper.isSpeakerDeckUrl(uri)) {
             Toast.makeText(this, "Unsupported url.", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
-        if (!UrlHelper.canOpen(mUrl)) {
-            WebViewActivity.start(this, mUrl.toString());
+        if (!UrlHelper.canOpen(uri)) {
+            WebViewActivity.start(this, uri.toString());
             finish();
             return;
         }
 
-        mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.getSettings().setBuiltInZoomControls(false);
-        mWebView.addJavascriptInterface(new SrcHolderInterface(), "srcHolder");
-        mWebView.setWebViewClient(new MyWebViewClient());
+        binding.slideWebView.getSettings().setJavaScriptEnabled(true);
+        binding.slideWebView.getSettings().setBuiltInZoomControls(false);
+        binding.slideWebView.addJavascriptInterface(new SrcHolderInterface(), "srcHolder");
+        binding.slideWebView.setWebViewClient(new MyWebViewClient());
 
         loadAd();
         startLoad(false);
@@ -156,19 +136,19 @@ public class SlideActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        mAdView.pause();
+        binding.slideAdView.pause();
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mAdView.resume();
+        binding.slideAdView.resume();
     }
 
     @Override
     protected void onDestroy() {
-        mAdView.destroy();
+        binding.slideAdView.destroy();
         super.onDestroy();
     }
 
@@ -176,7 +156,7 @@ public class SlideActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.slide_activity_menus, menu);
-        mMainMenu = menu;
+        this.menu = menu;
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -187,8 +167,8 @@ public class SlideActivity extends AppCompatActivity {
             switch (event.getKeyCode()) {
                 case KeyEvent.KEYCODE_MENU:
                     // Menuボタン押下
-                    if (mMainMenu != null) {
-                        mMainMenu.performIdentifierAction(R.id.overflow_options, 0);
+                    if (menu != null) {
+                        menu.performIdentifierAction(R.id.overflow_options, 0);
                     }
                     return true;
             }
@@ -206,7 +186,7 @@ public class SlideActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_reload:
-                mViewPager.setCurrentItem(0);
+                binding.slideViewPager.setCurrentItem(0);
                 startLoad(true);
                 return true;
             case R.id.menu_share:
@@ -225,61 +205,61 @@ public class SlideActivity extends AppCompatActivity {
 
     private void loadAd() {
         AdRequest adRequest = AdRequestGenerator.generate(this);
-        mAdView.loadAd(adRequest);
+        binding.slideAdView.loadAd(adRequest);
 
         // インタースティシャルを作成する。
-        mInterstitialAd = new InterstitialAd(this);
-        mInterstitialAd.setAdUnitId(getString(R.string.admob_unit_id));
-        mInterstitialAd.loadAd(adRequest);
+        interstitialAd = new InterstitialAd(this);
+        interstitialAd.setAdUnitId(getString(R.string.admob_unit_id));
+        interstitialAd.loadAd(adRequest);
     }
 
     private void startLoad(boolean refresh) {
         TalkDao dao = new TalkDao(this);
         if (refresh) {
-            mTalk = null;
-            mSlideAdapter.notifyDataSetChanged();
-            dao.deleteByUrl(mUrl.toString());
+            talk = null;
+            adapter.notifyDataSetChanged();
+            dao.deleteByUrl(uri.toString());
         }
-        mTalk = dao.findByUrl(mUrl.toString());
-        if (mTalk != null) {
+        talk = dao.findByUrl(uri.toString());
+        if (talk != null) {
             // DBにデータがある場合の描画処理
-            TalkMetaData talkMetaData = mTalk.getTalkMetaData().iterator().next();
-            mTitleView.setText(talkMetaData.getTitle());
-            mUserView.setText(talkMetaData.getUser());
-            setPageNumbers(1, mTalk.getSlides().size());
-            mSlideAdapter.notifyDataSetChanged();
+            TalkMetaData talkMetaData = talk.getTalkMetaData().iterator().next();
+            binding.slideTitle.setText(talkMetaData.getTitle());
+            binding.slideUser.setText(talkMetaData.getUser());
+            setPageNumbers(1, talk.getSlides().size());
+            adapter.notifyDataSetChanged();
             return;
         }
 
-        mWebView.loadUrl(mUrl.toString());
-        mLoadingDialog.show(getFragmentManager(), null);
+        binding.slideWebView.loadUrl(uri.toString());
+        loadingDialog.show(getFragmentManager(), null);
     }
 
     /**
      * インタースティシャルを表示する準備が出来ていたら表示する。
      */
     public void displayInterstitial() {
-        if (mInterstitialAd.isLoaded()) {
-            mInterstitialAd.show();
+        if (interstitialAd.isLoaded()) {
+            interstitialAd.show();
         }
     }
 
     private void setPageNumbers(int current, int max) {
-        mPageNumbers.setText(current + "/" + max);
+        binding.slidePageNumbers.setText(current + "/" + max);
     }
 
     private void shareUrl() {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, mUrl);
+        intent.putExtra(Intent.EXTRA_TEXT, uri);
         startActivity(intent);
     }
 
     private void shareBrowser() {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(mUrl);
+        intent.setData(uri);
         startActivity(intent);
     }
 
@@ -309,16 +289,13 @@ public class SlideActivity extends AppCompatActivity {
         public void setSrc(final String src, final String title, final String user) {
             final String url = "https:" + src;
             Log.d(TAG, "src = " + src);
-            mTalkMetaData = new TalkMetaData();
-            mTalkMetaData.setTitle(title);
-            mTalkMetaData.setUser(user);
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    mWebView.loadUrl(url);
-                    mTitleView.setText(title);
-                    mUserView.setText(user);
-                }
+            talkMetaData = new TalkMetaData();
+            talkMetaData.setTitle(title);
+            talkMetaData.setUser(user);
+            handler.post(() -> {
+                binding.slideWebView.loadUrl(url);
+                binding.slideTitle.setText(title);
+                binding.slideUser.setText(user);
             });
         }
 
@@ -329,26 +306,20 @@ public class SlideActivity extends AppCompatActivity {
                 Gson gson = new GsonBuilder()
                         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                         .create();
-                mTalk = gson.fromJson(URLDecoder.decode(talk, "UTF-8"), Talk.class);
-                Log.d(TAG, "talkObject = " + mTalk);
-                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), mTalk.getUrl());
+                SlideActivity.this.talk = gson.fromJson(URLDecoder.decode(talk, "UTF-8"), Talk.class);
+                Log.d(TAG, "talkObject = " + SlideActivity.this.talk);
+                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), SlideActivity.this.talk.getUrl());
 
                 // TODO
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        TalkDao dao = new TalkDao(SlideActivity.this);
-                        dao.saveIfNotExists(mTalk, mTalk.getSlides(), mTalkMetaData);
-                    }
+                handler.post(() -> {
+                    TalkDao dao = new TalkDao(SlideActivity.this);
+                    dao.saveIfNotExists(SlideActivity.this.talk, SlideActivity.this.talk.getSlides(), talkMetaData);
                 });
 
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        mLoadingDialog.dismiss();
-                        setPageNumbers(1, mTalk.getSlides().size());
-                        mSlideAdapter.notifyDataSetChanged();
-                    }
+                handler.post(() -> {
+                    loadingDialog.dismiss();
+                    setPageNumbers(1, SlideActivity.this.talk.getSlides().size());
+                    adapter.notifyDataSetChanged();
                 });
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
@@ -357,19 +328,19 @@ public class SlideActivity extends AppCompatActivity {
     }
 
     class SlideAdapter extends PagerAdapter {
-        private LayoutInflater mInflater;
+        private LayoutInflater inflater;
 
         SlideAdapter(Context c) {
             super();
-            mInflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            inflater = (LayoutInflater) c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
         @Override
         public int getCount() {
-            if (mTalk == null) {
+            if (talk == null) {
                 return 0;
             }
-            return mTalk.getSlides().size();
+            return talk.getSlides().size();
         }
 
         @Override
@@ -379,8 +350,8 @@ public class SlideActivity extends AppCompatActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            Slide slide = mTalk.getSlides().get(position);
-            final View layout = mInflater.inflate(R.layout.view_slide, container, false);
+            Slide slide = talk.getSlides().get(position);
+            final View layout = inflater.inflate(R.layout.view_slide, container, false);
             final ImageView imageView = (ImageView) layout.findViewById(R.id.slide_image);
 
             Glide.with(SlideActivity.this)
