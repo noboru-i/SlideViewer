@@ -2,19 +2,15 @@ package hm.orz.chaos114.android.slideviewer.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
-import android.webkit.WebView;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import hm.orz.chaos114.android.slideviewer.R;
+import hm.orz.chaos114.android.slideviewer.databinding.ActivityLicenseBinding;
 
 public class LicenseActivity extends AppCompatActivity {
-
-    @BindView(R.id.license_web_view)
-    WebView mWebView;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, LicenseActivity.class);
@@ -24,11 +20,9 @@ public class LicenseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_license);
+        ActivityLicenseBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_license);
 
-        ButterKnife.bind(this);
-
-        mWebView.loadUrl("file:///android_asset/licenses.html");
+        binding.webView.loadUrl("file:///android_asset/licenses.html");
     }
 
     @Override
