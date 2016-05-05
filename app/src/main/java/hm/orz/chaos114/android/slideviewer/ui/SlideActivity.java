@@ -300,25 +300,25 @@ public class SlideActivity extends AppCompatActivity {
         }
 
         @JavascriptInterface
-        public void setTalk(String talk) {
-            Log.d(TAG, "talk = " + talk);
+        public void setTalk(String talkString) {
+            Log.d(TAG, "talk = " + talkString);
             try {
                 Gson gson = new GsonBuilder()
                         .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                         .create();
-                SlideActivity.this.talk = gson.fromJson(URLDecoder.decode(talk, "UTF-8"), Talk.class);
-                Log.d(TAG, "talkObject = " + SlideActivity.this.talk);
-                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), SlideActivity.this.talk.getUrl());
+                talk = gson.fromJson(URLDecoder.decode(talkString, "UTF-8"), Talk.class);
+                Log.d(TAG, "talkObject = " + talk);
+                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), talk.getUrl());
 
                 // TODO
                 handler.post(() -> {
                     TalkDao dao = new TalkDao(SlideActivity.this);
-                    dao.saveIfNotExists(SlideActivity.this.talk, SlideActivity.this.talk.getSlides(), talkMetaData);
+                    dao.saveIfNotExists(talk, talk.getSlides(), talkMetaData);
                 });
 
                 handler.post(() -> {
                     loadingDialog.dismiss();
-                    setPageNumbers(1, SlideActivity.this.talk.getSlides().size());
+                    setPageNumbers(1, talk.getSlides().size());
                     adapter.notifyDataSetChanged();
                 });
             } catch (UnsupportedEncodingException e) {
