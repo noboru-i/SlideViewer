@@ -20,6 +20,10 @@ android {
     compileSdkVersion 23
     buildToolsVersion "23.0.3"
 
+    dataBinding {
+        enabled = true
+    }
+
     defaultConfig {
         applicationId "hm.orz.chaos114.android.slideviewer"
         minSdkVersion 15
@@ -53,9 +57,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.releaseConfig
         }
-    }
-    dataBinding {
-        enabled = true
     }
 }
 
