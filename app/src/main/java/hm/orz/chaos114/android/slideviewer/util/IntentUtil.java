@@ -10,9 +10,13 @@ public final class IntentUtil {
     }
 
     public static void browse(Context context, String url) {
+        browse(context, Uri.parse(url));
+    }
+
+    public static void browse(Context context, Uri uri) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
+        intent.setData(uri);
         context.startActivity(intent);
     }
 }

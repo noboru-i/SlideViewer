@@ -42,6 +42,7 @@ import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
+import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
 
 public class SlideActivity extends AppCompatActivity {
@@ -257,15 +258,11 @@ public class SlideActivity extends AppCompatActivity {
     }
 
     private void shareBrowser() {
-        Intent intent = new Intent();
-        intent.setAction(Intent.ACTION_VIEW);
-        intent.setData(uri);
-        startActivity(intent);
+        IntentUtil.browse(this, uri);
     }
 
     private void startAboutActivity() {
-        Intent intent = new Intent(this, AboutActivity.class);
-        startActivity(intent);
+        AboutActivity.start(this);
     }
 
     private static class MyWebViewClient extends WebViewClient {
@@ -302,28 +299,25 @@ public class SlideActivity extends AppCompatActivity {
         @JavascriptInterface
         public void setTalk(String talkString) {
             Log.d(TAG, "talk = " + talkString);
+            Gson gson = new GsonBuilder()
+                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                    .create();
             try {
-                Gson gson = new GsonBuilder()
-                        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                        .create();
                 talk = gson.fromJson(URLDecoder.decode(talkString, "UTF-8"), Talk.class);
-                Log.d(TAG, "talkObject = " + talk);
-                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), talk.getUrl());
-
-                // TODO
-                handler.post(() -> {
-                    TalkDao dao = new TalkDao(SlideActivity.this);
-                    dao.saveIfNotExists(talk, talk.getSlides(), talkMetaData);
-                });
-
-                handler.post(() -> {
-                    loadingDialog.dismiss();
-                    setPageNumbers(1, talk.getSlides().size());
-                    adapter.notifyDataSetChanged();
-                });
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
             }
+            Log.d(TAG, "talkObject = " + talk);
+            AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), talk.getUrl());
+
+            TalkDao dao = new TalkDao(SlideActivity.this);
+            dao.saveIfNotExists(talk, talk.getSlides(), talkMetaData);
+
+            handler.post(() -> {
+                loadingDialog.dismiss();
+                setPageNumbers(1, talk.getSlides().size());
+                adapter.notifyDataSetChanged();
+            });
         }
     }
 
