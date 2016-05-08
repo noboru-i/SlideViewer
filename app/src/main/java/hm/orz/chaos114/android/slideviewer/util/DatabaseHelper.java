@@ -14,7 +14,7 @@ import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
 
-public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
+public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
     private static final String TAG = DatabaseHelper.class.getSimpleName();
 
     private static final String DATABASE_NAME = "slide_viewer.db";

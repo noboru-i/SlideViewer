@@ -10,7 +10,7 @@ import com.google.android.gms.analytics.Tracker;
 import hm.orz.chaos114.android.slideviewer.BuildConfig;
 import hm.orz.chaos114.android.slideviewer.R;
 
-public class AnalyticsManager {
+public final class AnalyticsManager {
     private final static String TAG = AnalyticsManager.class.getSimpleName();
 
     public enum Action {
@@ -20,6 +20,10 @@ public class AnalyticsManager {
 
     private static Context sAppContext = null;
     private static Tracker mTracker;
+
+    private AnalyticsManager() {
+        // no-op
+    }
 
     private static boolean canSend() {
         return sAppContext != null && mTracker != null;

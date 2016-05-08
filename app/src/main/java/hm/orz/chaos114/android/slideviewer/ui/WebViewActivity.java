@@ -81,6 +81,8 @@ public class WebViewActivity extends AppCompatActivity {
             }
         });
         binding.webView.getSettings().setJavaScriptEnabled(true);
-        binding.webView.getSettings().setBuiltInZoomControls(false);
+        binding.webView.getSettings().setBuiltInZoomControls(true);
+        binding.webView.getSettings().setLoadWithOverviewMode(true);
+        binding.webView.getSettings().setUseWideViewPort(true);
     }
 }
