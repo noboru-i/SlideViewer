@@ -31,3 +31,5 @@
 -keep interface com.j256.**
 -keepclassmembers interface com.j256.** { *; }
 
+# Gradle Retrolambda Plugin
+-dontwarn java.lang.invoke.*
