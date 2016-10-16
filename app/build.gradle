@@ -17,8 +17,8 @@ apply plugin: 'com.cookpad.android.licensetools'
 apply plugin: 'com.github.ben-manes.versions'
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion 24
+    buildToolsVersion "24.0.3"
 
     dataBinding {
         enabled = true
@@ -61,7 +61,8 @@ android {
 }
 
 ext {
-    supportLibVersion = '23.3.0'
+    supportLibVersion = '24.2.1'
+    playServicesVersion = '9.6.1'
 }
 
 dependencies {
@@ -70,10 +71,10 @@ dependencies {
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
-    compile 'com.google.code.gson:gson:2.6.2'
+    compile 'com.google.code.gson:gson:2.7'
     compile 'com.github.bumptech.glide:glide:3.7.0'
-    compile 'com.google.android.gms:play-services-ads:8.4.0'
-    compile 'com.google.android.gms:play-services-analytics:8.4.0'
+    compile "com.google.android.gms:play-services-ads:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
     provided 'org.projectlombok:lombok:1.16.8'
