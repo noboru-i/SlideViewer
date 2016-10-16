@@ -22,9 +22,14 @@ import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.google.gson.FieldNamingPolicy;
@@ -346,11 +351,10 @@ public class SlideActivity extends AppCompatActivity {
         public Object instantiateItem(ViewGroup container, int position) {
             Slide slide = talk.getSlides().get(position);
             final View layout = inflater.inflate(R.layout.view_slide, container, false);
-            final ImageView imageView = (ImageView) layout.findViewById(R.id.slide_image);
+            final TextView refreshButton = (TextView) layout.findViewById(R.id.refresh_button);
+            refreshButton.setOnClickListener(v -> loadImage(slide, layout));
 
-            Glide.with(SlideActivity.this)
-                    .load(slide.getOriginal())
-                    .into(imageView);
+            loadImage(slide, layout);
 
             container.addView(layout);
             return layout;
@@ -359,6 +363,32 @@ public class SlideActivity extends AppCompatActivity {
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
             container.removeView((View) object);
+        }
+
+        private void loadImage(Slide slide, View layout) {
+            final ProgressBar progressBar = (ProgressBar) layout.findViewById(R.id.slide_image_progress);
+            final ImageView imageView = (ImageView) layout.findViewById(R.id.slide_image);
+            final TextView refreshButton = (TextView) layout.findViewById(R.id.refresh_button);
+            progressBar.setVisibility(View.VISIBLE);
+            refreshButton.setVisibility(View.GONE);
+
+            Glide.with(SlideActivity.this)
+                    .load(slide.getOriginal())
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            progressBar.setVisibility(View.GONE);
+                            refreshButton.setVisibility(View.VISIBLE);
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            // no-op
+                            return false;
+                        }
+                    })
+                    .into(imageView);
         }
     }
 }
