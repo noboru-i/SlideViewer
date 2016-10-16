@@ -15,4 +15,14 @@
         android:layout_height="match_parent"
         android:layout_centerInParent="true"
         android:adjustViewBounds="true"/>
+
+    <TextView
+        android:id="@+id/refresh_button"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/slide_reload"
+        android:gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Button"
+        android:textAllCaps="false"
+        android:visibility="gone"/>
 </RelativeLayout>
