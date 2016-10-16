@@ -85,6 +85,13 @@ public class SlideActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
+        if (getSupportActionBar() == null) {
+            throw new AssertionError("getSupportActionBar() needs non-null.");
+        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         adapter = new SlideAdapter(this);
         loadingDialog = LoadingDialogFragment.newInstance();
 
@@ -191,6 +198,10 @@ public class SlideActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                displayInterstitial();
+                finish();
+                return true;
             case R.id.menu_reload:
                 binding.slideViewPager.setCurrentItem(0);
                 startLoad(true);
