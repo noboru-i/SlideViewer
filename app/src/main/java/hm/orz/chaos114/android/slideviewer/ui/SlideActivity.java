@@ -191,7 +191,7 @@ public class SlideActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        displayInterstitial();
+        beforeFinish();
         super.onBackPressed();
     }
 
@@ -199,7 +199,7 @@ public class SlideActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                displayInterstitial();
+                beforeFinish();
                 finish();
                 return true;
             case R.id.menu_reload:
@@ -218,6 +218,15 @@ public class SlideActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void beforeFinish() {
+        // start list activity
+        Intent intent = new Intent(this, SlideListActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+        displayInterstitial();
     }
 
     private void loadAd() {
