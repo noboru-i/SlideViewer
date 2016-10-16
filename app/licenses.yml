@@ -22,3 +22,7 @@
   copyrightHolder: Chris Banes
   license: Apache License 2.0
   url: https://github.com/chrisbanes/PhotoView
+- artifact: com.artemzin.rxjava:proguard-rules:+
+  name: proguard-rules
+  license: Apache License Version 2.0
+  url: https://github.com/artem-zinnatullin/RxJavaProGuardRules
