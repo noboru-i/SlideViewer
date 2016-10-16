@@ -85,6 +85,13 @@ public class SlideActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
+        if (getSupportActionBar() == null) {
+            throw new AssertionError("getSupportActionBar() needs non-null.");
+        }
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         adapter = new SlideAdapter(this);
         loadingDialog = LoadingDialogFragment.newInstance();
 
@@ -184,13 +191,17 @@ public class SlideActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        displayInterstitial();
+        beforeFinish();
         super.onBackPressed();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                beforeFinish();
+                finish();
+                return true;
             case R.id.menu_reload:
                 binding.slideViewPager.setCurrentItem(0);
                 startLoad(true);
@@ -207,6 +218,15 @@ public class SlideActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void beforeFinish() {
+        // start list activity
+        Intent intent = new Intent(this, SlideListActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
+
+        displayInterstitial();
     }
 
     private void loadAd() {

@@ -2,6 +2,7 @@
 <resources>
 
     <string name="app_name">SlideViewer</string>
+    <string name="menu_search">Search</string>
     <string name="menu_reload">Reload</string>
     <string name="menu_menu">Menu</string>
     <string name="menu_share">シェアする</string>
@@ -13,5 +14,6 @@
 
     <string name="slide_list_empty_message">閲覧履歴が空です。\n\nブラウザでSpeaker Deckのページを表示、スライドを表示し、共有よりこのアプリに戻ってきて下さい。</string>
     <string name="slide_list_title">履歴</string>
-    <string name="menu_search">Search</string>
+
+    <string name="slide_reload">画像の読み込みに失敗しました。\n\nRELOAD</string>
 </resources>
