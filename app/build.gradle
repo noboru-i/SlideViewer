@@ -28,8 +28,8 @@ android {
         applicationId "hm.orz.chaos114.android.slideviewer"
         minSdkVersion 15
         targetSdkVersion 23
-        versionCode 5
-        versionName "2.0.1"
+        versionCode 6
+        versionName "2.0.2"
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -78,6 +78,7 @@ dependencies {
     compile 'com.j256.ormlite:ormlite-android:4.48'
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
     provided 'org.projectlombok:lombok:1.16.8'
+    compile 'com.artemzin.rxjava:proguard-rules:1.2.1.0'
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
