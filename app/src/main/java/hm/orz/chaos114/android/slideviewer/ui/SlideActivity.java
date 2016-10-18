@@ -49,6 +49,8 @@ import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
+import uk.co.senab.photoview.PhotoView;
+import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class SlideActivity extends AppCompatActivity {
     private static final String TAG = SlideActivity.class.getSimpleName();
@@ -290,6 +292,10 @@ public class SlideActivity extends AppCompatActivity {
         AboutActivity.start(this);
     }
 
+    private void toggleInfo() {
+        binding.layoutInfo.setVisibility(binding.layoutInfo.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+    }
+
     private static class MyWebViewClient extends WebViewClient {
         @Override
         public void onPageFinished(WebView view, String url) {
@@ -346,8 +352,8 @@ public class SlideActivity extends AppCompatActivity {
         }
     }
 
-    class SlideAdapter extends PagerAdapter {
-        private LayoutInflater inflater;
+    private class SlideAdapter extends PagerAdapter {
+        private final LayoutInflater inflater;
 
         SlideAdapter(Context c) {
             super();
@@ -371,8 +377,20 @@ public class SlideActivity extends AppCompatActivity {
         public Object instantiateItem(ViewGroup container, int position) {
             Slide slide = talk.getSlides().get(position);
             final View layout = inflater.inflate(R.layout.view_slide, container, false);
+            final PhotoView imageView = (PhotoView) layout.findViewById(R.id.slide_image);
             final TextView refreshButton = (TextView) layout.findViewById(R.id.refresh_button);
             refreshButton.setOnClickListener(v -> loadImage(slide, layout));
+            imageView.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
+                @Override
+                public void onPhotoTap(View view, float x, float y) {
+                    toggleInfo();
+                }
+
+                @Override
+                public void onOutsidePhotoTap() {
+
+                }
+            });
 
             loadImage(slide, layout);
 
