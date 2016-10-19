@@ -2,7 +2,6 @@ package hm.orz.chaos114.android.slideviewer.util;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.j256.ormlite.android.apptools.OrmLiteSqliteOpenHelper;
 import com.j256.ormlite.support.ConnectionSource;
@@ -13,10 +12,9 @@ import java.sql.SQLException;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
+import timber.log.Timber;
 
 public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
-    private static final String TAG = DatabaseHelper.class.getSimpleName();
-
     private static final String DATABASE_NAME = "slide_viewer.db";
     private static final int DATABASE_VERSION = 1;
 
@@ -31,7 +29,7 @@ public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {
             TableUtils.createTable(connectionSource, Slide.class);
             TableUtils.createTable(connectionSource, TalkMetaData.class);
         } catch (SQLException e) {
-            Log.e(TAG, "データベースを作成できませんでした。", e);
+            Timber.e(e, "データベースを作成できませんでした。");
         }
     }
 

@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -49,6 +48,7 @@ import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
+import timber.log.Timber;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -120,11 +120,11 @@ public class SlideActivity extends AppCompatActivity {
         String action = intent.getAction();
         if (Intent.ACTION_VIEW.equals(action)) {
             Uri uri = intent.getData();
-            Log.d(TAG, "uri = " + uri.toString());
+            Timber.d("uri = %s", uri.toString());
             this.uri = uri;
         } else if (Intent.ACTION_SEND.equals(action)) {
             String uri = intent.getStringExtra(Intent.EXTRA_TEXT);
-            Log.d(TAG, "uri = " + uri);
+            Timber.d("uri = %s", uri);
             this.uri = Uri.parse(uri);
         } else {
             throw new RuntimeException("invalid intent.");
@@ -301,7 +301,7 @@ public class SlideActivity extends AppCompatActivity {
         public void onPageFinished(WebView view, String url) {
             Uri uri = Uri.parse(url);
             String path = uri.getPath();
-            Log.d(TAG, "path  = " + uri.getPath());
+            Timber.d("path  = %s", uri.getPath());
             if (!path.startsWith("/player/")) {
                 // 初回の読み込み
                 view.loadUrl("javascript:srcHolder.setSrc($('.speakerdeck-iframe').attr('src'), $('#talk-details header h1').text(), $('#talk-details header h2 a').text())");
@@ -316,7 +316,7 @@ public class SlideActivity extends AppCompatActivity {
         @JavascriptInterface
         public void setSrc(final String src, final String title, final String user) {
             final String url = "https:" + src;
-            Log.d(TAG, "src = " + src);
+            Timber.d("src = %s", src);
             talkMetaData = new TalkMetaData();
             talkMetaData.setTitle(title);
             talkMetaData.setUser(user);
@@ -329,7 +329,7 @@ public class SlideActivity extends AppCompatActivity {
 
         @JavascriptInterface
         public void setTalk(String talkString) {
-            Log.d(TAG, "talk = " + talkString);
+            Timber.d("talk = %s", talkString);
             Gson gson = new GsonBuilder()
                     .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                     .create();
@@ -338,7 +338,7 @@ public class SlideActivity extends AppCompatActivity {
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
             }
-            Log.d(TAG, "talkObject = " + talk);
+            Timber.d("talkObject = %s", talk);
             AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), talk.getUrl());
 
             TalkDao dao = new TalkDao(SlideActivity.this);

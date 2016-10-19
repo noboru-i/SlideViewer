@@ -71,6 +71,7 @@ dependencies {
     compile "com.android.support:appcompat-v7:${supportLibVersion}"
     compile "com.android.support:design:${supportLibVersion}"
     compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+    compile "com.google.firebase:firebase-crash:${playServicesVersion}"
     compile 'com.google.code.gson:gson:2.7'
     compile 'com.github.bumptech.glide:glide:3.7.0'
     compile "com.google.android.gms:play-services-ads:${playServicesVersion}"
@@ -79,8 +80,11 @@ dependencies {
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
     provided 'org.projectlombok:lombok:1.16.8'
     compile 'com.artemzin.rxjava:proguard-rules:1.2.1.0'
+    compile 'com.jakewharton.timber:timber:4.3.1'
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
     testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 }
+
+apply plugin: 'com.google.gms.google-services'

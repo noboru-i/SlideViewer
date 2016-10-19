@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -16,10 +15,9 @@ import android.webkit.WebViewClient;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivityWebViewBinding;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
+import timber.log.Timber;
 
 public class WebViewActivity extends AppCompatActivity {
-    private static final String TAG = WebViewActivity.class.getSimpleName();
-
     public static final String EXTRA_URL = "extra_url";
 
     private ActivityWebViewBinding binding;
@@ -64,7 +62,7 @@ public class WebViewActivity extends AppCompatActivity {
         binding.webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                Log.d(TAG, "url: " + url);
+                Timber.d("url: %s", url);
                 Uri uri = Uri.parse(url);
                 if (UrlHelper.isSpeakerDeckUrl(uri)
                         && UrlHelper.canOpen(uri)) {
