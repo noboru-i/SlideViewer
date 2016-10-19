@@ -1,5 +1,7 @@
 - artifact: com.android.databinding:+:+
   skip: true
+- artifact: com.google.firebase:+:+
+  skip: true
 - artifact: com.android.support:+:+
   name: Android Support Libraries
   copyrightHolder: The Android Open Source Project
@@ -26,3 +28,8 @@
   name: proguard-rules
   license: Apache License Version 2.0
   url: https://github.com/artem-zinnatullin/RxJavaProGuardRules
+- artifact: com.jakewharton.timber:timber:+
+  name: Timber
+  copyrightHolder: Jake Wharton
+  license: The Apache Software License, Version 2.0
+  url: https://github.com/JakeWharton/timber
