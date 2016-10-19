@@ -22,3 +22,4 @@ deployment:
       - ./gradlew :app:checkLicenses -PdisablePreDex
       - ./gradlew :app:assembleRelease -PdisablePreDex
       - cp app/build/outputs/apk/app-release.apk $CIRCLE_ARTIFACTS/
+      - cp app/build/outputs/mapping/release/dump.txt $CIRCLE_ARTIFACTS/

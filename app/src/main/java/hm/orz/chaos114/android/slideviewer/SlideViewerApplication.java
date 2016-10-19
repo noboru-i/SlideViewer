@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.squareup.leakcanary.LeakCanary;
 
+import hm.orz.chaos114.android.slideviewer.ui.CrashReportingTree;
 import timber.log.Timber;
 
 public class SlideViewerApplication extends Application {
@@ -12,6 +13,6 @@ public class SlideViewerApplication extends Application {
         super.onCreate();
 
         LeakCanary.install(this);
-        Timber.plant(new Timber.DebugTree());
+        Timber.plant(BuildConfig.DEBUG ? new Timber.DebugTree() : new CrashReportingTree());
     }
 }

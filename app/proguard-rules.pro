@@ -33,3 +33,6 @@
 
 # Gradle Retrolambda Plugin
 -dontwarn java.lang.invoke.*
+
+-keep public class * extends java.lang.Exception
+-printmapping mapping.txt
