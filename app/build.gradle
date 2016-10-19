@@ -79,6 +79,7 @@ dependencies {
     compile 'com.github.chrisbanes:PhotoView:1.2.6'
     provided 'org.projectlombok:lombok:1.16.8'
     compile 'com.artemzin.rxjava:proguard-rules:1.2.1.0'
+    compile 'com.jakewharton.timber:timber:4.3.1'
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'

@@ -1,18 +1,15 @@
 package hm.orz.chaos114.android.slideviewer.util;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import hm.orz.chaos114.android.slideviewer.BuildConfig;
 import hm.orz.chaos114.android.slideviewer.R;
+import timber.log.Timber;
 
 public final class AnalyticsManager {
-    private final static String TAG = AnalyticsManager.class.getSimpleName();
-
     public enum Action {
         START,
         CHANGE_PAGE,
@@ -33,9 +30,9 @@ public final class AnalyticsManager {
         if (canSend()) {
             mTracker.setScreenName(screenName);
             mTracker.send(new HitBuilders.AppViewBuilder().build());
-            Log.d(TAG, "Screen View recorded: " + screenName);
+            Timber.d("Screen View recorded: %s", screenName);
         } else {
-            Log.d(TAG, "Screen View NOT recorded (analytics disabled or not ready).");
+            Timber.d("Screen View NOT recorded (analytics disabled or not ready).");
         }
     }
 
@@ -48,13 +45,13 @@ public final class AnalyticsManager {
                     .setValue(value)
                     .build());
 
-            Log.d(TAG, "Event recorded:");
-            Log.d(TAG, "\tCategory: " + category);
-            Log.d(TAG, "\tAction: " + action);
-            Log.d(TAG, "\tLabel: " + label);
-            Log.d(TAG, "\tValue: " + value);
+            Timber.d("Event recorded:");
+            Timber.d("\tCategory: %s", category);
+            Timber.d("\tAction: %s", action);
+            Timber.d("\tLabel: %s", label);
+            Timber.d("\tValue: %s", value);
         } else {
-            Log.d(TAG, "Analytics event ignored (analytics disabled or not ready).");
+            Timber.d("Analytics event ignored (analytics disabled or not ready).");
         }
     }
 

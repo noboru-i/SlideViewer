@@ -3,12 +3,11 @@ package hm.orz.chaos114.android.slideviewer.widget;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 
-public class ViewPagerFixed extends ViewPager {
-    private static final String TAG = ViewPagerFixed.class.getSimpleName();
+import timber.log.Timber;
 
+public class ViewPagerFixed extends ViewPager {
     public ViewPagerFixed(Context context) {
         super(context);
     }
@@ -22,7 +21,7 @@ public class ViewPagerFixed extends ViewPager {
         try {
             return super.onTouchEvent(ev);
         } catch (IllegalArgumentException ex) {
-            Log.w(TAG, ex);
+            Timber.w(ex);
         }
         return false;
     }
@@ -32,7 +31,7 @@ public class ViewPagerFixed extends ViewPager {
         try {
             return super.onInterceptTouchEvent(ev);
         } catch (IllegalArgumentException ex) {
-            Log.w(TAG, ex);
+            Timber.w(ex);
         }
         return false;
     }
