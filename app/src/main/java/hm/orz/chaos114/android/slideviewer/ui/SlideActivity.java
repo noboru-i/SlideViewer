@@ -17,9 +17,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.JavascriptInterface;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -35,8 +32,12 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
@@ -48,6 +49,11 @@ import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import timber.log.Timber;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -139,11 +145,6 @@ public class SlideActivity extends AppCompatActivity {
             finish();
             return;
         }
-
-        binding.slideWebView.getSettings().setJavaScriptEnabled(true);
-        binding.slideWebView.getSettings().setBuiltInZoomControls(false);
-        binding.slideWebView.addJavascriptInterface(new SrcHolderInterface(), "srcHolder");
-        binding.slideWebView.setWebViewClient(new MyWebViewClient());
 
         loadAd();
         startLoad(false);
@@ -259,8 +260,89 @@ public class SlideActivity extends AppCompatActivity {
             return;
         }
 
-        binding.slideWebView.loadUrl(uri.toString());
         loadingDialog.show(getFragmentManager(), null);
+        OkHttpClient client = new OkHttpClient();
+        Request request = new Request.Builder()
+                .url(uri.toString())
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                Timber.d(e, "onFailure");
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                try {
+                    Document document = Jsoup.parse(response.body().string());
+
+                    String dataId = document.select("div.speakerdeck-embed").get(0).attr("data-id");
+                    Timber.d("dataId = %s", dataId);
+                    String url = "https://speakerdeck.com/player/" + dataId + "?";
+                    Timber.d("src = %s", url);
+                    String title = document.select("#talk-details header h1").get(0).text();
+                    Timber.d("title = %s", title);
+                    String user = document.select("#talk-details header h2 a").get(0).text();
+                    Timber.d("user = %s", user);
+
+                    talkMetaData = new TalkMetaData();
+                    talkMetaData.setTitle(title);
+                    talkMetaData.setUser(user);
+                    handler.post(() -> {
+                        binding.slideTitle.setText(title);
+                        binding.slideUser.setText(user);
+                    });
+
+                    Request request = new Request.Builder()
+                            .url(url)
+                            .build();
+                    client.newCall(request).enqueue(new Callback() {
+                        @Override
+                        public void onFailure(Call call, IOException e) {
+                            Timber.d(e, "onFailure");
+                        }
+
+                        @Override
+                        public void onResponse(Call call, Response response) throws IOException {
+                            try {
+                                Pattern pattern = Pattern.compile("var talk = ([^;]*)");
+                                Matcher matcher = pattern.matcher(response.body().string());
+                                if (matcher.find()) {
+                                    Timber.d("group = %s", matcher.group(1));
+                                    Gson gson = new GsonBuilder()
+                                            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+                                            .create();
+                                    talk = gson.fromJson(matcher.group(1), Talk.class);
+                                    Timber.d("talkObject = %s", talk);
+                                } else {
+                                    Timber.d("not match");
+                                }
+
+                                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), talk.getUrl());
+
+                                TalkDao dao = new TalkDao(SlideActivity.this);
+                                dao.saveIfNotExists(talk, talk.getSlides(), talkMetaData);
+
+                                handler.post(() -> {
+                                    loadingDialog.dismiss();
+                                    setPageNumbers(1, talk.getSlides().size());
+                                    adapter.notifyDataSetChanged();
+                                });
+
+
+                            } catch (Exception e) {
+                                Timber.e(e);
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    });
+                } catch (Exception e) {
+                    Timber.e(e);
+                    throw new RuntimeException(e);
+                }
+            }
+        });
     }
 
     /**
@@ -294,62 +376,6 @@ public class SlideActivity extends AppCompatActivity {
 
     private void toggleInfo() {
         binding.layoutInfo.setVisibility(binding.layoutInfo.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-    }
-
-    private static class MyWebViewClient extends WebViewClient {
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            Uri uri = Uri.parse(url);
-            String path = uri.getPath();
-            Timber.d("path  = %s", uri.getPath());
-            if (!path.startsWith("/player/")) {
-                // 初回の読み込み
-                view.loadUrl("javascript:srcHolder.setSrc($('.speakerdeck-iframe').attr('src'), $('#talk-details header h1').text(), $('#talk-details header h2 a').text())");
-            } else {
-                // playerの読み込み
-                view.loadUrl("javascript:srcHolder.setTalk(JSON.stringify(talk))");
-            }
-        }
-    }
-
-    class SrcHolderInterface {
-        @JavascriptInterface
-        public void setSrc(final String src, final String title, final String user) {
-            final String url = "https:" + src;
-            Timber.d("src = %s", src);
-            talkMetaData = new TalkMetaData();
-            talkMetaData.setTitle(title);
-            talkMetaData.setUser(user);
-            handler.post(() -> {
-                binding.slideWebView.loadUrl(url);
-                binding.slideTitle.setText(title);
-                binding.slideUser.setText(user);
-            });
-        }
-
-        @JavascriptInterface
-        public void setTalk(String talkString) {
-            Timber.d("talk = %s", talkString);
-            Gson gson = new GsonBuilder()
-                    .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                    .create();
-            try {
-                talk = gson.fromJson(URLDecoder.decode(talkString, "UTF-8"), Talk.class);
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
-            }
-            Timber.d("talkObject = %s", talk);
-            AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), talk.getUrl());
-
-            TalkDao dao = new TalkDao(SlideActivity.this);
-            dao.saveIfNotExists(talk, talk.getSlides(), talkMetaData);
-
-            handler.post(() -> {
-                loadingDialog.dismiss();
-                setPageNumbers(1, talk.getSlides().size());
-                adapter.notifyDataSetChanged();
-            });
-        }
     }
 
     private class SlideAdapter extends PagerAdapter {

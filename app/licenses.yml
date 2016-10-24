@@ -33,3 +33,15 @@
   copyrightHolder: Jake Wharton
   license: The Apache Software License, Version 2.0
   url: https://github.com/JakeWharton/timber
+- artifact: org.jsoup:jsoup:+
+  name: jsoup
+  license: The MIT License
+  url: https://jsoup.org/
+- artifact: com.squareup.okhttp3:okhttp:+
+  name: OkHttp
+  copyrightHolder: Square, Inc.
+  license: Apache License 2.0
+- artifact: com.squareup.okio:okio:+
+  name: Okio
+  copyrightHolder: Square, Inc.
+  license: Apache License Version 2.0
