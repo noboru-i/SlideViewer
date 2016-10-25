@@ -36,3 +36,7 @@
 
 -keep public class * extends java.lang.Exception
 -printmapping mapping.txt
+
+# okio
+-dontwarn java.nio.file.*
+-dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
