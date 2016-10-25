@@ -40,3 +40,6 @@
 # okio
 -dontwarn java.nio.file.*
 -dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+
+# jsoup
+-keep public class org.jsoup.** { public *; }
