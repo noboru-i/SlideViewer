@@ -362,7 +362,7 @@ public class SlideActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, uri);
+        intent.putExtra(Intent.EXTRA_TEXT, uri.toString());
         startActivity(intent);
     }
 
