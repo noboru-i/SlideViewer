@@ -42,6 +42,24 @@ public class WebViewActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        binding.webView.onPause();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        binding.webView.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding.webView.destroy();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
