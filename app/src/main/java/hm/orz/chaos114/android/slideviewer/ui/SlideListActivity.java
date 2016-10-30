@@ -109,7 +109,7 @@ public class SlideListActivity extends AppCompatActivity {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(Intent.EXTRA_TEXT, Uri.parse("https://play.google.com/store/apps/details?id=hm.orz.chaos114.android.slideviewer"));
+        intent.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=hm.orz.chaos114.android.slideviewer");
         startActivity(intent);
     }
 

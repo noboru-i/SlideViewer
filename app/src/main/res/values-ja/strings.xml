@@ -5,7 +5,7 @@
     <string name="menu_search">Search</string>
     <string name="menu_reload">Reload</string>
     <string name="menu_menu">Menu</string>
-    <string name="menu_share">シェアする</string>
+    <string name="menu_share">このアプリを共有する</string>
     <string name="menu_show_by_browser">ブラウザで開く</string>
     <string name="menu_about">このアプリについて</string>
     <string name="about_git_hub">GitHubで見る</string>

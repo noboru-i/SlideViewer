@@ -5,7 +5,7 @@
     <string name="menu_search">Search</string>
     <string name="menu_reload">Reload</string>
     <string name="menu_menu">Menu</string>
-    <string name="menu_share">Share</string>
+    <string name="menu_share">Share this app</string>
     <string name="menu_show_by_browser">Show by browser</string>
     <string name="menu_about">About</string>
     <string name="about_git_hub">View on GitHub</string>
