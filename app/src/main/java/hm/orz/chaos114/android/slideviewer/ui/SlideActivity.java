@@ -306,25 +306,29 @@ public class SlideActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(Call call, Response response) throws IOException {
                             try {
+                                final Talk tmpTalk;
+                                String responseString = response.body().string();
                                 Pattern pattern = Pattern.compile("var talk = ([^;]*)");
-                                Matcher matcher = pattern.matcher(response.body().string());
+                                Matcher matcher = pattern.matcher(responseString);
                                 if (matcher.find()) {
                                     Timber.d("group = %s", matcher.group(1));
                                     Gson gson = new GsonBuilder()
                                             .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                                             .create();
-                                    talk = gson.fromJson(matcher.group(1), Talk.class);
-                                    Timber.d("talkObject = %s", talk);
+                                    tmpTalk = gson.fromJson(matcher.group(1), Talk.class);
+                                    Timber.d("talkObject = %s", tmpTalk);
                                 } else {
                                     Timber.d("not match");
+                                    throw new RuntimeException("not match. " + responseString);
                                 }
 
-                                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), talk.getUrl());
+                                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), tmpTalk.getUrl());
 
                                 TalkDao dao = new TalkDao(SlideActivity.this);
-                                dao.saveIfNotExists(talk, talk.getSlides(), talkMetaData);
+                                dao.saveIfNotExists(tmpTalk, tmpTalk.getSlides(), talkMetaData);
 
                                 handler.post(() -> {
+                                    talk = tmpTalk;
                                     loadingDialog.dismiss();
                                     setPageNumbers(1, talk.getSlides().size());
                                     adapter.notifyDataSetChanged();
