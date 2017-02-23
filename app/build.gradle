@@ -1,20 +1,12 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
-        classpath 'me.tatarka:gradle-retrolambda:3.5.0'
-        classpath 'com.cookpad.android.licensetools:license-tools-plugin:0.19.1'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.14.0'
-    }
-}
-
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.cookpad.android.licensetools'
 apply plugin: 'com.github.ben-manes.versions'
+
+// CI
+def isCi = "true".equals(System.getenv("CI"))
+def preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
 
 android {
     compileSdkVersion 25
@@ -22,6 +14,11 @@ android {
 
     dataBinding {
         enabled = true
+    }
+
+    dexOptions {
+        // Skip pre-dexing when running on CI or when disabled via -Dpre-dex=false.
+        preDexLibraries = preDexEnabled && !isCi
     }
 
     defaultConfig {
@@ -36,6 +33,12 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     signingConfigs {
+        debug {
+            storeFile rootProject.file("debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
         releaseConfig {
             storeFile file("keystore")
             storePassword System.getenv("STORE_PASSWORD")
@@ -48,12 +51,15 @@ android {
             minifyEnabled false
             shrinkResources false
             debuggable true
+            zipAlignEnabled true
             applicationIdSuffix '.debug'
+            signingConfig signingConfigs.debug
         }
         release {
             minifyEnabled true
             shrinkResources true
             debuggable false
+            zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.releaseConfig
         }
