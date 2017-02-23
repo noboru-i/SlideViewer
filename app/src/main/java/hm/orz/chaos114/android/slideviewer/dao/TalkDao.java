@@ -5,6 +5,7 @@ import android.content.Context;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -131,7 +132,7 @@ public class TalkDao {
         } finally {
             try {
                 iterator.close();
-            } catch (SQLException e) {
+            } catch (IOException e) {
                 // no-op
             }
         }
