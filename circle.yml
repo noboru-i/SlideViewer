@@ -5,7 +5,7 @@ machine:
   environment:
     TERM: "dumb"
     JAVA_OPTS: "-Xms512m -Xmx1024m"
-    GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
+    GRADLE_OPTS: '-Dorg.gradle.parallel=false -Dorg.gradle.daemon=false -Dorg.gradle.jvmargs="-Xmx1560m -XX:+HeapDumpOnOutOfMemoryError"'
 dependencies:
   pre:
     - mkdir $ANDROID_HOME/licenses
@@ -14,13 +14,12 @@ test:
   pre:
     - openssl aes-256-cbc -k $DECRYPT_KEY -d -in app/encrypted_google-services.json -out app/google-services.json
   override:
-    - ./gradlew :app:checkLicenses -PdisablePreDex
-    - ./gradlew :app:assembleDebug -PdisablePreDex
+    - ./gradlew :app:checkLicenses
+    - ./gradlew :app:assembleDebug
 deployment:
   master:
     branch: master
     commands:
-      - ./gradlew :app:checkLicenses -PdisablePreDex
-      - ./gradlew :app:assembleRelease -PdisablePreDex
+      - ./gradlew :app:assembleRelease
       - cp app/build/outputs/apk/app-release.apk $CIRCLE_ARTIFACTS/
       - cp app/build/outputs/mapping/release/dump.txt $CIRCLE_ARTIFACTS/
