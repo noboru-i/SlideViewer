@@ -8,8 +8,8 @@ machine:
     GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx2048m -XX:+HeapDumpOnOutOfMemoryError"'
 dependencies:
   pre:
-    - echo y | android update sdk --no-ui --all --filter "tools"
-    - echo y | android update sdk --no-ui --all --filter "android-25,build-tools-25.0.2,extra-google-m2repository,extra-android-m2repository"
+    - mkdir $ANDROID_HOME/licenses
+    - echo "8933bad161af4178b1185d1a37fbf41ea5269c55" >> $ANDROID_HOME/licenses/android-sdk-license
 test:
   pre:
     - openssl aes-256-cbc -k $DECRYPT_KEY -d -in app/encrypted_google-services.json -out app/google-services.json
