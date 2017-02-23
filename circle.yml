@@ -9,7 +9,7 @@ machine:
 dependencies:
   pre:
     - echo y | android update sdk --no-ui --all --filter "tools"
-    - echo y | android update sdk --no-ui --all --filter "android-24,build-tools-24.0.3,extra-google-m2repository,extra-android-m2repository"
+    - echo y | android update sdk --no-ui --all --filter "android-25,build-tools-25.0.2,extra-google-m2repository,extra-android-m2repository"
 test:
   pre:
     - openssl aes-256-cbc -k $DECRYPT_KEY -d -in app/encrypted_google-services.json -out app/google-services.json
