@@ -45,3 +45,5 @@
   name: Okio
   copyrightHolder: Square, Inc.
   license: Apache License Version 2.0
+- artifact: com.squareup.leakcanary:leakcanary-android-no-op:+
+  skip: true
