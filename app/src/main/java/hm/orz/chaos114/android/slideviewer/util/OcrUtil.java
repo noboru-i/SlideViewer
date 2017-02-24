@@ -5,7 +5,7 @@ import android.graphics.Bitmap;
 import com.googlecode.tesseract.android.TessBaseAPI;
 
 import hm.orz.chaos114.android.slideviewer.model.Slide;
-import rx.Observable;
+import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
 import rx.Single;
 import timber.log.Timber;
 
@@ -18,8 +18,13 @@ public final class OcrUtil {
         // prevent initialize
     }
 
-    public static Single<String> recognizeText(Slide slide, Bitmap bitmap) {
+    // TODO needs refactor
+    public static Single<String> recognizeText(SettingPrefs settingPrefs, Bitmap bitmap) {
         return Single.create(subscriber -> {
+            if (!settingPrefs.getEnableOcr()) {
+                subscriber.onSuccess("");
+                return;
+            }
             Bitmap converted = bitmap.copy(Bitmap.Config.ARGB_8888, false);
             TessBaseAPI baseApi = new TessBaseAPI();
             // TODO need to copy this
