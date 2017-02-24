@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:ads="http://schemas.android.com/apk/res-auto"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        tools:context=".ui.SlideActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.SlideActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
             android:id="@+id/slide_web_view"
             android:layout_width="1dp"
             android:layout_height="1dp"
-            android:visibility="invisible"/>
+            android:visibility="invisible" />
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
@@ -21,14 +21,14 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         <hm.orz.chaos114.android.slideviewer.widget.ViewPagerFixed
             android:id="@+id/slide_view_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/toolbar"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true" />
 
         <LinearLayout
             android:id="@+id/layout_info"
@@ -46,7 +46,7 @@
                 android:layout_marginRight="8dp"
                 android:textColor="@android:color/white"
                 android:textSize="20sp"
-                tools:text="dummy title"/>
+                tools:text="dummy title" />
 
             <TextView
                 android:id="@+id/slide_user"
@@ -57,7 +57,7 @@
                 android:layout_marginTop="8dp"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
-                tools:text="name"/>
+                tools:text="name" />
 
             <TextView
                 android:id="@+id/slide_page_numbers"
@@ -67,8 +67,16 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginRight="8dp"
                 android:textColor="@android:color/white"
-                tools:text="X/X"/>
+                tools:text="X/X" />
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/recognize_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_info"
+            android:autoLink="web"
+            android:textIsSelectable="true" />
 
         <com.google.android.gms.ads.AdView
             android:id="@+id/slide_ad_view"
@@ -77,6 +85,6 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             ads:adSize="SMART_BANNER"
-            ads:adUnitId="@string/admob_unit_id"/>
+            ads:adUnitId="@string/admob_unit_id" />
     </RelativeLayout>
 </layout>

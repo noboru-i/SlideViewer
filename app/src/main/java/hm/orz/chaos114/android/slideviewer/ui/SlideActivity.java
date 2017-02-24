@@ -3,6 +3,7 @@ package hm.orz.chaos114.android.slideviewer.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.ads.AdRequest;
@@ -36,6 +36,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -48,12 +50,15 @@ import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
+import hm.orz.chaos114.android.slideviewer.util.OcrUtil;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 import uk.co.senab.photoview.PhotoView;
 import uk.co.senab.photoview.PhotoViewAttacher;
@@ -73,6 +78,7 @@ public class SlideActivity extends AppCompatActivity {
     private Uri uri;
     private Talk talk;
     private TalkMetaData talkMetaData;
+    private Map<String, String> recognizeTextMap;
 
     static void start(Context context, @NonNull String url) {
         Intent intent = new Intent(context, SlideActivity.class);
@@ -90,6 +96,7 @@ public class SlideActivity extends AppCompatActivity {
         AnalyticsManager.sendScreenView(TAG);
 
         handler = new Handler();
+        recognizeTextMap = new HashMap<>();
 
         setSupportActionBar(binding.toolbar);
 
@@ -115,6 +122,8 @@ public class SlideActivity extends AppCompatActivity {
                 final int page = position + 1;
                 setPageNumbers(page, talk.getSlides().size());
                 AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.CHANGE_PAGE.name(), Integer.toString(page));
+
+                setRecognizedText(position);
             }
 
             @Override
@@ -382,6 +391,20 @@ public class SlideActivity extends AppCompatActivity {
         binding.layoutInfo.setVisibility(binding.layoutInfo.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
+    private void setRecognizedText(int position) {
+        Slide slide = talk.getSlides().get(position);
+        Timber.d("currentItem is %d", binding.slideViewPager.getCurrentItem());
+        Timber.d("check: %s", slide.getOriginal());
+        if (recognizeTextMap.containsKey(slide.getOriginal())) {
+            Timber.d("contains");
+            Timber.d("set text: %s", recognizeTextMap.get(slide.getOriginal()));
+            binding.recognizeText.setText(recognizeTextMap.get(slide.getOriginal()));
+        } else {
+            Timber.d("not contains");
+            binding.recognizeText.setText(null);
+        }
+    }
+
     private class SlideAdapter extends PagerAdapter {
         private final LayoutInflater inflater;
 
@@ -409,7 +432,7 @@ public class SlideActivity extends AppCompatActivity {
             final View layout = inflater.inflate(R.layout.view_slide, container, false);
             final PhotoView imageView = (PhotoView) layout.findViewById(R.id.slide_image);
             final TextView refreshButton = (TextView) layout.findViewById(R.id.refresh_button);
-            refreshButton.setOnClickListener(v -> loadImage(slide, layout));
+            refreshButton.setOnClickListener(v -> loadImage(slide, layout, position));
             imageView.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
                 @Override
                 public void onPhotoTap(View view, float x, float y) {
@@ -422,7 +445,7 @@ public class SlideActivity extends AppCompatActivity {
                 }
             });
 
-            loadImage(slide, layout);
+            loadImage(slide, layout, position);
 
             container.addView(layout);
             return layout;
@@ -433,7 +456,7 @@ public class SlideActivity extends AppCompatActivity {
             container.removeView((View) object);
         }
 
-        private void loadImage(Slide slide, View layout) {
+        private void loadImage(Slide slide, View layout, int position) {
             final ProgressBar progressBar = (ProgressBar) layout.findViewById(R.id.slide_image_progress);
             final ImageView imageView = (ImageView) layout.findViewById(R.id.slide_image);
             final TextView refreshButton = (TextView) layout.findViewById(R.id.refresh_button);
@@ -442,17 +465,32 @@ public class SlideActivity extends AppCompatActivity {
 
             Glide.with(SlideActivity.this)
                     .load(slide.getOriginal())
-                    .listener(new RequestListener<String, GlideDrawable>() {
+                    .asBitmap()
+                    .listener(new RequestListener<String, Bitmap>() {
                         @Override
-                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                        public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
                             progressBar.setVisibility(View.GONE);
                             refreshButton.setVisibility(View.VISIBLE);
                             return false;
                         }
 
                         @Override
-                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                            // no-op
+                        public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            if (recognizeTextMap.containsKey(slide.getOriginal())
+                                    || position == binding.slideViewPager.getCurrentItem()) {
+                                binding.recognizeText.setText(recognizeTextMap.get(slide.getOriginal()));
+                            }
+                            OcrUtil.recognizeText(slide, resource)
+                                    .subscribeOn(Schedulers.newThread())
+                                    .observeOn(AndroidSchedulers.mainThread())
+                                    .subscribe(text -> {
+                                        Timber.d("original is: %s", slide.getOriginal());
+                                        Timber.d("text is recognized: %d : %s", position, text);
+                                        recognizeTextMap.put(slide.getOriginal(), text);
+                                        if (position == binding.slideViewPager.getCurrentItem()) {
+                                            binding.recognizeText.setText(text);
+                                        }
+                                    });
                             return false;
                         }
                     })

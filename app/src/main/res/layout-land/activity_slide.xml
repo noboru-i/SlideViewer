@@ -65,6 +65,14 @@
                 tools:text="X/X"/>
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/recognize_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_info"
+            android:autoLink="web"
+            android:textIsSelectable="true" />
+
         <com.google.android.gms.ads.AdView
             android:id="@+id/slide_ad_view"
             android:layout_width="wrap_content"
