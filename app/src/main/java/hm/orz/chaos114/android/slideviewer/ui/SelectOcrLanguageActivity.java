@@ -10,22 +10,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.Channels;
 import java.util.ArrayList;
 import java.util.List;
 
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySelectOcrLanguageBinding;
 import hm.orz.chaos114.android.slideviewer.util.OcrUtil;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class SelectOcrLanguageActivity extends AppCompatActivity {
@@ -55,13 +49,12 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
 
     private class Adapter extends BaseAdapter {
 
-        private List<RowData> rowDataList;
-        private OkHttpClient client = new OkHttpClient();
+        private List<OcrUtil.Language> rowDataList;
 
         private Adapter() {
             rowDataList = new ArrayList<>();
-            rowDataList.add(new RowData("eng", "https://github.com/tesseract-ocr/tessdata/blob/3.04.00/eng.traineddata?raw=true"));
-            rowDataList.add(new RowData("jpn", "https://github.com/tesseract-ocr/tessdata/blob/3.04.00/jpn.traineddata?raw=true"));
+            rowDataList.add(new OcrUtil.Language("eng", "https://github.com/tesseract-ocr/tessdata/blob/3.04.00/eng.traineddata?raw=true"));
+            rowDataList.add(new OcrUtil.Language("jpn", "https://github.com/tesseract-ocr/tessdata/blob/3.04.00/jpn.traineddata?raw=true"));
         }
 
         @Override
@@ -70,7 +63,7 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
         }
 
         @Override
-        public RowData getItem(int position) {
+        public OcrUtil.Language getItem(int position) {
             return rowDataList.get(position);
         }
 
@@ -88,60 +81,21 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
                 view = convertView;
             }
 
-            RowData rowData = getItem(position);
+            OcrUtil.Language rowData = getItem(position);
             TextView labelView = (TextView) view.findViewById(R.id.label);
-            labelView.setText(rowData.label);
+            labelView.setText(rowData.getLabel());
             view.setOnClickListener(v -> {
-                        Timber.d("clicked: %s", rowData.label);
-                        load(rowData);
+                        Timber.d("clicked: %s", rowData.getLabel());
+                        OcrUtil.download(parent.getContext(), rowData)
+                                .subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(file -> {
+                                    Toast.makeText(SelectOcrLanguageActivity.this, "download succeeded.", Toast.LENGTH_SHORT).show();
+                                });
                     }
 
             );
             return view;
-        }
-
-        private void load(RowData rowData) {
-            Request request = new Request.Builder()
-                    .url(rowData.url)
-                    .build();
-
-            client.newCall(request).enqueue(
-                    new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            Timber.d(e, "onFailure");
-                        }
-
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            Timber.d("onResponse: %d", response.code());
-                            File dir = OcrUtil.getTessdataDir(SelectOcrLanguageActivity.this);
-                            File file = new File(dir, rowData.label + ".traineddata");
-                            FileOutputStream fos = null;
-                            try {
-                                fos = new FileOutputStream(file);
-                                fos.getChannel().transferFrom(Channels.newChannel(response.body().byteStream()), 0, Long.MAX_VALUE);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            } finally {
-                                if (fos != null) {
-                                    fos.close();
-                                }
-                            }
-                        }
-                    }
-            );
-
-        }
-    }
-
-    private static class RowData {
-        String label;
-        String url;
-
-        private RowData(String label, String url) {
-            this.label = label;
-            this.url = url;
         }
     }
 }
