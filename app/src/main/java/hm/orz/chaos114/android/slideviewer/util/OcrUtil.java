@@ -1,10 +1,12 @@
 package hm.orz.chaos114.android.slideviewer.util;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 
 import com.googlecode.tesseract.android.TessBaseAPI;
 
-import hm.orz.chaos114.android.slideviewer.model.Slide;
+import java.io.File;
+
 import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
 import rx.Single;
 import timber.log.Timber;
@@ -18,9 +20,9 @@ public final class OcrUtil {
         // prevent initialize
     }
 
-    // TODO needs refactor
-    public static Single<String> recognizeText(SettingPrefs settingPrefs, Bitmap bitmap) {
+    public static Single<String> recognizeText(Context context, Bitmap bitmap) {
         return Single.create(subscriber -> {
+            SettingPrefs settingPrefs = SettingPrefs.get(context);
             if (!settingPrefs.getEnableOcr()) {
                 subscriber.onSuccess("");
                 return;
@@ -28,12 +30,19 @@ public final class OcrUtil {
             Bitmap converted = bitmap.copy(Bitmap.Config.ARGB_8888, false);
             TessBaseAPI baseApi = new TessBaseAPI();
             // TODO need to copy this
-            baseApi.init("/mnt/sdcard/tesseract", "eng");
+            baseApi.init(getTessdataDir(context).getParentFile().getAbsolutePath(), "eng");
             baseApi.setImage(converted);
             String recognizedText = baseApi.getUTF8Text();
             baseApi.end();
-            Timber.d("recognizedText: %s", recognizedText);
             subscriber.onSuccess(recognizedText);
         });
+    }
+
+    public static File getTessdataDir(Context context) {
+        File dir = new File(context.getExternalFilesDir("tesseract"), "tessdata");
+        if (!dir.exists() && !dir.mkdirs()) {
+            throw new RuntimeException("cannot create file dir.");
+        }
+        return dir;
     }
 }

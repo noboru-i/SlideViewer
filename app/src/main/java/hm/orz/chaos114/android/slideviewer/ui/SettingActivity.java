@@ -23,7 +23,6 @@ public class SettingActivity extends AppCompatActivity {
 
     public static void start(@NonNull Context context) {
         Intent intent = new Intent(context, SettingActivity.class);
-        intent.setAction(Intent.ACTION_VIEW);
         context.startActivity(intent);
     }
 
@@ -63,6 +62,6 @@ public class SettingActivity extends AppCompatActivity {
         binding.settingSwitch.setChecked(prefs.getEnableOcr());
 
         binding.settingSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> prefs.setEnableOcr(isChecked));
-        binding.selectLanguageLayout.setOnClickListener(v -> Toast.makeText(this, "test", Toast.LENGTH_SHORT).show());
+        binding.selectLanguageLayout.setOnClickListener(v -> SelectOcrLanguageActivity.start(this));
     }
 }

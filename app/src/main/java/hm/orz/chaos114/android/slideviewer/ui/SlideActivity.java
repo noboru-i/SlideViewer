@@ -47,7 +47,6 @@ import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideBinding;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
-import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
@@ -484,7 +483,7 @@ public class SlideActivity extends AppCompatActivity {
                                     || position == binding.slideViewPager.getCurrentItem()) {
                                 binding.recognizeText.setText(recognizeTextMap.get(slide.getOriginal()));
                             }
-                            OcrUtil.recognizeText(SettingPrefs.get(SlideActivity.this), resource)
+                            OcrUtil.recognizeText(SlideActivity.this, resource)
                                     .subscribeOn(Schedulers.newThread())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(text -> {
