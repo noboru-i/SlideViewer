@@ -23,13 +23,6 @@
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-        <hm.orz.chaos114.android.slideviewer.widget.ViewPagerFixed
-            android:id="@+id/slide_view_pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar"
-            android:layout_centerInParent="true" />
-
         <LinearLayout
             android:id="@+id/layout_info"
             android:layout_width="match_parent"
@@ -70,11 +63,19 @@
                 tools:text="X/X" />
         </LinearLayout>
 
+        <hm.orz.chaos114.android.slideviewer.widget.ViewPagerFixed
+            android:id="@+id/slide_view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/layout_info"
+            android:layout_centerInParent="true" />
+
         <TextView
             android:id="@+id/recognize_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/layout_info"
+            android:layout_below="@+id/slide_view_pager"
+            android:layout_above="@+id/slide_ad_view"
             android:autoLink="web"
             android:textIsSelectable="true" />
 

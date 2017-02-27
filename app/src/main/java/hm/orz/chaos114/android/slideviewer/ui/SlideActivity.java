@@ -482,6 +482,7 @@ public class SlideActivity extends AppCompatActivity {
                             if (recognizeTextMap.containsKey(slide.getOriginal())
                                     || position == binding.slideViewPager.getCurrentItem()) {
                                 binding.recognizeText.setText(recognizeTextMap.get(slide.getOriginal()));
+                                return false;
                             }
                             OcrUtil.recognizeText(SlideActivity.this, resource)
                                     .subscribeOn(Schedulers.newThread())
