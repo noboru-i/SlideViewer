@@ -30,7 +30,7 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
 
     private RowSelectOcrLanguageView.RowSelectOcrLanguageViewListener listener = new RowSelectOcrLanguageView.RowSelectOcrLanguageViewListener() {
         @Override
-        public void onChangeState(OcrUtil.Language language, boolean isChecked) {
+        public void onChangeState(RowSelectOcrLanguageView view, OcrUtil.Language language, boolean isChecked) {
             Timber.d("onChangeState: %b", isChecked);
             if (!isChecked) {
                 updatePrefs(null);
@@ -42,12 +42,14 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
                 return;
             }
 
+            view.showLoading(true);
             OcrUtil.download(SelectOcrLanguageActivity.this, language)
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(file -> {
                         Toast.makeText(SelectOcrLanguageActivity.this, "download succeeded.", Toast.LENGTH_SHORT).show();
                         adapter.notifyDataSetChanged();
+                        view.showLoading(false);
                     });
             updatePrefs(language);
         }

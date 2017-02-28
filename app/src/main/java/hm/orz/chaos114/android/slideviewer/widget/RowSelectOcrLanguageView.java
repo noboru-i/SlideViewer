@@ -19,6 +19,8 @@ import lombok.Setter;
 public class RowSelectOcrLanguageView extends LinearLayout {
 
     private RowSelectOcrLanguageBinding binding;
+    private OcrUtil.Language language;
+    private boolean loading;
     @Setter
     private RowSelectOcrLanguageViewListener listener;
 
@@ -37,21 +39,36 @@ public class RowSelectOcrLanguageView extends LinearLayout {
     }
 
     public void setData(OcrUtil.Language language) {
+        this.language = language;
+
         binding.label.setText(language.getLabel());
-        binding.status.setText(OcrUtil.hasFile(getContext(), language)
-                ? R.string.select_ocr_language_downloaded
-                : R.string.select_ocr_language_not_downloaded);
+        if (loading) {
+            binding.status.setText(R.string.select_ocr_language_downloading);
+        } else {
+            binding.status.setText(OcrUtil.hasFile(getContext(), language)
+                    ? R.string.select_ocr_language_downloaded
+                    : R.string.select_ocr_language_not_downloaded);
+        }
         SettingPrefs settingPrefs = SettingPrefs.get(getContext());
         binding.languageSwitch.setChecked(language.getId().equals(settingPrefs.getSelectedLanguage()));
 
         binding.languageSwitch.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onChangeState(language, ((SwitchCompat) v).isChecked());
+                listener.onChangeState(this, language, ((SwitchCompat) v).isChecked());
             }
         });
+        binding.languageSwitch.setVisibility(loading ? GONE : VISIBLE);
+        binding.progress.setVisibility(loading ? VISIBLE : GONE);
+    }
+
+    public void showLoading(boolean loading) {
+        this.loading = loading;
+
+        // update view
+        setData(language);
     }
 
     public interface RowSelectOcrLanguageViewListener {
-        void onChangeState(OcrUtil.Language language, boolean isChecked);
+        void onChangeState(RowSelectOcrLanguageView view, OcrUtil.Language language, boolean isChecked);
     }
 }

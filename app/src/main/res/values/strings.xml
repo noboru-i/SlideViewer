@@ -25,8 +25,10 @@
     <!-- settings -->
     <string name="setting_enable_ocr">Enable OCR</string>
     <string name="setting_select_language">Select language</string>
+    <string name="setting_error_before_download">Please select and download language first.</string>
 
     <!-- RowSelectOcrLanguageView -->
-    <string name="select_ocr_language_downloaded">Downloaded</string>
     <string name="select_ocr_language_not_downloaded">Not downloaded</string>
+    <string name="select_ocr_language_downloading">Downloading</string>
+    <string name="select_ocr_language_downloaded">Downloaded</string>
 </resources>

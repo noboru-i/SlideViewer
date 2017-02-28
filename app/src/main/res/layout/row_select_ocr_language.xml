@@ -15,7 +15,7 @@
             android:layout_toLeftOf="@+id/language_switch"
             android:textSize="20sp"
             android:textStyle="bold"
-            tools:text="eng" />
+            tools:text="English" />
 
         <TextView
             android:id="@+id/status"
@@ -32,5 +32,13 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:visibility="gone" />
     </RelativeLayout>
 </layout>
