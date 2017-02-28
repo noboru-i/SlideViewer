@@ -10,4 +10,7 @@ import com.rejasupotaro.android.kvs.annotations.Table;
 public interface SettingPrefsSchema {
     @Key(name = "enable_ocr")
     boolean enableOcr = false;
+
+    @Key(name = "selected_language")
+    String selectedLanguage = null;
 }

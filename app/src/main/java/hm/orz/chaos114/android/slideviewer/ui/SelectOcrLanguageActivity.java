@@ -4,12 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -17,7 +16,9 @@ import java.util.List;
 
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySelectOcrLanguageBinding;
+import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
 import hm.orz.chaos114.android.slideviewer.util.OcrUtil;
+import hm.orz.chaos114.android.slideviewer.widget.RowSelectOcrLanguageView;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -25,6 +26,38 @@ import timber.log.Timber;
 public class SelectOcrLanguageActivity extends AppCompatActivity {
 
     private ActivitySelectOcrLanguageBinding binding;
+    private BaseAdapter adapter;
+
+    private RowSelectOcrLanguageView.RowSelectOcrLanguageViewListener listener = new RowSelectOcrLanguageView.RowSelectOcrLanguageViewListener() {
+        @Override
+        public void onChangeState(OcrUtil.Language language, boolean isChecked) {
+            Timber.d("onChangeState: %b", isChecked);
+            if (!isChecked) {
+                updatePrefs(null);
+                return;
+            }
+
+            if (OcrUtil.hasFile(SelectOcrLanguageActivity.this, language)) {
+                updatePrefs(language);
+                return;
+            }
+
+            OcrUtil.download(SelectOcrLanguageActivity.this, language)
+                    .subscribeOn(Schedulers.newThread())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(file -> {
+                        Toast.makeText(SelectOcrLanguageActivity.this, "download succeeded.", Toast.LENGTH_SHORT).show();
+                        adapter.notifyDataSetChanged();
+                    });
+            updatePrefs(language);
+        }
+
+        private void updatePrefs(@Nullable OcrUtil.Language language) {
+            SettingPrefs settingPrefs = SettingPrefs.get(SelectOcrLanguageActivity.this);
+            settingPrefs.setSelectedLanguage(language != null ? language.getId() : null);
+            adapter.notifyDataSetChanged();
+        }
+    };
 
     public static void start(Context context) {
         Intent intent = new Intent(context, SelectOcrLanguageActivity.class);
@@ -44,7 +77,8 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        binding.languageList.setAdapter(new Adapter());
+        adapter = new Adapter();
+        binding.languageList.setAdapter(adapter);
     }
 
     private class Adapter extends BaseAdapter {
@@ -53,8 +87,8 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
 
         private Adapter() {
             rowDataList = new ArrayList<>();
-            rowDataList.add(new OcrUtil.Language("eng", "https://github.com/tesseract-ocr/tessdata/blob/3.04.00/eng.traineddata?raw=true"));
-            rowDataList.add(new OcrUtil.Language("jpn", "https://github.com/tesseract-ocr/tessdata/blob/3.04.00/jpn.traineddata?raw=true"));
+            rowDataList.add(new OcrUtil.Language("eng", "English", "https://github.com/tesseract-ocr/tessdata/blob/3.04.00/eng.traineddata?raw=true"));
+            rowDataList.add(new OcrUtil.Language("jpn", "Japanese", "https://github.com/tesseract-ocr/tessdata/blob/3.04.00/jpn.traineddata?raw=true"));
         }
 
         @Override
@@ -74,27 +108,17 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            View view;
+            RowSelectOcrLanguageView view;
             if (convertView == null) {
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_select_ocr_language, parent, false);
+                view = new RowSelectOcrLanguageView(SelectOcrLanguageActivity.this);
             } else {
-                view = convertView;
+                view = (RowSelectOcrLanguageView) convertView;
             }
 
             OcrUtil.Language rowData = getItem(position);
-            TextView labelView = (TextView) view.findViewById(R.id.label);
-            labelView.setText(rowData.getLabel());
-            view.setOnClickListener(v -> {
-                        Timber.d("clicked: %s", rowData.getLabel());
-                        OcrUtil.download(parent.getContext(), rowData)
-                                .subscribeOn(Schedulers.newThread())
-                                .observeOn(AndroidSchedulers.mainThread())
-                                .subscribe(file -> {
-                                    Toast.makeText(SelectOcrLanguageActivity.this, "download succeeded.", Toast.LENGTH_SHORT).show();
-                                });
-                    }
+            view.setData(rowData);
+            view.setListener(listener);
 
-            );
             return view;
         }
     }

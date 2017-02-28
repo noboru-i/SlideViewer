@@ -31,14 +31,14 @@ public final class OcrUtil {
     public static Single<String> recognizeText(Context context, Bitmap bitmap) {
         return Single.create(subscriber -> {
             SettingPrefs settingPrefs = SettingPrefs.get(context);
-            if (!settingPrefs.getEnableOcr()) {
+            if (!settingPrefs.getEnableOcr()
+                    || settingPrefs.getSelectedLanguage() == null) {
                 subscriber.onSuccess("");
                 return;
             }
             Bitmap converted = bitmap.copy(Bitmap.Config.ARGB_8888, false);
             TessBaseAPI baseApi = new TessBaseAPI();
-            // TODO need to copy this
-            baseApi.init(getTessdataDir(context).getParentFile().getAbsolutePath(), "eng");
+            baseApi.init(getTessdataDir(context).getParentFile().getAbsolutePath(), settingPrefs.getSelectedLanguage());
             baseApi.setImage(converted);
             String recognizedText = baseApi.getUTF8Text();
             baseApi.end();
@@ -66,7 +66,7 @@ public final class OcrUtil {
                             Timber.d("onResponse: %d", response.code());
 
                             File dir = OcrUtil.getTessdataDir(context);
-                            File file = new File(dir, language.getLabel() + ".traineddata");
+                            File file = new File(dir, language.getId() + ".traineddata");
                             FileOutputStream fos = null;
                             try {
                                 fos = new FileOutputStream(file);
@@ -90,6 +90,12 @@ public final class OcrUtil {
         });
     }
 
+    public static boolean hasFile(Context context, Language language) {
+        File dir = OcrUtil.getTessdataDir(context);
+        File file = new File(dir, language.getId() + ".traineddata");
+        return file.exists();
+    }
+
     private static File getTessdataDir(Context context) {
         File dir = new File(context.getExternalFilesDir("tesseract"), "tessdata");
         if (!dir.exists() && !dir.mkdirs()) {
@@ -100,6 +106,7 @@ public final class OcrUtil {
 
     @Value
     public static class Language {
+        String id;
         String label;
         String url;
     }

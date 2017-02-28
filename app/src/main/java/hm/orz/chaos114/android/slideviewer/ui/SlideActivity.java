@@ -6,7 +6,6 @@ import android.databinding.DataBindingUtil;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -28,18 +27,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
@@ -47,16 +37,13 @@ import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideBinding;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
+import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
 import hm.orz.chaos114.android.slideviewer.util.OcrUtil;
+import hm.orz.chaos114.android.slideviewer.util.SlideShareLoader;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -65,8 +52,6 @@ import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class SlideActivity extends AppCompatActivity {
     private static final String TAG = SlideActivity.class.getSimpleName();
-
-    private Handler handler;
 
     private ActivitySlideBinding binding;
 
@@ -77,8 +62,8 @@ public class SlideActivity extends AppCompatActivity {
 
     private Uri uri;
     private Talk talk;
-    private TalkMetaData talkMetaData;
     private Map<String, String> recognizeTextMap;
+    private String currentLanguageId;
 
     static void start(Context context, @NonNull String url) {
         Intent intent = new Intent(context, SlideActivity.class);
@@ -95,7 +80,6 @@ public class SlideActivity extends AppCompatActivity {
 
         AnalyticsManager.sendScreenView(TAG);
 
-        handler = new Handler();
         recognizeTextMap = new HashMap<>();
 
         setSupportActionBar(binding.toolbar);
@@ -115,6 +99,7 @@ public class SlideActivity extends AppCompatActivity {
         binding.slideViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                // no-op
             }
 
             @Override
@@ -128,6 +113,7 @@ public class SlideActivity extends AppCompatActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                // no-op
             }
         });
 
@@ -169,6 +155,17 @@ public class SlideActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         binding.slideAdView.resume();
+
+        // reset text if language is changed.
+        SettingPrefs settingPrefs = SettingPrefs.get(this);
+        if (currentLanguageId == null
+                || !currentLanguageId.equals(settingPrefs.getSelectedLanguage())) {
+            currentLanguageId = settingPrefs.getSelectedLanguage();
+            // reset
+            recognizeTextMap = new HashMap<>();
+            binding.recognizeText.setText(null);
+            adapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -273,92 +270,25 @@ public class SlideActivity extends AppCompatActivity {
         }
 
         loadingDialog.show(getFragmentManager(), null);
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url(uri.toString())
-                .build();
 
-        client.newCall(request).enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                Timber.d(e, "onFailure");
-            }
+        SlideShareLoader.load(getApplicationContext(), uri)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(talkMetaData -> {
+                    binding.slideTitle.setText(talkMetaData.getTitle());
+                    binding.slideUser.setText(talkMetaData.getUser());
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                try {
-                    Document document = Jsoup.parse(response.body().string());
+                    if (talkMetaData.getTalk() != null) {
+                        AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), talkMetaData.getTalk().getUrl());
 
-                    String dataId = document.select("div.speakerdeck-embed").get(0).attr("data-id");
-                    Timber.d("dataId = %s", dataId);
-                    String url = "https://speakerdeck.com/player/" + dataId + "?";
-                    Timber.d("src = %s", url);
-                    String title = document.select("#talk-details header h1").get(0).text();
-                    Timber.d("title = %s", title);
-                    String user = document.select("#talk-details header h2 a").get(0).text();
-                    Timber.d("user = %s", user);
-
-                    talkMetaData = new TalkMetaData();
-                    talkMetaData.setTitle(title);
-                    talkMetaData.setUser(user);
-                    handler.post(() -> {
-                        binding.slideTitle.setText(title);
-                        binding.slideUser.setText(user);
-                    });
-
-                    Request request = new Request.Builder()
-                            .url(url)
-                            .build();
-                    client.newCall(request).enqueue(new Callback() {
-                        @Override
-                        public void onFailure(Call call, IOException e) {
-                            Timber.d(e, "onFailure");
-                        }
-
-                        @Override
-                        public void onResponse(Call call, Response response) throws IOException {
-                            try {
-                                final Talk tmpTalk;
-                                String responseString = response.body().string();
-                                Pattern pattern = Pattern.compile("var talk = ([^;]*)");
-                                Matcher matcher = pattern.matcher(responseString);
-                                if (matcher.find()) {
-                                    Timber.d("group = %s", matcher.group(1));
-                                    Gson gson = new GsonBuilder()
-                                            .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                                            .create();
-                                    tmpTalk = gson.fromJson(matcher.group(1), Talk.class);
-                                    Timber.d("talkObject = %s", tmpTalk);
-                                } else {
-                                    Timber.d("not match");
-                                    throw new RuntimeException("not match. " + responseString);
-                                }
-
-                                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), tmpTalk.getUrl());
-
-                                TalkDao dao = new TalkDao(SlideActivity.this);
-                                dao.saveIfNotExists(tmpTalk, tmpTalk.getSlides(), talkMetaData);
-
-                                handler.post(() -> {
-                                    talk = tmpTalk;
-                                    loadingDialog.dismiss();
-                                    setPageNumbers(1, talk.getSlides().size());
-                                    adapter.notifyDataSetChanged();
-                                });
-
-
-                            } catch (Exception e) {
-                                Timber.e(e);
-                                throw new RuntimeException(e);
-                            }
-                        }
-                    });
-                } catch (Exception e) {
-                    Timber.e(e);
-                    throw new RuntimeException(e);
-                }
-            }
-        });
+                        talk = talkMetaData.getTalk();
+                        loadingDialog.dismiss();
+                        setPageNumbers(1, talk.getSlides().size());
+                        adapter.notifyDataSetChanged();
+                    }
+                }, throwable -> {
+                    Toast.makeText(this, "failed.", Toast.LENGTH_SHORT).show();
+                });
     }
 
     /**
@@ -425,6 +355,13 @@ public class SlideActivity extends AppCompatActivity {
         }
 
         @Override
+        public int getItemPosition(Object object) {
+            // update when call notifyDataSetChanged.
+            // http://stackoverflow.com/a/7287121
+            return POSITION_NONE;
+        }
+
+        @Override
         public boolean isViewFromObject(View view, Object o) {
             return view.equals(o);
         }
@@ -444,7 +381,7 @@ public class SlideActivity extends AppCompatActivity {
 
                 @Override
                 public void onOutsidePhotoTap() {
-
+                    // no-op
                 }
             });
 
@@ -460,6 +397,7 @@ public class SlideActivity extends AppCompatActivity {
         }
 
         private void loadImage(Slide slide, View layout, int position) {
+            Timber.d("loadImage: %d", position);
             final ProgressBar progressBar = (ProgressBar) layout.findViewById(R.id.slide_image_progress);
             final ImageView imageView = (ImageView) layout.findViewById(R.id.slide_image);
             final TextView refreshButton = (TextView) layout.findViewById(R.id.refresh_button);
@@ -479,9 +417,11 @@ public class SlideActivity extends AppCompatActivity {
 
                         @Override
                         public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            Timber.d("onResourceReady: %d", position);
                             if (recognizeTextMap.containsKey(slide.getOriginal())
-                                    || position == binding.slideViewPager.getCurrentItem()) {
+                                    && position == binding.slideViewPager.getCurrentItem()) {
                                 binding.recognizeText.setText(recognizeTextMap.get(slide.getOriginal()));
+                                Timber.d("onResourceReady: %d, contains and same position", position);
                                 return false;
                             }
                             OcrUtil.recognizeText(SlideActivity.this, resource)
