@@ -49,9 +49,9 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
                     .subscribe(file -> {
                         Toast.makeText(SelectOcrLanguageActivity.this, "download succeeded.", Toast.LENGTH_SHORT).show();
                         adapter.notifyDataSetChanged();
+                        updatePrefs(language);
                         view.showLoading(false);
                     });
-            updatePrefs(language);
         }
 
         private void updatePrefs(@Nullable OcrUtil.Language language) {
