@@ -72,7 +72,7 @@
 
         <TextView
             android:id="@+id/recognize_text"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/slide_view_pager"
             android:layout_above="@+id/slide_ad_view"

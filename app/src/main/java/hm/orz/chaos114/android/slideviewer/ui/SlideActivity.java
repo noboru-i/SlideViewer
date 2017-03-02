@@ -108,7 +108,7 @@ public class SlideActivity extends AppCompatActivity {
                 setPageNumbers(page, talk.getSlides().size());
                 AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.CHANGE_PAGE.name(), Integer.toString(page));
 
-                setRecognizedText(position);
+                setRecognizedText();
             }
 
             @Override
@@ -158,14 +158,15 @@ public class SlideActivity extends AppCompatActivity {
 
         // reset text if language is changed.
         SettingPrefs settingPrefs = SettingPrefs.get(this);
-        if (currentLanguageId == null
+        if (!settingPrefs.getEnableOcr()
+                || currentLanguageId == null
                 || !currentLanguageId.equals(settingPrefs.getSelectedLanguage())) {
             currentLanguageId = settingPrefs.getSelectedLanguage();
             // reset
             recognizeTextMap = new HashMap<>();
-            binding.recognizeText.setText(null);
-            adapter.notifyDataSetChanged();
         }
+        setRecognizedText();
+        adapter.notifyDataSetChanged();
     }
 
     @Override
@@ -324,8 +325,8 @@ public class SlideActivity extends AppCompatActivity {
         binding.layoutInfo.setVisibility(binding.layoutInfo.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
     }
 
-    private void setRecognizedText(int position) {
-        Slide slide = talk.getSlides().get(position);
+    private void setRecognizedText() {
+        Slide slide = talk.getSlides().get(binding.slideViewPager.getCurrentItem());
         Timber.d("currentItem is %d", binding.slideViewPager.getCurrentItem());
         Timber.d("check: %s", slide.getOriginal());
         if (recognizeTextMap.containsKey(slide.getOriginal())) {
@@ -334,7 +335,7 @@ public class SlideActivity extends AppCompatActivity {
             binding.recognizeText.setText(recognizeTextMap.get(slide.getOriginal()));
         } else {
             Timber.d("not contains");
-            binding.recognizeText.setText(null);
+            binding.recognizeText.setText(R.string.recognizing);
         }
     }
 
@@ -386,6 +387,7 @@ public class SlideActivity extends AppCompatActivity {
             });
 
             loadImage(slide, layout, position);
+            setRecognizedText();
 
             container.addView(layout);
             return layout;
@@ -420,7 +422,7 @@ public class SlideActivity extends AppCompatActivity {
                             Timber.d("onResourceReady: %d", position);
                             if (recognizeTextMap.containsKey(slide.getOriginal())
                                     && position == binding.slideViewPager.getCurrentItem()) {
-                                binding.recognizeText.setText(recognizeTextMap.get(slide.getOriginal()));
+                                setRecognizedText();
                                 Timber.d("onResourceReady: %d, contains and same position", position);
                                 return false;
                             }
@@ -432,7 +434,7 @@ public class SlideActivity extends AppCompatActivity {
                                         Timber.d("text is recognized: %d : %s", position, text);
                                         recognizeTextMap.put(slide.getOriginal(), text);
                                         if (position == binding.slideViewPager.getCurrentItem()) {
-                                            binding.recognizeText.setText(text);
+                                            setRecognizedText();
                                         }
                                     });
                             return false;

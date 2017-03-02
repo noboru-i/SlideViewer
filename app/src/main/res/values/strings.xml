@@ -22,6 +22,8 @@
 
     <string name="about_version" translatable="false">version: %s</string>
 
+    <string name="recognizing">Recognizing...</string>
+
     <!-- settings -->
     <string name="setting_enable_ocr">Enable OCR</string>
     <string name="setting_select_language">Select language</string>
