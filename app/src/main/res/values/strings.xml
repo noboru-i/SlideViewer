@@ -7,6 +7,7 @@
     <string name="menu_menu">Menu</string>
     <string name="menu_share">Share this app</string>
     <string name="menu_show_by_browser">Show by browser</string>
+    <string name="menu_setting">Setting</string>
     <string name="menu_about">About</string>
     <string name="about_git_hub">View on GitHub</string>
     <string name="about_other_app">View other Android app</string>
@@ -20,4 +21,16 @@
     <string name="slide_reload">Loading image failed.\n\nRELOAD</string>
 
     <string name="about_version" translatable="false">version: %s</string>
+
+    <string name="recognizing">Recognizing...</string>
+
+    <!-- settings -->
+    <string name="setting_enable_ocr">Enable OCR</string>
+    <string name="setting_select_language">Select language</string>
+    <string name="setting_error_before_download">Please select and download language first.</string>
+
+    <!-- RowSelectOcrLanguageView -->
+    <string name="select_ocr_language_not_downloaded">Not downloaded</string>
+    <string name="select_ocr_language_downloading">Downloading</string>
+    <string name="select_ocr_language_downloaded">Downloaded</string>
 </resources>

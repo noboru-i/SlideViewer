@@ -25,9 +25,7 @@
   license: Apache License 2.0
   url: https://github.com/chrisbanes/PhotoView
 - artifact: com.artemzin.rxjava:proguard-rules:+
-  name: proguard-rules
-  license: Apache License Version 2.0
-  url: https://github.com/artem-zinnatullin/RxJavaProGuardRules
+  skip: true
 - artifact: com.jakewharton.timber:timber:+
   name: Timber
   copyrightHolder: Jake Wharton
@@ -35,6 +33,7 @@
   url: https://github.com/JakeWharton/timber
 - artifact: org.jsoup:jsoup:+
   name: jsoup
+  copyrightHolder: Jonathan Hedley
   license: The MIT License
   url: https://jsoup.org/
 - artifact: com.squareup.okhttp3:okhttp:+
@@ -47,3 +46,30 @@
   license: Apache License Version 2.0
 - artifact: com.squareup.leakcanary:leakcanary-android-no-op:+
   skip: true
+- artifact: com.jakewharton.fliptables:fliptables:+
+  name: Flip Tables
+  copyrightHolder: Jake Wharton
+  license: Apache 2.0
+  licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
+  url: http://github.com/JakeWharton/flip-tables/
+- artifact: com.rejasupotaro:kvs-schema:+
+  name: kvs-schema
+  copyrightHolder: Kentaro Takiguchi
+  license: The MIT License
+- artifact: com.rmtheis:tess-two:+
+  name: tess-two
+  copyrightHolder: Robert Theis
+  license: The Apache Software License, Version 2.0
+  licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
+- artifact: io.reactivex:rxandroid:+
+  name: RxAndroid
+  copyrightHolder: The RxAndroid authors
+  license: The Apache Software License, Version 2.0
+  licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
+  url: https://github.com/ReactiveX/RxAndroid
+- artifact: io.reactivex:rxjava:+
+  name: rxjava
+  copyrightHolder: RxJava Contributors
+  license: The Apache Software License, Version 2.0
+  licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
+  url: https://github.com/ReactiveX/RxJava

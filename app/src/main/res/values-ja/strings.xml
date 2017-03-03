@@ -7,6 +7,7 @@
     <string name="menu_menu">Menu</string>
     <string name="menu_share">このアプリを共有する</string>
     <string name="menu_show_by_browser">ブラウザで開く</string>
+    <string name="menu_setting">設定</string>
     <string name="menu_about">このアプリについて</string>
     <string name="about_git_hub">GitHubで見る</string>
     <string name="about_other_app">他のAndroidアプリを見る</string>
@@ -16,4 +17,16 @@
     <string name="slide_list_title">履歴</string>
 
     <string name="slide_reload">画像の読み込みに失敗しました。\n\nRELOAD</string>
+
+    <string name="recognizing">解析中</string>
+
+    <!-- settings -->
+    <string name="setting_enable_ocr">OCR機能の有効化</string>
+    <string name="setting_select_language">言語の選択</string>
+    <string name="setting_error_before_download">先に言語の選択・ダウンロードを行ってください。</string>
+
+    <!-- RowSelectOcrLanguageView -->
+    <string name="select_ocr_language_not_downloaded">未ダウンロード</string>
+    <string name="select_ocr_language_downloading">ダウンロード中</string>
+    <string name="select_ocr_language_downloaded">ダウンロード済み</string>
 </resources>
