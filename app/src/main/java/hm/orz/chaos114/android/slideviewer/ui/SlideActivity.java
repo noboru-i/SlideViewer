@@ -156,8 +156,10 @@ public class SlideActivity extends AppCompatActivity {
         super.onResume();
         binding.slideAdView.resume();
 
+
         // reset text if language is changed.
         SettingPrefs settingPrefs = SettingPrefs.get(this);
+        binding.recognizeText.setVisibility(settingPrefs.getEnableOcr() ? View.VISIBLE : View.GONE);
         if (!settingPrefs.getEnableOcr()
                 || currentLanguageId == null
                 || !currentLanguageId.equals(settingPrefs.getSelectedLanguage())) {
@@ -326,6 +328,9 @@ public class SlideActivity extends AppCompatActivity {
     }
 
     private void setRecognizedText() {
+        if (talk == null) {
+            return;
+        }
         Slide slide = talk.getSlides().get(binding.slideViewPager.getCurrentItem());
         Timber.d("currentItem is %d", binding.slideViewPager.getCurrentItem());
         Timber.d("check: %s", slide.getOriginal());
