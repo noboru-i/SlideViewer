@@ -75,7 +75,6 @@ public class SlideActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AnalyticsManager.initializeAnalyticsTracker(getApplication());
         binding = DataBindingUtil.setContentView(this, R.layout.activity_slide);
 
         AnalyticsManager.sendScreenView(TAG);
@@ -106,7 +105,7 @@ public class SlideActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 final int page = position + 1;
                 setPageNumbers(page, talk.getSlides().size());
-                AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.CHANGE_PAGE.name(), Integer.toString(page));
+                AnalyticsManager.sendChangePageEvent(TAG, talk.getUrl(), page);
 
                 setRecognizedText();
             }
@@ -282,7 +281,7 @@ public class SlideActivity extends AppCompatActivity {
                     binding.slideUser.setText(talkMetaData.getUser());
 
                     if (talkMetaData.getTalk() != null) {
-                        AnalyticsManager.sendEvent(TAG, AnalyticsManager.Action.START.name(), talkMetaData.getTalk().getUrl());
+                        AnalyticsManager.sendStartEvent(TAG, talkMetaData.getTalk().getUrl());
 
                         talk = talkMetaData.getTalk();
                         loadingDialog.dismiss();
