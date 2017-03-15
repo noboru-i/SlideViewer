@@ -20,6 +20,9 @@
 
     <string name="recognizing">解析中</string>
 
+    <string name="prev">prev</string>
+    <string name="next">next</string>
+
     <!-- settings -->
     <string name="setting_enable_ocr">OCR機能の有効化</string>
     <string name="setting_select_language">言語の選択</string>

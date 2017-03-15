@@ -65,24 +65,43 @@
             android:layout_below="@+id/layout_info"
             android:autoLink="web"
             android:textIsSelectable="true"
-            tools:text="test recognized text."/>
+            tools:text="test recognized text." />
 
         <hm.orz.chaos114.android.slideviewer.widget.ViewPagerFixed
             android:id="@+id/slide_view_pager"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/slide_ad_view"
+            android:layout_above="@+id/button_layout"
             android:layout_below="@+id/layout_info"
             android:layout_centerInParent="true"
             android:layout_toRightOf="@+id/recognize_text" />
 
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/slide_ad_view"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:id="@+id/button_layout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            ads:adSize="SMART_BANNER"
-            ads:adUnitId="@string/admob_unit_id" />
+            android:layout_alignParentBottom="true">
+
+            <Button
+                android:id="@+id/prev_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/prev" />
+
+            <com.google.android.gms.ads.AdView
+                android:id="@+id/slide_ad_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                ads:adSize="BANNER"
+                ads:adUnitId="@string/admob_unit_id" />
+
+            <Button
+                android:id="@+id/next_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/next" />
+        </LinearLayout>
     </RelativeLayout>
 </layout>

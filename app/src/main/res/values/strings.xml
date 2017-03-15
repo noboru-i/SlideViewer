@@ -24,6 +24,9 @@
 
     <string name="recognizing">Recognizing...</string>
 
+    <string name="prev">prev</string>
+    <string name="next">next</string>
+
     <!-- settings -->
     <string name="setting_enable_ocr">Enable OCR</string>
     <string name="setting_select_language">Select language</string>
