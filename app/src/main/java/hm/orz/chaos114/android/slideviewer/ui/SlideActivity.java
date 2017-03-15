@@ -116,6 +116,15 @@ public class SlideActivity extends AppCompatActivity {
             }
         });
 
+        binding.prevButton.setOnClickListener(v -> {
+            int current = binding.slideViewPager.getCurrentItem();
+            binding.slideViewPager.setCurrentItem(current - 1, false);
+        });
+        binding.nextButton.setOnClickListener(v -> {
+            int current = binding.slideViewPager.getCurrentItem();
+            binding.slideViewPager.setCurrentItem(current + 1, false);
+        });
+
         Intent intent = getIntent();
         String action = intent.getAction();
         if (Intent.ACTION_VIEW.equals(action)) {
