@@ -44,6 +44,7 @@ import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
 import hm.orz.chaos114.android.slideviewer.util.OcrUtil;
 import hm.orz.chaos114.android.slideviewer.util.SlideShareLoader;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
+import hm.orz.chaos114.android.slideviewer.widget.PickPageDialog;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
@@ -123,6 +124,11 @@ public class SlideActivity extends AppCompatActivity {
         binding.nextButton.setOnClickListener(v -> {
             int current = binding.slideViewPager.getCurrentItem();
             binding.slideViewPager.setCurrentItem(current + 1, false);
+        });
+        binding.slidePageNumbers.setOnClickListener(v -> {
+            int current = binding.slideViewPager.getCurrentItem();
+            int max = talk.getSlides().size();
+            PickPageDialog.show(this, current, max, page -> binding.slideViewPager.setCurrentItem(page));
         });
 
         Intent intent = getIntent();
@@ -312,7 +318,7 @@ public class SlideActivity extends AppCompatActivity {
     }
 
     private void setPageNumbers(int current, int max) {
-        binding.slidePageNumbers.setText(current + "/" + max);
+        binding.slidePageNumbers.setText(current + " / " + max);
     }
 
     private void shareUrl() {
