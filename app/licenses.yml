@@ -61,15 +61,20 @@
   copyrightHolder: Robert Theis
   license: The Apache Software License, Version 2.0
   licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
-- artifact: io.reactivex:rxandroid:+
+- artifact: io.reactivex.rxjava2:rxandroid:+
   name: RxAndroid
   copyrightHolder: The RxAndroid authors
   license: The Apache Software License, Version 2.0
   licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
   url: https://github.com/ReactiveX/RxAndroid
-- artifact: io.reactivex:rxjava:+
+- artifact: io.reactivex.rxjava2:rxjava:+
   name: rxjava
   copyrightHolder: RxJava Contributors
   license: The Apache Software License, Version 2.0
   licenseUrl: http://www.apache.org/licenses/LICENSE-2.0.txt
   url: https://github.com/ReactiveX/RxJava
+- artifact: org.reactivestreams:reactive-streams:+
+  name: reactive-streams
+  license: CC0
+  licenseUrl: http://creativecommons.org/publicdomain/zero/1.0/
+  url: http://www.reactive-streams.org/
