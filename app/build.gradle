@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.neenbedankt.android-apt'
 apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'com.cookpad.android.licensetools'
 apply plugin: 'com.github.ben-manes.versions'
@@ -92,7 +91,7 @@ dependencies {
     compile 'com.squareup.okhttp3:okhttp:3.6.0'
     compile 'org.jsoup:jsoup:1.10.2'
     compile 'com.rmtheis:tess-two:6.2.0'
-    apt 'com.rejasupotaro:kvs-schema-compiler:5.0.1'
+    annotationProcessor 'com.rejasupotaro:kvs-schema-compiler:5.0.1'
     compile 'com.rejasupotaro:kvs-schema:5.0.1'
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
