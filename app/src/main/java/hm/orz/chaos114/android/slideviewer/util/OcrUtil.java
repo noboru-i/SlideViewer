@@ -10,13 +10,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
+import io.reactivex.Single;
 import lombok.Value;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import rx.Single;
 import timber.log.Timber;
 
 /**

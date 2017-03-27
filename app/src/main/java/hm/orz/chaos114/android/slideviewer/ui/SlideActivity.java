@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.github.chrisbanes.photoview.PhotoView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 
@@ -45,11 +46,9 @@ import hm.orz.chaos114.android.slideviewer.util.OcrUtil;
 import hm.orz.chaos114.android.slideviewer.util.SlideShareLoader;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
 import hm.orz.chaos114.android.slideviewer.widget.PickPageDialog;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
-import uk.co.senab.photoview.PhotoView;
-import uk.co.senab.photoview.PhotoViewAttacher;
 
 public class SlideActivity extends AppCompatActivity {
     private static final String TAG = SlideActivity.class.getSimpleName();
@@ -393,17 +392,7 @@ public class SlideActivity extends AppCompatActivity {
             final PhotoView imageView = (PhotoView) layout.findViewById(R.id.slide_image);
             final TextView refreshButton = (TextView) layout.findViewById(R.id.refresh_button);
             refreshButton.setOnClickListener(v -> loadImage(slide, layout, position));
-            imageView.setOnPhotoTapListener(new PhotoViewAttacher.OnPhotoTapListener() {
-                @Override
-                public void onPhotoTap(View view, float x, float y) {
-                    toggleInfo();
-                }
-
-                @Override
-                public void onOutsidePhotoTap() {
-                    // no-op
-                }
-            });
+            imageView.setOnPhotoTapListener((imageView1, v, v1) -> toggleInfo());
 
             loadImage(slide, layout, position);
             setRecognizedText();
