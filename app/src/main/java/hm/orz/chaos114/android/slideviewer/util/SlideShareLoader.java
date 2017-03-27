@@ -17,12 +17,12 @@ import java.util.regex.Pattern;
 import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
+import io.reactivex.Observable;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import rx.Observable;
 import timber.log.Timber;
 
 /**
@@ -103,7 +103,7 @@ public final class SlideShareLoader {
 
                                     talkMetaData.setTalk(tmpTalk);
                                     subscriber.onNext(talkMetaData);
-                                    subscriber.onCompleted();
+                                    subscriber.onComplete();
 
                                 } catch (Exception e) {
                                     Timber.e(e);

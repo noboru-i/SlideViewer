@@ -19,8 +19,8 @@ import hm.orz.chaos114.android.slideviewer.databinding.ActivitySelectOcrLanguage
 import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
 import hm.orz.chaos114.android.slideviewer.util.OcrUtil;
 import hm.orz.chaos114.android.slideviewer.widget.RowSelectOcrLanguageView;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class SelectOcrLanguageActivity extends AppCompatActivity {
