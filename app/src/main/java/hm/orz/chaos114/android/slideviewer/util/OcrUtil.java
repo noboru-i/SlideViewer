@@ -10,7 +10,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
+import io.reactivex.Observable;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Function;
+import io.reactivex.schedulers.Schedulers;
+import io.reactivex.subjects.BehaviorSubject;
 import lombok.Value;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -24,26 +31,42 @@ import timber.log.Timber;
  * use https://github.com/rmtheis/tess-two
  */
 public final class OcrUtil {
-    private OcrUtil() {
-        // prevent initialize
+    private final BehaviorSubject<OcrRequest> subject = BehaviorSubject.create();
+    private final Observable<OcrResult> observable;
+
+    public OcrUtil(Context context) {
+        observable = subject
+                .observeOn(Schedulers.computation())
+                .flatMap(new Function<OcrRequest, Observable<OcrResult>>() {
+                    @Override
+                    public Observable<OcrResult> apply(@NonNull OcrRequest ocrRequest) throws Exception {
+                        return Observable.create((ObservableOnSubscribe<OcrResult>) emitter -> {
+                            SettingPrefs settingPrefs = SettingPrefs.get(context);
+                            if (!settingPrefs.getEnableOcr()
+                                    || settingPrefs.getSelectedLanguage() == null) {
+                                emitter.onNext(new OcrResult(ocrRequest.getUrl(), ""));
+                            }
+                            Bitmap converted = ocrRequest.getBitmap().copy(Bitmap.Config.ARGB_8888, false);
+                            Timber.d("start recognize: %s", ocrRequest.getUrl());
+                            TessBaseAPI baseApi = new TessBaseAPI();
+                            baseApi.init(getTessdataDir(context).getParentFile().getAbsolutePath(), settingPrefs.getSelectedLanguage());
+                            baseApi.setImage(converted);
+                            String recognizedText = baseApi.getUTF8Text();
+                            baseApi.end();
+                            Timber.d("end recognize: %s", ocrRequest.getUrl());
+                            emitter.onNext(new OcrResult(ocrRequest.getUrl(), recognizedText));
+                        }).subscribeOn(Schedulers.computation());
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread());
     }
 
-    public static Single<String> recognizeText(Context context, Bitmap bitmap) {
-        return Single.create(subscriber -> {
-            SettingPrefs settingPrefs = SettingPrefs.get(context);
-            if (!settingPrefs.getEnableOcr()
-                    || settingPrefs.getSelectedLanguage() == null) {
-                subscriber.onSuccess("");
-                return;
-            }
-            Bitmap converted = bitmap.copy(Bitmap.Config.ARGB_8888, false);
-            TessBaseAPI baseApi = new TessBaseAPI();
-            baseApi.init(getTessdataDir(context).getParentFile().getAbsolutePath(), settingPrefs.getSelectedLanguage());
-            baseApi.setImage(converted);
-            String recognizedText = baseApi.getUTF8Text();
-            baseApi.end();
-            subscriber.onSuccess(recognizedText);
-        });
+    public void recognize(String url, Bitmap bitmap) {
+        subject.onNext(new OcrRequest(url, bitmap));
+    }
+
+    public Observable<OcrResult> listen() {
+        return observable;
     }
 
     public static Single<File> download(Context context, Language language) {
@@ -109,5 +132,17 @@ public final class OcrUtil {
         String id;
         String label;
         String url;
+    }
+
+    @Value
+    public static class OcrRequest {
+        String url;
+        Bitmap bitmap;
+    }
+
+    @Value
+    public static class OcrResult {
+        String url;
+        String recognizedText;
     }
 }

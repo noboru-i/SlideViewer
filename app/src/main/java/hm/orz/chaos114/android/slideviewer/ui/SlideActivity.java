@@ -65,6 +65,8 @@ public class SlideActivity extends AppCompatActivity {
     private Map<String, String> recognizeTextMap;
     private String currentLanguageId;
 
+    private OcrUtil ocrUtil;
+
     static void start(Context context, @NonNull String url) {
         Intent intent = new Intent(context, SlideActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
@@ -156,6 +158,15 @@ public class SlideActivity extends AppCompatActivity {
 
         loadAd();
         startLoad(false);
+
+        ocrUtil = new OcrUtil(this);
+        ocrUtil.listen()
+                .subscribe(ocrResult -> {
+                    Timber.d("original is: %s", ocrResult.getUrl());
+                    Timber.d("text is recognized: %s", ocrResult.getRecognizedText());
+                    recognizeTextMap.put(ocrResult.getUrl(), ocrResult.getRecognizedText());
+                    setRecognizedText();
+                });
     }
 
     @Override
@@ -302,9 +313,7 @@ public class SlideActivity extends AppCompatActivity {
                         setPageNumbers(1, talk.getSlides().size());
                         adapter.notifyDataSetChanged();
                     }
-                }, throwable -> {
-                    Toast.makeText(this, "failed.", Toast.LENGTH_SHORT).show();
-                });
+                }, throwable -> Toast.makeText(this, "failed.", Toast.LENGTH_SHORT).show());
     }
 
     /**
@@ -345,14 +354,9 @@ public class SlideActivity extends AppCompatActivity {
             return;
         }
         Slide slide = talk.getSlides().get(binding.slideViewPager.getCurrentItem());
-        Timber.d("currentItem is %d", binding.slideViewPager.getCurrentItem());
-        Timber.d("check: %s", slide.getOriginal());
         if (recognizeTextMap.containsKey(slide.getOriginal())) {
-            Timber.d("contains");
-            Timber.d("set text: %s", recognizeTextMap.get(slide.getOriginal()));
             binding.recognizeText.setText(recognizeTextMap.get(slide.getOriginal()));
         } else {
-            Timber.d("not contains");
             binding.recognizeText.setText(R.string.recognizing);
         }
     }
@@ -420,6 +424,7 @@ public class SlideActivity extends AppCompatActivity {
                     .listener(new RequestListener<String, Bitmap>() {
                         @Override
                         public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                            Timber.d("Glide onException");
                             progressBar.setVisibility(View.GONE);
                             refreshButton.setVisibility(View.VISIBLE);
                             return false;
@@ -427,24 +432,14 @@ public class SlideActivity extends AppCompatActivity {
 
                         @Override
                         public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
-                            Timber.d("onResourceReady: %d", position);
+                            Timber.d("Glide onResourceReady: %d", position);
                             if (recognizeTextMap.containsKey(slide.getOriginal())
                                     && position == binding.slideViewPager.getCurrentItem()) {
                                 setRecognizedText();
                                 Timber.d("onResourceReady: %d, contains and same position", position);
                                 return false;
                             }
-                            OcrUtil.recognizeText(SlideActivity.this, resource)
-                                    .subscribeOn(Schedulers.newThread())
-                                    .observeOn(AndroidSchedulers.mainThread())
-                                    .subscribe(text -> {
-                                        Timber.d("original is: %s", slide.getOriginal());
-                                        Timber.d("text is recognized: %d : %s", position, text);
-                                        recognizeTextMap.put(slide.getOriginal(), text);
-                                        if (position == binding.slideViewPager.getCurrentItem()) {
-                                            setRecognizedText();
-                                        }
-                                    });
+                            ocrUtil.recognize(slide.getOriginal(), resource);
                             return false;
                         }
                     })
