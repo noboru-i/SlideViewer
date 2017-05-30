@@ -118,14 +118,8 @@ public class SlideActivity extends AppCompatActivity {
             }
         });
 
-        binding.prevButton.setOnClickListener(v -> {
-            int current = binding.slideViewPager.getCurrentItem();
-            binding.slideViewPager.setCurrentItem(current - 1, false);
-        });
-        binding.nextButton.setOnClickListener(v -> {
-            int current = binding.slideViewPager.getCurrentItem();
-            binding.slideViewPager.setCurrentItem(current + 1, false);
-        });
+        binding.prevButton.setOnClickListener(v -> movePrev());
+        binding.nextButton.setOnClickListener(v -> moveNext());
         binding.slidePageNumbers.setOnClickListener(v -> {
             int current = binding.slideViewPager.getCurrentItem();
             int max = talk.getSlides().size();
@@ -345,10 +339,6 @@ public class SlideActivity extends AppCompatActivity {
         AboutActivity.start(this);
     }
 
-    private void toggleInfo() {
-        binding.layoutInfo.setVisibility(binding.layoutInfo.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-    }
-
     private void setRecognizedText() {
         if (talk == null) {
             return;
@@ -359,6 +349,16 @@ public class SlideActivity extends AppCompatActivity {
         } else {
             binding.recognizeText.setText(R.string.recognizing);
         }
+    }
+
+    private void moveNext() {
+        int current = binding.slideViewPager.getCurrentItem();
+        binding.slideViewPager.setCurrentItem(current + 1, false);
+    }
+
+    private void movePrev() {
+        int current = binding.slideViewPager.getCurrentItem();
+        binding.slideViewPager.setCurrentItem(current - 1, false);
     }
 
     private class SlideAdapter extends PagerAdapter {
@@ -396,7 +396,13 @@ public class SlideActivity extends AppCompatActivity {
             final PhotoView imageView = (PhotoView) layout.findViewById(R.id.slide_image);
             final TextView refreshButton = (TextView) layout.findViewById(R.id.refresh_button);
             refreshButton.setOnClickListener(v -> loadImage(slide, layout, position));
-            imageView.setOnPhotoTapListener((imageView1, v, v1) -> toggleInfo());
+            imageView.setOnPhotoTapListener((imageView1, x, y) -> {
+                if (x < 0.5f) {
+                    movePrev();
+                } else {
+                    moveNext();
+                }
+            });
 
             loadImage(slide, layout, position);
             setRecognizedText();
