@@ -41,8 +41,9 @@
 -printmapping mapping.txt
 
 # okio
--dontwarn java.nio.file.*
--dontwarn org.codehaus.mojo.animal_sniffer.IgnoreJRERequirement
+-dontwarn okio.**
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
 
 # jsoup
 -keep public class org.jsoup.** { public *; }
