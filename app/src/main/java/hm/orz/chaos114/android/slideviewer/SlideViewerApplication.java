@@ -1,6 +1,8 @@
 package hm.orz.chaos114.android.slideviewer;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
 
 import com.squareup.leakcanary.LeakCanary;
 
@@ -19,5 +21,11 @@ public class SlideViewerApplication extends Application {
 
         AnalyticsManager.initializeAnalyticsTracker(this);
         AnalyticsManager.updateUserProperty();
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }

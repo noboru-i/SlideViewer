@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,6 +15,15 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.ErrorCodes;
+import com.firebase.ui.auth.IdpResponse;
+import com.firebase.ui.auth.ResultCodes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
 
@@ -25,6 +35,7 @@ import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.widget.SlideListRowView;
+import timber.log.Timber;
 
 public class SlideListActivity extends AppCompatActivity {
 
@@ -85,6 +96,16 @@ public class SlideListActivity extends AppCompatActivity {
         final MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.slide_list_activity_menus, menu);
 
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        if (auth.getCurrentUser() == null) {
+            Timber.d("remove 1");
+            menu.removeItem(R.id.sign_out);
+        } else {
+            Timber.d("remove 2");
+            menu.removeItem(R.id.sign_up);
+        }
+
+        Timber.d("menu %s", menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -100,8 +121,54 @@ public class SlideListActivity extends AppCompatActivity {
             case R.id.menu_about:
                 AboutActivity.start(this);
                 return true;
+            case R.id.sign_up:
+                startActivityForResult(
+                        // Get an instance of AuthUI based on the default app
+                        AuthUI.getInstance().createSignInIntentBuilder().build(),
+                        123);
+                return true;
+            case R.id.sign_out:
+                AuthUI.getInstance()
+                        .signOut(this)
+                        .addOnCompleteListener(task -> Toast.makeText(SlideListActivity.this, "sign out", Toast.LENGTH_SHORT).show());
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 123) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            // Successfully signed in
+            if (resultCode == ResultCodes.OK) {
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                Toast.makeText(this, "Welcome " + auth.getCurrentUser().getDisplayName(), Toast.LENGTH_SHORT).show();
+                return;
+            } else {
+                // Sign in failed
+                if (response == null) {
+                    // User pressed back button
+                    Timber.d("cancelled");
+                    return;
+                }
+
+                if (response.getErrorCode() == ErrorCodes.NO_NETWORK) {
+                    Timber.d("no_internet_connection");
+                    return;
+                }
+
+                if (response.getErrorCode() == ErrorCodes.UNKNOWN_ERROR) {
+                    Timber.d("unknown_error");
+                    return;
+                }
+            }
+
+            Timber.d("unknown_sign_in_response");
         }
     }
 
