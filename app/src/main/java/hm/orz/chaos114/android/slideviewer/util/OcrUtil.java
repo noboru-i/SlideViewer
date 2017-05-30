@@ -45,6 +45,7 @@ public final class OcrUtil {
                             if (!settingPrefs.getEnableOcr()
                                     || settingPrefs.getSelectedLanguage() == null) {
                                 emitter.onNext(new OcrResult(ocrRequest.getUrl(), ""));
+                                return;
                             }
                             Bitmap converted = ocrRequest.getBitmap().copy(Bitmap.Config.ARGB_8888, false);
                             Timber.d("start recognize: %s", ocrRequest.getUrl());
