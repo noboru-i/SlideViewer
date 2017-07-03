@@ -1,6 +1,8 @@
 machine:
   java:
     version: oraclejdk8
+  ruby:
+    version: ruby-2.4.1
   timezone: Asia/Tokyo
   environment:
     TERM: "dumb"
@@ -14,6 +16,7 @@ test:
   pre:
     - openssl aes-256-cbc -k $DECRYPT_KEY -d -in app/encrypted_google-services.json -out app/google-services.json
   override:
+    - bundle exec danger
     - ./gradlew :app:checkLicenses
     - ./gradlew :app:assembleDebug
 deployment:
