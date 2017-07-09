@@ -14,3 +14,14 @@ warn("A pull request must have a milestone set") if github.pr_json["milestone"].
 
 # Warn when PR has no assignees
 warn("A pull request must have some assignees") if github.pr_json["assignee"].nil?
+
+# Findbugs
+findbugs.gradle_task = "app:findbugs"
+findbugs.report_file = "app/build/reports/findbugs/findbugs.xml"
+findbugs.report(true)
+
+# Android Lint
+android_lint.gradle_task = "app:lint"
+android_lint.report_file = "app/build/reports/lint-results.xml"
+android_lint.filtering = true
+android_lint.lint(inline_mode: true)
