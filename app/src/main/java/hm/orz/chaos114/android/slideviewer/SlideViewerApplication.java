@@ -1,8 +1,6 @@
 package hm.orz.chaos114.android.slideviewer;
 
 import android.app.Application;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 
 import com.squareup.leakcanary.LeakCanary;
 
@@ -21,13 +19,5 @@ public class SlideViewerApplication extends Application {
 
         AnalyticsManager.initializeAnalyticsTracker(this);
         AnalyticsManager.updateUserProperty();
-
-        if (true) {
-            Integer i = 1;
-            i.toString();
-
-            SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-            editor.apply();
-        }
     }
 }
