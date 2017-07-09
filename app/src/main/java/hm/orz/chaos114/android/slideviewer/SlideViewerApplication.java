@@ -23,11 +23,11 @@ public class SlideViewerApplication extends Application {
         AnalyticsManager.updateUserProperty();
 
         if (true) {
-            Integer i = null;
+            Integer i = 1;
             i.toString();
 
             SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-            editor.commit();
+            editor.apply();
         }
     }
 }
