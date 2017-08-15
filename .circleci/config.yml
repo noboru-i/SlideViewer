@@ -34,8 +34,7 @@ jobs:
           name: Build apk
           command: ./gradlew :app:assembleDebug
       - store_artifacts:
-          path: app/build/reports
-          destination: reports
+          path: app/build/outputs/apk/app-debug.apk
       - store_test_results:
           path: app/build/test-results
       - persist_to_workspace:
@@ -52,10 +51,8 @@ jobs:
           command: ./gradlew :app:assembleRelease
       - store_artifacts:
           path: app/build/outputs/apk/app-release.apk
-          destination: apk
       - store_artifacts:
           path: app/build/outputs/mapping/release/dump.txt
-          destination: apk
 workflows:
   version: 2
   build_and_deploy:
