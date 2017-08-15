@@ -43,7 +43,7 @@ jobs:
     steps:
       - run:
           name: Build apk
-          commands: ./gradlew :app:assembleRelease
+          command: ./gradlew :app:assembleRelease
       - store_artifacts:
           path: app/build/outputs/apk/app-release.apk
           destination: apk
