@@ -1,0 +1,63 @@
+version: 2
+jobs:
+  build:
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-26-alpha
+    environment:
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - checkout
+      - restore_cache:
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
+      - save_cache:
+          paths:
+            - ~/.gradle
+          key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
+      - run:
+          name: Decrypt google-services.json
+          command: openssl aes-256-cbc -k $DECRYPT_KEY -d -in app/encrypted_google-services.json -out app/google-services.json -md md5
+      # - bundle exec danger
+      # - cp app/build/reports/findbugs/findbugs.xml $CIRCLE_ARTIFACTS || true
+      # - cp app/build/reports/lint-results.xml $CIRCLE_ARTIFACTS || true
+      - run:
+          name: Check licenses
+          command: ./gradlew :app:checkLicenses
+      - run:
+          name: Build apk
+          command: ./gradlew :app:assembleDebug
+      - store_artifacts:
+          path: app/build/reports
+          destination: reports
+      - store_test_results:
+          path: app/build/test-results
+  deploy:
+    working_directory: ~/code
+    docker:
+      - image: circleci/android:api-26-alpha
+    environment:
+      JVM_OPTS: -Xmx3200m
+    steps:
+      - run:
+          name: Build apk
+          commands: ./gradlew :app:assembleRelease
+      - store_artifacts:
+          path: app/build/outputs/apk/app-release.apk
+          destination: apk
+      - store_artifacts:
+          path: app/build/outputs/mapping/release/dump.txt
+          destination: apk
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
