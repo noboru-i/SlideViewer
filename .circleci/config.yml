@@ -1,11 +1,15 @@
 version: 2
+
+defaults: &defaults
+  working_directory: ~/code
+  docker:
+    - image: circleci/android:api-26-alpha
+  environment:
+    JVM_OPTS: -Xmx3200m
+
 jobs:
   build:
-    working_directory: ~/code
-    docker:
-      - image: circleci/android:api-26-alpha
-    environment:
-      JVM_OPTS: -Xmx3200m
+    <<: *defaults
     steps:
       - checkout
       - restore_cache:
@@ -34,14 +38,15 @@ jobs:
           destination: reports
       - store_test_results:
           path: app/build/test-results
+      - persist_to_workspace:
+          root: ~/code
+          paths:
+            - .
   deploy:
-    working_directory: ~/code
-    docker:
-      - image: circleci/android:api-26-alpha
-    environment:
-      JVM_OPTS: -Xmx3200m
+    <<: *defaults
     steps:
-      - checkout
+      - attach_workspace:
+          at: ~/code
       - run:
           name: Build apk
           command: ./gradlew :app:assembleRelease
