@@ -64,7 +64,7 @@ jobs:
           paths:
             - vendor/bundle
           key: saddler-gems
-      - store_test_results:
+      - store_artifacts:
           path: "/tmp/circle_artifacts"
 
   deploy:
