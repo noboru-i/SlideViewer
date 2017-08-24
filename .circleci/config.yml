@@ -54,7 +54,8 @@ jobs:
       - attach_workspace:
           at: ~/code
       - restore_cache:
-          key: saddler-gems
+          key: saddler-gems-{{ checksum "Gemfile.lock" }}
+      - run: bundle install --path vendor/bundle
       - run:
           name: Run saddler
           command: sh scripts/saddler.sh
@@ -63,7 +64,7 @@ jobs:
       - save_cache:
           paths:
             - vendor/bundle
-          key: saddler-gems
+          key: saddler-gems-{{ checksum "Gemfile.lock" }}
       - store_artifacts:
           path: "/tmp/circle_artifacts"
 
