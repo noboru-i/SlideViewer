@@ -129,7 +129,7 @@ public class SlideActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String action = intent.getAction();
         if (Intent.ACTION_VIEW.equals(action)) {
-            Uri uri = intent.getData();
+            Uri uri = intent.getData(); 
             Timber.d("uri = %s", uri.toString());
             this.uri = uri;
         } else if (Intent.ACTION_SEND.equals(action)) {
