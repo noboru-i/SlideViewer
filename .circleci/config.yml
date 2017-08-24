@@ -31,6 +31,9 @@ jobs:
           name: Check licenses
           command: ./gradlew :app:checkLicenses
       - run:
+          name: Check lint
+          command: ./gradlew :app:check -x test
+      - run:
           name: Build apk
           command: ./gradlew :app:assembleDebug
       - store_artifacts:
@@ -42,6 +45,16 @@ jobs:
           root: ~/code
           paths:
             - .
+
+  check:
+    working_directory: ~/code
+    docker:
+      - image: circleci/ruby:2.4.1
+    steps:
+      - attach_workspace:
+          at: ~/code
+      - run: sh scripts/saddler.sh
+
   deploy:
     <<: *defaults
     steps:
@@ -61,9 +74,13 @@ workflows:
   build_and_deploy:
     jobs:
       - build
+      - check:
+          requires:
+            - build
       - deploy:
           requires:
             - build
+            - check
           filters:
             branches:
               only: master
