@@ -11,9 +11,10 @@ echo "********************"
 echo "* save outputs     *"
 echo "********************"
 
+CIRCLE_ARTIFACTS=/tmp/circle_artifacts
 LINT_RESULT_DIR="$CIRCLE_ARTIFACTS/lint"
 
-mkdir "$LINT_RESULT_DIR"
+mkdir -p "$LINT_RESULT_DIR"
 cp -v "app/build/reports/checkstyle/checkstyle.xml" "$LINT_RESULT_DIR/"
 cp -v "app/build/reports/findbugs/findbugs.xml" "$LINT_RESULT_DIR/"
 cp -v "app/build/reports/pmd/pmd.xml" "$LINT_RESULT_DIR/"
