@@ -11,7 +11,6 @@ echo "********************"
 echo "* save outputs     *"
 echo "********************"
 
-CIRCLE_ARTIFACTS=/tmp/circle_artifacts
 LINT_RESULT_DIR="$CIRCLE_ARTIFACTS/lint"
 
 mkdir -p "$LINT_RESULT_DIR"

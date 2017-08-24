@@ -53,7 +53,19 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/code
-      - run: sh scripts/saddler.sh
+      - restore_cache:
+          key: saddler-gems
+      - run:
+          name: Run saddler
+          command: sh scripts/saddler.sh
+          environment:
+              CIRCLE_ARTIFACTS: "/tmp/circle_artifacts"
+      - save_cache:
+          paths:
+            - vendor/bundle
+          key: saddler-gems
+      - store_test_results:
+          path: CIRCLE_ARTIFACTS
 
   deploy:
     <<: *defaults
