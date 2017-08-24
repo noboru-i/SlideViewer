@@ -18,8 +18,6 @@ cp -v "app/build/reports/pmd/pmd.xml" "$CIRCLE_ARTIFACTS/"
 cp -v "app/build/reports/pmd/cpd.xml" "$CIRCLE_ARTIFACTS/"
 cp -v "app/build/reports/lint-results.xml" "$CIRCLE_ARTIFACTS/"
 
-GITHUB_ACCESS_TOKEN="$DANGER_GITHUB_API_TOKEN"
-
 if [ -z "${CI_PULL_REQUEST}" ]; then
     # when not pull request
     REPORTER=Saddler::Reporter::Github::CommitReviewComment
