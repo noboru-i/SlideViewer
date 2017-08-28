@@ -13,7 +13,7 @@ cp -v "app/build/reports/pmd/pmd.xml" "$CIRCLE_ARTIFACTS/"
 cp -v "app/build/reports/pmd/cpd.xml" "$CIRCLE_ARTIFACTS/"
 cp -v "app/build/reports/lint-results.xml" "$CIRCLE_ARTIFACTS/"
 
-if [ -v CI_PULL_REQUEST ] || [ -z "${CI_PULL_REQUEST}" ]; then
+if [ -z "${CI_PULL_REQUEST+UNDEF}" ]; then
     # when not pull request
     REPORTER=Saddler::Reporter::Github::CommitReviewComment
 else
