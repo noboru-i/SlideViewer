@@ -13,6 +13,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySelectOcrLanguageBinding;
@@ -83,7 +85,7 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
         binding.languageList.setAdapter(adapter);
     }
 
-    private class Adapter extends BaseAdapter {
+    private class Adapter extends BaseAdapter { 
 
         private List<OcrUtil.Language> rowDataList;
 
