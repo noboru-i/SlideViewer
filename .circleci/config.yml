@@ -54,10 +54,18 @@ jobs:
           key: saddler-gems-{{ checksum "Gemfile.lock" }}
       - run: bundle install --path vendor/bundle
       - run:
-          name: Run saddler
-          command: sh scripts/saddler.sh
-          environment:
-              CIRCLE_ARTIFACTS: "/tmp/circle_artifacts"
+          name: Run danger
+          command: bundle exec danger
+      - run:
+          name: Move artifacts
+          command: |
+            ARTIFACTS="/tmp/circle_artifacts"
+            mkdir -p "$ARTIFACTS"
+            cp -v "app/build/reports/checkstyle/checkstyle.xml" "$ARTIFACTS/"
+            cp -v "app/build/reports/findbugs/findbugs.xml" "$ARTIFACTS/"
+            cp -v "app/build/reports/pmd/pmd.xml" "$ARTIFACTS/"
+            cp -v "app/build/reports/pmd/cpd.xml" "$ARTIFACTS/"
+            cp -v "app/build/reports/lint-results.xml" "$ARTIFACTS/"
       - save_cache:
           paths:
             - vendor/bundle
