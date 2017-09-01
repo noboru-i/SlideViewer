@@ -13,6 +13,7 @@ warn('a large PR') if git.lines_of_code > 300
 checkstyle_format.base_path = Dir.pwd
 checkstyle_format.report 'app/build/reports/checkstyle/checkstyle.xml'
 
+# TODO: below methods need Android SDK
 # # Findbugs
 # findbugs.gradle_task = "app:findbugs"
 # findbugs.report_file = "app/build/reports/findbugs/findbugs.xml"
