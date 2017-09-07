@@ -45,6 +45,9 @@ GEM
       sawyer (~> 0.8.0, >= 0.5.3)
     open4 (1.3.4)
     ox (2.6.0)
+    pmd_translate_checkstyle_format (0.3.0)
+      nori
+      thor
     public_suffix (3.0.0)
     sawyer (0.8.1)
       addressable (>= 2.3.5, < 2.6)
@@ -61,6 +64,7 @@ DEPENDENCIES
   danger
   danger-checkstyle_format
   findbugs_translate_checkstyle_format
+  pmd_translate_checkstyle_format
 
 BUNDLED WITH
    1.15.4

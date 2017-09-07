@@ -19,6 +19,16 @@ require 'findbugs_translate_checkstyle_format'
 findbugs_xml = ::FindbugsTranslateCheckstyleFormat::Script.translate(File.read('app/build/reports/findbugs/findbugs.xml'))
 checkstyle_format.report_by_text findbugs_xml
 
+# PMD
+require 'pmd_translate_checkstyle_format'
+pmd_xml = ::PmdTranslateCheckstyleFormat::Script.translate(File.read('app/build/reports/pmd/pmd.xml'))
+checkstyle_format.report_by_text pmd_xml
+
+# PMD-CPD
+require 'pmd_translate_checkstyle_format'
+pmd_cpd_xml = ::PmdTranslateCheckstyleFormat::Script.translate_cpd(File.read('app/build/reports/pmd/cpd.xml'))
+checkstyle_format.report_by_text pmd_cpd_xml
+
 # TODO: below methods need Android SDK
 # # Android Lint
 # android_lint.gradle_task = "app:lint"
