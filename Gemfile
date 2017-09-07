@@ -2,4 +2,5 @@
 source "https://rubygems.org"
 
 gem 'danger'
-gem 'danger-checkstyle_format', '~> 0.0.1'
+gem 'danger-checkstyle_format'
+gem 'findbugs_translate_checkstyle_format'

@@ -9,16 +9,17 @@ end
 # Warn when there is a big PR
 warn('a large PR') if git.lines_of_code > 300
 
-# checkstyle
 checkstyle_format.base_path = Dir.pwd
+
+# checkstyle
 checkstyle_format.report 'app/build/reports/checkstyle/checkstyle.xml'
 
+# Findbugs
+require 'findbugs_translate_checkstyle_format'
+findbugs_xml = ::FindbugsTranslateCheckstyleFormat::Script.translate(File.read('app/build/reports/findbugs/findbugs.xml'))
+checkstyle_format.report_by_text findbugs_xml
+
 # TODO: below methods need Android SDK
-# # Findbugs
-# findbugs.gradle_task = "app:findbugs"
-# findbugs.report_file = "app/build/reports/findbugs/findbugs.xml"
-# findbugs.report(true)
-#
 # # Android Lint
 # android_lint.gradle_task = "app:lint"
 # android_lint.report_file = "app/build/reports/lint-results.xml"
