@@ -9,8 +9,7 @@
         android:orientation="horizontal"
         android:padding="8dp">
 
-        <ImageView
-            android:id="@+id/slide_list_row_image"
+        <ImageView android:id="@+id/slide_list_row_image"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_gravity="center_vertical"/>
