@@ -64,6 +64,10 @@ jobs:
           destination: app-debug.apk
       - store_test_results:
           path: app/build/test-results
+      - persist_to_workspace:
+          root: ~/code
+          paths:
+            - .
 
   deploy:
     <<: *defaults
