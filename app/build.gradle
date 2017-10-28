@@ -87,7 +87,8 @@ dependencies {
     compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
     compile 'com.j256.ormlite:ormlite-android:5.0'
     compile 'com.github.chrisbanes:PhotoView:2.0.0'
-    provided 'org.projectlombok:lombok:1.16.16'
+    provided 'org.projectlombok:lombok:1.16.18'
+    annotationProcessor 'org.projectlombok:lombok:1.16.18'
     compile "io.reactivex.rxjava2:rxjava:2.1.0"
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
     compile 'com.jakewharton.timber:timber:4.5.1'
