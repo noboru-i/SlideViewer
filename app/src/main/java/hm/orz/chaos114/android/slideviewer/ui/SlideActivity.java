@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.github.chrisbanes.photoview.PhotoView;
@@ -425,11 +428,11 @@ public class SlideActivity extends AppCompatActivity {
             refreshButton.setVisibility(View.GONE);
 
             Glide.with(SlideActivity.this)
-                    .load(slide.getOriginal())
                     .asBitmap()
-                    .listener(new RequestListener<String, Bitmap>() {
+                    .load(slide.getOriginal())
+                    .listener(new RequestListener<Bitmap>() {
                         @Override
-                        public boolean onException(Exception e, String model, Target<Bitmap> target, boolean isFirstResource) {
+                        public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Bitmap> target, boolean isFirstResource) {
                             Timber.d("Glide onException");
                             progressBar.setVisibility(View.GONE);
                             refreshButton.setVisibility(View.VISIBLE);
@@ -437,7 +440,7 @@ public class SlideActivity extends AppCompatActivity {
                         }
 
                         @Override
-                        public boolean onResourceReady(Bitmap resource, String model, Target<Bitmap> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                        public boolean onResourceReady(Bitmap resource, Object model, Target<Bitmap> target, DataSource dataSource, boolean isFirstResource) {
                             Timber.d("Glide onResourceReady: %d", position);
                             if (recognizeTextMap.containsKey(slide.getOriginal())
                                     && position == binding.slideViewPager.getCurrentItem()) {
