@@ -54,8 +54,6 @@ import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
 public class SlideActivity extends AppCompatActivity {
-    private static final String TAG = SlideActivity.class.getSimpleName();
-
     private ActivitySlideBinding binding;
 
     private Menu menu;
@@ -81,8 +79,6 @@ public class SlideActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_slide);
-
-        AnalyticsManager.sendScreenView(TAG);
 
         recognizeTextMap = new HashMap<>();
 
@@ -110,7 +106,7 @@ public class SlideActivity extends AppCompatActivity {
             public void onPageSelected(int position) {
                 final int page = position + 1;
                 setPageNumbers(page, talk.getSlides().size());
-                AnalyticsManager.sendChangePageEvent(TAG, talk.getUrl(), page);
+                AnalyticsManager.sendChangePageEvent(talk.getUrl(), page);
 
                 setRecognizedText();
             }
@@ -303,7 +299,7 @@ public class SlideActivity extends AppCompatActivity {
                     binding.slideUser.setText(talkMetaData.getUser());
 
                     if (talkMetaData.getTalk() != null) {
-                        AnalyticsManager.sendStartEvent(TAG, talkMetaData.getTalk().getUrl());
+                        AnalyticsManager.sendStartEvent(talkMetaData.getTalk().getUrl());
 
                         talk = talkMetaData.getTalk();
                         loadingDialog.dismiss();

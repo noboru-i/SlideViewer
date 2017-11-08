@@ -14,11 +14,8 @@ import android.widget.Toast;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySettingBinding;
 import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
-import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 
 public class SettingActivity extends AppCompatActivity {
-    private static final String TAG = SettingActivity.class.getSimpleName();
-
     private ActivitySettingBinding binding;
 
     public static void start(@NonNull Context context) {
@@ -30,8 +27,6 @@ public class SettingActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_setting);
-
-        AnalyticsManager.sendScreenView(TAG);
 
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() == null) {

@@ -3,7 +3,7 @@ package hm.orz.chaos114.android.slideviewer.ui;
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 
 import timber.log.Timber;
 
@@ -14,13 +14,13 @@ public class CrashReportingTree extends Timber.Tree {
             return;
         }
         if (priority != Log.ERROR) {
-            FirebaseCrash.log(message);
+            Crashlytics.log(message);
             return;
         }
         Throwable throwable = t;
         if (throwable == null && !TextUtils.isEmpty(message)) {
             throwable = new Exception(message);
         }
-        FirebaseCrash.report(throwable);
+        Crashlytics.logException(throwable);
     }
 }
