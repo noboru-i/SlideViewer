@@ -9,6 +9,8 @@
     <string name="menu_show_by_browser">ブラウザで開く</string>
     <string name="menu_setting">設定</string>
     <string name="menu_about">このアプリについて</string>
+    <string name="menu_signup">Sign up / Sign in</string>
+    <string name="menu_signout">Sign out</string>
     <string name="about_git_hub">GitHubで見る</string>
     <string name="about_other_app">他のAndroidアプリを見る</string>
     <string name="about_license">ライセンス</string>

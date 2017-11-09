@@ -9,6 +9,8 @@
     <string name="menu_show_by_browser">Show by browser</string>
     <string name="menu_setting">Setting</string>
     <string name="menu_about">About</string>
+    <string name="menu_signup">Sign up / Sign in</string>
+    <string name="menu_signout">Sign out</string>
     <string name="about_git_hub">View on GitHub</string>
     <string name="about_other_app">View other Android app</string>
     <string name="about_license">License</string>
