@@ -44,14 +44,21 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.AboutActivity" />
-        <activity android:name=".ui.LicenseActivity" />
         <activity android:name=".ui.WebViewActivity" />
         <activity android:name=".ui.SettingActivity" />
-        <activity android:name=".ui.SelectOcrLanguageActivity"/>
+        <activity android:name=".ui.SelectOcrLanguageActivity" />
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
+
+        <!-- https://qiita.com/sho5nn/items/f63ebd7ccc0c86d98e4b -->
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesActivity"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
+        <activity
+            android:name="com.google.android.gms.oss.licenses.OssLicensesMenuActivity"
+            android:theme="@style/Theme.AppCompat.Light.DarkActionBar" />
 
         <meta-data
             android:name="com.google.android.gms.version"

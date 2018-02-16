@@ -8,6 +8,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.google.android.gms.oss.licenses.OssLicensesMenuActivity;
+
 import hm.orz.chaos114.android.slideviewer.BuildConfig;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivityAboutBinding;
@@ -62,7 +64,7 @@ public class AboutActivity extends AppCompatActivity {
                 IntentUtil.browse(this, "https://play.google.com/store/apps/developer?id=noboru")
         );
         binding.aboutLicense.setOnClickListener(v ->
-                LicenseActivity.start(this)
+                startActivity(new Intent(this, OssLicensesMenuActivity.class))
         );
     }
 }
