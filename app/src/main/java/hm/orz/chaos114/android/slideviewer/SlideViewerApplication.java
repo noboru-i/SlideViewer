@@ -1,7 +1,10 @@
 package hm.orz.chaos114.android.slideviewer;
 
 import android.app.Application;
+import android.content.Context;
+import android.support.multidex.MultiDex;
 
+import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
 
 import hm.orz.chaos114.android.slideviewer.ui.CrashReportingTree;
@@ -16,8 +19,17 @@ public class SlideViewerApplication extends Application {
 
         LeakCanary.install(this);
         Timber.plant(BuildConfig.DEBUG ? new Timber.DebugTree() : new CrashReportingTree());
+        if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this);
+        }
 
         AnalyticsManager.initializeAnalyticsTracker(this);
         AnalyticsManager.updateUserProperty();
+    }
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 }

@@ -3,6 +3,7 @@ package hm.orz.chaos114.android.slideviewer.util;
 import android.content.Context;
 import android.graphics.Bitmap;
 
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.googlecode.tesseract.android.TessBaseAPI;
 
 import java.io.File;
@@ -76,7 +77,9 @@ public final class OcrUtil {
                     .url(language.getUrl())
                     .build();
 
-            OkHttpClient client = new OkHttpClient();
+            OkHttpClient client = new OkHttpClient.Builder()
+                    .addNetworkInterceptor(new StethoInterceptor())
+                    .build();
             client.newCall(request).enqueue(
                     new Callback() {
                         @Override
