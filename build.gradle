@@ -5,6 +5,7 @@ buildscript {
         kotlin_version = '1.2.21'
         supportLibVersion = '27.0.2'
         playServicesVersion = '11.8.0'
+        dagger_version = '2.14.1'
     }
 
 

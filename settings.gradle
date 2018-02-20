@@ -1,3 +1,4 @@
-include ':app', ':infra'
+include ':app', ':domain', ':infra'
 def moduleDir = new File('modules')
+project(':domain').projectDir = new File(moduleDir, 'domain')
 project(':infra').projectDir = new File(moduleDir, 'infra')
