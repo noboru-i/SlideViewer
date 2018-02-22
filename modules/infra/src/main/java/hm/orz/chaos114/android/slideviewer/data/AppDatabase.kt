@@ -23,7 +23,7 @@ abstract class AppDatabase : RoomDatabase() {
 
     companion object {
         fun createInstance(application: Application): AppDatabase =
-                Room.databaseBuilder(application, AppDatabase::class.java, "droidkaigi.db")
+                Room.databaseBuilder(application, AppDatabase::class.java, "slide_viewer.db")
                         .fallbackToDestructiveMigration()
                         .build()
     }

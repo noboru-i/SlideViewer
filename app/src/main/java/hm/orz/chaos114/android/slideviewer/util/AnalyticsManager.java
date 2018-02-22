@@ -62,8 +62,8 @@ public final class AnalyticsManager {
         }
 
         TalkDao dao = new TalkDao(sAppContext);
-        int count = dao.list().size();
-        mFirebaseAnalytics.setUserProperty("slide_count", String.format(Locale.getDefault(), "%d", count));
+//        int count = dao.list().size();
+//        mFirebaseAnalytics.setUserProperty("slide_count", String.format(Locale.getDefault(), "%d", count));
     }
 
 
