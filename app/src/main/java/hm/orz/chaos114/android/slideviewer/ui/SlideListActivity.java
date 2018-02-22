@@ -3,12 +3,12 @@ package hm.orz.chaos114.android.slideviewer.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,16 +17,29 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
+import hm.orz.chaos114.android.slideviewer.data.AppDatabase;
+import hm.orz.chaos114.android.slideviewer.data.entities.SlideEntity;
+import hm.orz.chaos114.android.slideviewer.data.entities.TalkMetaDataEntity;
+import hm.orz.chaos114.android.slideviewer.data.entities.TalkWithChildrenEntity;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideListBinding;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.Talk;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.widget.SlideListRowView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import timber.log.Timber;
 
 public class SlideListActivity extends AppCompatActivity {
+    @Inject
+    AppDatabase appDatabase;
+//    TalkDao talkDao;
 
     private ActivitySlideListBinding binding;
     private SlideListAdapter adapter;
@@ -34,6 +47,7 @@ public class SlideListActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        AndroidInjection.inject(this);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_slide_list);
 
         setSupportActionBar(binding.toolbar);
@@ -62,16 +76,23 @@ public class SlideListActivity extends AppCompatActivity {
         super.onResume();
         binding.adView.resume();
 
-        TalkDao dao = new TalkDao(this);
-        List<Talk> talks = dao.list();
-        if (talks.size() == 0) {
-            binding.emptyLayout.setVisibility(View.VISIBLE);
-            binding.list.setVisibility(View.GONE);
-        } else {
-            binding.emptyLayout.setVisibility(View.GONE);
-            binding.list.setVisibility(View.VISIBLE);
-        }
-        adapter.updateData(talks);
+        appDatabase.talkDao().fetch()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(talks -> {
+                            Timber.d("sucess : %s", talks);
+                            if (talks.size() == 0) {
+                                binding.emptyLayout.setVisibility(View.VISIBLE);
+                                binding.list.setVisibility(View.GONE);
+                            } else {
+                                binding.emptyLayout.setVisibility(View.GONE);
+                                binding.list.setVisibility(View.VISIBLE);
+                            }
+                            adapter.updateData(talks);
+                        },
+                        throwable -> {
+                            Timber.d(throwable, "fail");
+                        });
     }
 
     @Override
@@ -118,7 +139,7 @@ public class SlideListActivity extends AppCompatActivity {
     }
 
     private static class SlideListAdapter extends RecyclerView.Adapter<ViewHolder> {
-        private List<Talk> mTalks;
+        private List<TalkWithChildrenEntity> mTalks;
 
         private SlideListAdapter() {
             // no-op
@@ -133,13 +154,12 @@ public class SlideListActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
-            Talk item = mTalks.get(position);
-            List<Slide> slides = item.getSlides();
-            TalkDao dao = new TalkDao(holder.itemView.getContext());
-            TalkMetaData talkMetaData = dao.findMetaData(item);
+            TalkWithChildrenEntity item = mTalks.get(position);
+            List<SlideEntity> slides = item.getSlideList();
+            TalkMetaDataEntity talkMetaData = item.getTalkMetaDataList().get(0);
 
             ((SlideListRowView) holder.itemView).bind(slides, talkMetaData);
-            holder.itemView.setTag(talkMetaData.getTalk());
+            holder.itemView.setTag(talkMetaData.getTalkId());
         }
 
         @Override
@@ -155,7 +175,7 @@ public class SlideListActivity extends AppCompatActivity {
             return mTalks.size();
         }
 
-        void updateData(List<Talk> talks) {
+        void updateData(List<TalkWithChildrenEntity> talks) {
             mTalks = talks;
             notifyDataSetChanged();
         }

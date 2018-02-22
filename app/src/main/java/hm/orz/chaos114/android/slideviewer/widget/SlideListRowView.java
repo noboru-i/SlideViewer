@@ -11,6 +11,8 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import hm.orz.chaos114.android.slideviewer.R;
+import hm.orz.chaos114.android.slideviewer.data.entities.SlideEntity;
+import hm.orz.chaos114.android.slideviewer.data.entities.TalkMetaDataEntity;
 import hm.orz.chaos114.android.slideviewer.databinding.ViewSlideListRowBinding;
 import hm.orz.chaos114.android.slideviewer.model.Slide;
 import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
@@ -33,7 +35,7 @@ public class SlideListRowView extends RelativeLayout {
         binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.view_slide_list_row, this, true);
     }
 
-    public void bind(List<Slide> slides, TalkMetaData talkMetaData) {
+    public void bind(List<SlideEntity> slides, TalkMetaDataEntity talkMetaData) {
         Glide.with(getContext()).load(slides.get(0).getPreview()).into(binding.slideListRowImage);
         if (talkMetaData != null) {
             binding.slideListRowTitle.setText(talkMetaData.getTitle());

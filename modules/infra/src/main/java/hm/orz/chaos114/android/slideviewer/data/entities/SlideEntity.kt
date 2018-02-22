@@ -4,7 +4,7 @@ import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "slide")
 data class SlideEntity(
         @PrimaryKey var id: Int,
         @ColumnInfo(name = "talk_id") var talkId: Int,

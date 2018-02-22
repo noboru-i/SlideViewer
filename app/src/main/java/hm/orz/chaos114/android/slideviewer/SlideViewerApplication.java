@@ -1,5 +1,6 @@
 package hm.orz.chaos114.android.slideviewer;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.support.multidex.MultiDex;
@@ -7,21 +8,31 @@ import android.support.multidex.MultiDex;
 import com.facebook.stetho.Stetho;
 import com.squareup.leakcanary.LeakCanary;
 
-import hm.orz.chaos114.android.slideviewer.di.AppComponent;
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjector;
+import dagger.android.DispatchingAndroidInjector;
+import dagger.android.HasActivityInjector;
+import hm.orz.chaos114.android.slideviewer.di.DaggerAppComponent;
 import hm.orz.chaos114.android.slideviewer.domain.di.DatabaseModule;
 import hm.orz.chaos114.android.slideviewer.ui.CrashReportingTree;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 import timber.log.Timber;
 
-public class SlideViewerApplication extends Application {
+public class SlideViewerApplication extends Application implements HasActivityInjector {
 
-    private AppComponent applicationComponent;
+    @Inject
+    DispatchingAndroidInjector<Activity> dispatchingAndroidInjector;
 
     @Override
     public void onCreate() {
         super.onCreate();
 
-        initializeInjector();
+        DaggerAppComponent.builder()
+                .application(this)
+                .databaseModule(DatabaseModule.instance)
+                .build()
+                .inject(this);
 
         LeakCanary.install(this);
         Timber.plant(BuildConfig.DEBUG ? new Timber.DebugTree() : new CrashReportingTree());
@@ -39,13 +50,8 @@ public class SlideViewerApplication extends Application {
         MultiDex.install(this);
     }
 
-    private void initializeInjector() {
-        applicationComponent = DaggerAppComponent.builder()
-                .appModule(new DatabaseModule(this))
-                .build();
-    }
-
-    public AppComponent getApplicationComponent() {
-        return applicationComponent;
+    @Override
+    public AndroidInjector<Activity> activityInjector() {
+        return dispatchingAndroidInjector;
     }
 }

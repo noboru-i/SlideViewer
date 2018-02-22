@@ -13,11 +13,13 @@ import javax.inject.Singleton
 open class DatabaseModule {
 
     companion object {
+        @JvmField
         val instance = DatabaseModule()
     }
 
-    @Singleton @Provides
-    open fun provideDb(app: Application): AppDatabase = AppDatabase.createInstance(app)
+    @Singleton
+    @Provides
+    fun provideAppDatabase(app: Application): AppDatabase = AppDatabase.createInstance(app)
 
     @Singleton
     @Provides
