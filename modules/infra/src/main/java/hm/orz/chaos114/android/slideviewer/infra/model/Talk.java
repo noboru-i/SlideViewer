@@ -1,4 +1,4 @@
-package hm.orz.chaos114.android.slideviewer.model;
+package hm.orz.chaos114.android.slideviewer.infra.model;
 
 import com.google.gson.annotations.Expose;
 import com.j256.ormlite.dao.ForeignCollection;

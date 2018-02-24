@@ -12,7 +12,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.Locale;
 
 import hm.orz.chaos114.android.slideviewer.R;
-import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
+import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao;
 import timber.log.Timber;
 
 public final class AnalyticsManager {

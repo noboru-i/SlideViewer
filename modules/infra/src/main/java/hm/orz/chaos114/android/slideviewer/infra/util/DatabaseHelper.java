@@ -1,4 +1,4 @@
-package hm.orz.chaos114.android.slideviewer.util;
+package hm.orz.chaos114.android.slideviewer.infra.util;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,9 +9,9 @@ import com.j256.ormlite.table.TableUtils;
 
 import java.sql.SQLException;
 
-import hm.orz.chaos114.android.slideviewer.model.Slide;
-import hm.orz.chaos114.android.slideviewer.model.Talk;
-import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
+import hm.orz.chaos114.android.slideviewer.infra.model.Slide;
+import hm.orz.chaos114.android.slideviewer.infra.model.Talk;
+import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData;
 import timber.log.Timber;
 
 public final class DatabaseHelper extends OrmLiteSqliteOpenHelper {

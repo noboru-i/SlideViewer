@@ -25,6 +25,12 @@ dependencies {
 
     implementation "com.android.support:appcompat-v7:${versions.supportLib}"
 
+    implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.jakewharton.timber:timber:4.6.0'
+    implementation 'com.j256.ormlite:ormlite-android:5.0'
+    provided 'org.projectlombok:lombok:1.16.18'
+    annotationProcessor 'org.projectlombok:lombok:1.16.18'
+
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'

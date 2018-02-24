@@ -1,4 +1,4 @@
-package hm.orz.chaos114.android.slideviewer.dao;
+package hm.orz.chaos114.android.slideviewer.infra.dao;
 
 import android.content.Context;
 
@@ -10,10 +10,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import hm.orz.chaos114.android.slideviewer.model.Slide;
-import hm.orz.chaos114.android.slideviewer.model.Talk;
-import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
-import hm.orz.chaos114.android.slideviewer.util.DatabaseHelper;
+import hm.orz.chaos114.android.slideviewer.infra.model.Slide;
+import hm.orz.chaos114.android.slideviewer.infra.model.Talk;
+import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData;
+import hm.orz.chaos114.android.slideviewer.infra.util.DatabaseHelper;
 
 public class TalkDao {
     private Context mContext;
