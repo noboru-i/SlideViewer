@@ -1,1 +1,4 @@
 include ':app', ':infra'
+def moduleDir = new File('modules')
+
+project(':infra').projectDir = new File(moduleDir, 'infra')

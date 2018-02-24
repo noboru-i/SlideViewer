@@ -9,8 +9,8 @@ def isCi = "true".equals(System.getenv("CI"))
 def preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "26.0.2"
+    compileSdkVersion versions.compileSdk
+    buildToolsVersion versions.buildTools
 
     dataBinding {
         enabled = true
@@ -23,8 +23,8 @@ android {
 
     defaultConfig {
         applicationId "hm.orz.chaos114.android.slideviewer"
-        minSdkVersion 15
-        targetSdkVersion 27
+        minSdkVersion versions.minSdk
+        targetSdkVersion versions.targetSdk
         versionCode 13
         versionName "3.2.0"
     }
@@ -69,23 +69,20 @@ android {
     }
 }
 
-ext {
-    supportLibVersion = '27.0.2'
-    playServicesVersion = '11.8.0'
-}
-
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile "com.android.support:support-v4:${supportLibVersion}"
-    compile "com.android.support:appcompat-v7:${supportLibVersion}"
-    compile "com.android.support:design:${supportLibVersion}"
-    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
-    compile "com.google.firebase:firebase-crash:${playServicesVersion}"
+    implementation project(':infra')
+
+    compile "com.android.support:support-v4:${versions.supportLib}"
+    compile "com.android.support:appcompat-v7:${versions.supportLib}"
+    compile "com.android.support:design:${versions.supportLib}"
+    compile "com.android.support:recyclerview-v7:${versions.supportLib}"
+    compile "com.google.firebase:firebase-crash:${versions.playServices}"
     compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.github.bumptech.glide:glide:4.5.0'
-    compile "com.google.android.gms:play-services-ads:${playServicesVersion}"
-    compile "com.google.android.gms:play-services-analytics:${playServicesVersion}"
-    implementation "com.google.android.gms:play-services-oss-licenses:${playServicesVersion}"
+    compile "com.google.android.gms:play-services-ads:${versions.playServices}"
+    compile "com.google.android.gms:play-services-analytics:${versions.playServices}"
+    implementation "com.google.android.gms:play-services-oss-licenses:${versions.playServices}"
     compile 'com.j256.ormlite:ormlite-android:5.0'
     compile 'com.github.chrisbanes:PhotoView:2.1.3'
     provided 'org.projectlombok:lombok:1.16.18'
