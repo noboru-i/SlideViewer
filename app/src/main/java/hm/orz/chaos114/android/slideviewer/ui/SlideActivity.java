@@ -158,6 +158,7 @@ public class SlideActivity extends AppCompatActivity {
 
         ocrUtil = new OcrUtil(this);
         ocrUtil.listen()
+                .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ocrResult -> {
                     Timber.d("original is: %s", ocrResult.getUrl());
                     Timber.d("text is recognized: %s", ocrResult.getRecognizedText());
