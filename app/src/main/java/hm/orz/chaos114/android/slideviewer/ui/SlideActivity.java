@@ -36,8 +36,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import hm.orz.chaos114.android.slideviewer.R;
-import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideBinding;
+import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.infra.model.Slide;
 import hm.orz.chaos114.android.slideviewer.infra.model.Talk;
 import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData;
