@@ -9,6 +9,7 @@ buildscript {
                 targetSdk   : 27,
                 supportLib  : '27.0.2',
                 playServices: '11.8.0',
+                dagger      : '2.14.1',
                 rxJava      : '2.1.9',
                 rxAndroid   : '2.0.1',
                 okhttp      : '3.9.1',
