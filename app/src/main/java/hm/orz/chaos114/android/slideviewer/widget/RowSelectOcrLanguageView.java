@@ -9,8 +9,8 @@ import android.widget.LinearLayout;
 
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.RowSelectOcrLanguageBinding;
-import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
-import hm.orz.chaos114.android.slideviewer.util.OcrUtil;
+import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository;
+import hm.orz.chaos114.android.slideviewer.ocr.OcrUtil;
 import lombok.Setter;
 
 /**
@@ -49,8 +49,8 @@ public class RowSelectOcrLanguageView extends LinearLayout {
                     ? R.string.select_ocr_language_downloaded
                     : R.string.select_ocr_language_not_downloaded);
         }
-        SettingPrefs settingPrefs = SettingPrefs.get(getContext());
-        binding.languageSwitch.setChecked(language.getId().equals(settingPrefs.getSelectedLanguage()));
+        SettingsRepository settingsRepository = new SettingsRepository(getContext());
+        binding.languageSwitch.setChecked(language.getId().equals(settingsRepository.getSelectedLanguage()));
 
         binding.languageSwitch.setOnClickListener(v -> {
             if (listener != null) {

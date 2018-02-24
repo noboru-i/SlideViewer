@@ -1,4 +1,4 @@
-package hm.orz.chaos114.android.slideviewer.pref;
+package hm.orz.chaos114.android.slideviewer.infra.pref;
 
 import com.rejasupotaro.android.kvs.annotations.Key;
 import com.rejasupotaro.android.kvs.annotations.Table;

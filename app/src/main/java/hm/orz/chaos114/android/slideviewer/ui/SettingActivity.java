@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySettingBinding;
-import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
+import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 
 public class SettingActivity extends AppCompatActivity {
@@ -58,18 +58,18 @@ public class SettingActivity extends AppCompatActivity {
 
     // TODO move to ViewModel
     private void init() {
-        SettingPrefs prefs = SettingPrefs.get(this);
-        binding.settingSwitch.setChecked(prefs.getEnableOcr());
+        SettingsRepository settingsRepository = new SettingsRepository(this);
+        binding.settingSwitch.setChecked(settingsRepository.getEnableOcr());
 
         binding.settingSwitch.setOnClickListener(v -> {
             SwitchCompat view = (SwitchCompat) v;
             boolean isChecked = view.isChecked();
-            if (isChecked && TextUtils.isEmpty(prefs.getSelectedLanguage())) {
+            if (isChecked && TextUtils.isEmpty(settingsRepository.getSelectedLanguage())) {
                 view.setChecked(false);
                 Toast.makeText(this, R.string.setting_error_before_download, Toast.LENGTH_LONG).show();
                 return;
             }
-            prefs.setEnableOcr(isChecked);
+            settingsRepository.setEnableOcr(isChecked);
         });
         binding.selectLanguageLayout.setOnClickListener(v -> SelectOcrLanguageActivity.start(this));
     }

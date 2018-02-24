@@ -16,8 +16,8 @@ import java.util.List;
 
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySelectOcrLanguageBinding;
-import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
-import hm.orz.chaos114.android.slideviewer.util.OcrUtil;
+import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository;
+import hm.orz.chaos114.android.slideviewer.ocr.OcrUtil;
 import hm.orz.chaos114.android.slideviewer.widget.RowSelectOcrLanguageView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -55,8 +55,8 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
         }
 
         private void updatePrefs(@Nullable OcrUtil.Language language) {
-            SettingPrefs settingPrefs = SettingPrefs.get(SelectOcrLanguageActivity.this);
-            settingPrefs.setSelectedLanguage(language != null ? language.getId() : null);
+            SettingsRepository settingsRepository = new SettingsRepository(SelectOcrLanguageActivity.this);
+            settingsRepository.setSelectedLanguage(language != null ? language.getId() : null);
             adapter.notifyDataSetChanged();
         }
     };
