@@ -36,11 +36,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import hm.orz.chaos114.android.slideviewer.R;
-import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideBinding;
-import hm.orz.chaos114.android.slideviewer.model.Slide;
-import hm.orz.chaos114.android.slideviewer.model.Talk;
-import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
+import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao;
+import hm.orz.chaos114.android.slideviewer.infra.model.Slide;
+import hm.orz.chaos114.android.slideviewer.infra.model.Talk;
+import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData;
 import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
@@ -285,7 +285,7 @@ public class SlideActivity extends AppCompatActivity {
         talk = dao.findByUrl(uri.toString());
         if (talk != null) {
             // DBにデータがある場合の描画処理
-            TalkMetaData talkMetaData = talk.getTalkMetaData().iterator().next();
+            TalkMetaData talkMetaData = talk.getTalkMetaDataCollection().iterator().next();
             binding.slideTitle.setText(talkMetaData.getTitle());
             binding.slideUser.setText(talkMetaData.getUser());
             setPageNumbers(1, talk.getSlides().size());

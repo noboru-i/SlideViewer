@@ -14,9 +14,9 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
-import hm.orz.chaos114.android.slideviewer.model.Talk;
-import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
+import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao;
+import hm.orz.chaos114.android.slideviewer.infra.model.Talk;
+import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData;
 import io.reactivex.Observable;
 import okhttp3.Call;
 import okhttp3.Callback;

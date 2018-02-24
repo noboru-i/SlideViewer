@@ -3,7 +3,6 @@ package hm.orz.chaos114.android.slideviewer.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,11 +17,11 @@ import android.view.ViewGroup;
 import java.util.List;
 
 import hm.orz.chaos114.android.slideviewer.R;
-import hm.orz.chaos114.android.slideviewer.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideListBinding;
-import hm.orz.chaos114.android.slideviewer.model.Slide;
-import hm.orz.chaos114.android.slideviewer.model.Talk;
-import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
+import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao;
+import hm.orz.chaos114.android.slideviewer.infra.model.Slide;
+import hm.orz.chaos114.android.slideviewer.infra.model.Talk;
+import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.widget.SlideListRowView;
 

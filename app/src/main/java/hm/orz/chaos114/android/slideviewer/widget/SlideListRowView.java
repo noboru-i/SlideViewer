@@ -12,8 +12,8 @@ import java.util.List;
 
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ViewSlideListRowBinding;
-import hm.orz.chaos114.android.slideviewer.model.Slide;
-import hm.orz.chaos114.android.slideviewer.model.TalkMetaData;
+import hm.orz.chaos114.android.slideviewer.infra.model.Slide;
+import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData;
 
 public class SlideListRowView extends RelativeLayout {
 
