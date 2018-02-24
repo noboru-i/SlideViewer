@@ -41,11 +41,11 @@ import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.infra.model.Slide;
 import hm.orz.chaos114.android.slideviewer.infra.model.Talk;
 import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData;
-import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
+import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository;
+import hm.orz.chaos114.android.slideviewer.ocr.OcrUtil;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
-import hm.orz.chaos114.android.slideviewer.util.OcrUtil;
 import hm.orz.chaos114.android.slideviewer.util.SlideShareLoader;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
 import hm.orz.chaos114.android.slideviewer.widget.PickPageDialog;
@@ -179,12 +179,12 @@ public class SlideActivity extends AppCompatActivity {
 
 
         // reset text if language is changed.
-        SettingPrefs settingPrefs = SettingPrefs.get(this);
-        binding.recognizeText.setVisibility(settingPrefs.getEnableOcr() ? View.VISIBLE : View.GONE);
-        if (!settingPrefs.getEnableOcr()
+        SettingsRepository settingsRepository = new SettingsRepository(this);
+        binding.recognizeText.setVisibility(settingsRepository.getEnableOcr() ? View.VISIBLE : View.GONE);
+        if (!settingsRepository.getEnableOcr()
                 || currentLanguageId == null
-                || !currentLanguageId.equals(settingPrefs.getSelectedLanguage())) {
-            currentLanguageId = settingPrefs.getSelectedLanguage();
+                || !currentLanguageId.equals(settingsRepository.getSelectedLanguage())) {
+            currentLanguageId = settingsRepository.getSelectedLanguage();
             // reset
             recognizeTextMap = new HashMap<>();
         }

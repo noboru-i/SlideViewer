@@ -1,4 +1,4 @@
-package hm.orz.chaos114.android.slideviewer.util;
+package hm.orz.chaos114.android.slideviewer.ocr;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import hm.orz.chaos114.android.slideviewer.pref.SettingPrefs;
+import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository;
 import io.reactivex.Observable;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Single;
@@ -41,16 +41,16 @@ public final class OcrUtil {
                     @Override
                     public Observable<OcrResult> apply(@NonNull OcrRequest ocrRequest) throws Exception {
                         return Observable.create((ObservableOnSubscribe<OcrResult>) emitter -> {
-                            SettingPrefs settingPrefs = SettingPrefs.get(context);
-                            if (!settingPrefs.getEnableOcr()
-                                    || settingPrefs.getSelectedLanguage() == null) {
+                            SettingsRepository repository = new SettingsRepository(context);
+                            if (!repository.getEnableOcr()
+                                    || repository.getSelectedLanguage() == null) {
                                 emitter.onNext(new OcrResult(ocrRequest.getUrl(), ""));
                                 return;
                             }
                             Bitmap converted = ocrRequest.getBitmap().copy(Bitmap.Config.ARGB_8888, false);
                             Timber.d("start recognize: %s", ocrRequest.getUrl());
                             TessBaseAPI baseApi = new TessBaseAPI();
-                            baseApi.init(getTessdataDir(context).getParentFile().getAbsolutePath(), settingPrefs.getSelectedLanguage());
+                            baseApi.init(getTessdataDir(context).getParentFile().getAbsolutePath(), repository.getSelectedLanguage());
                             baseApi.setImage(converted);
                             String recognizedText = baseApi.getUTF8Text();
                             baseApi.end();
