@@ -7,6 +7,7 @@ import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.List;
 
 import lombok.Data;
@@ -38,4 +39,8 @@ public class Talk implements Serializable {
     private ForeignCollection<TalkMetaData> talkMetaData;
 
     private List<Slide> slides;
+
+    public Collection<TalkMetaData> getTalkMetaDataCollection() {
+        return talkMetaData;
+    }
 }

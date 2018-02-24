@@ -285,7 +285,7 @@ public class SlideActivity extends AppCompatActivity {
         talk = dao.findByUrl(uri.toString());
         if (talk != null) {
             // DBにデータがある場合の描画処理
-            TalkMetaData talkMetaData = talk.getTalkMetaData().iterator().next();
+            TalkMetaData talkMetaData = talk.getTalkMetaDataCollection().iterator().next();
             binding.slideTitle.setText(talkMetaData.getTitle());
             binding.slideUser.setText(talkMetaData.getUser());
             setPageNumbers(1, talk.getSlides().size());
