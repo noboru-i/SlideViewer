@@ -56,7 +56,7 @@ jobs:
           name: Build apk
           command: ./gradlew :app:assembleDebug
       - store_artifacts:
-          path: app/build/outputs/apk/app-debug.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
           destination: app-debug.apk
       - store_test_results:
           path: app/build/test-results
@@ -74,7 +74,7 @@ jobs:
           name: Build apk
           command: ./gradlew :app:assembleRelease
       - store_artifacts:
-          path: app/build/outputs/apk/app-release.apk
+          path: app/build/outputs/apk/release/app-release.apk
           destination: app-release.apk
       - store_artifacts:
           path: app/build/outputs/mapping/release/dump.txt
