@@ -35,6 +35,9 @@ import com.google.android.gms.ads.InterstitialAd;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideBinding;
 import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao;
@@ -56,6 +59,9 @@ import timber.log.Timber;
 public class SlideActivity extends AppCompatActivity {
     private static final String TAG = SlideActivity.class.getSimpleName();
 
+    @Inject
+    OcrUtil ocrUtil;
+
     private ActivitySlideBinding binding;
 
     private Menu menu;
@@ -68,8 +74,6 @@ public class SlideActivity extends AppCompatActivity {
     private Map<String, String> recognizeTextMap;
     private String currentLanguageId;
 
-    private OcrUtil ocrUtil;
-
     static void start(Context context, @NonNull String url) {
         Intent intent = new Intent(context, SlideActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
@@ -79,6 +83,7 @@ public class SlideActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_slide);
 
@@ -156,7 +161,6 @@ public class SlideActivity extends AppCompatActivity {
         loadAd();
         startLoad(false);
 
-        ocrUtil = new OcrUtil(this);
         ocrUtil.listen()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ocrResult -> {
