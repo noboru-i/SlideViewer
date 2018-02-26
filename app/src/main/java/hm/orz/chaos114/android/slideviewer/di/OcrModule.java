@@ -10,8 +10,6 @@ import hm.orz.chaos114.android.slideviewer.ocr.OcrUtil;
 
 @Module
 public class OcrModule {
-    public static OcrModule instance = new OcrModule();
-
     @Singleton
     @Provides
     public OcrUtil provideOcrUtil(Application app) {

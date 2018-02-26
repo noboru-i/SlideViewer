@@ -11,7 +11,6 @@ import dagger.android.AndroidInjector;
 import dagger.android.DispatchingAndroidInjector;
 import dagger.android.HasActivityInjector;
 import hm.orz.chaos114.android.slideviewer.di.DaggerAppComponent;
-import hm.orz.chaos114.android.slideviewer.di.OcrModule;
 import hm.orz.chaos114.android.slideviewer.ui.CrashReportingTree;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 import timber.log.Timber;
@@ -27,7 +26,6 @@ public class SlideViewerApplication extends Application implements HasActivityIn
 
         DaggerAppComponent.builder()
                 .application(this)
-                .ocrModule(OcrModule.instance)
                 .build()
                 .inject(this);
 

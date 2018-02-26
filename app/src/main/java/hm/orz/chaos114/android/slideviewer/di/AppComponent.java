@@ -21,7 +21,6 @@ public interface AppComponent {
     interface Builder {
         @BindsInstance
         Builder application(Application application);
-        Builder ocrModule(OcrModule ocrModule);
 
         AppComponent build();
     }
