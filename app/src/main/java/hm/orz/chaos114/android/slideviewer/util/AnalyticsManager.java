@@ -12,10 +12,11 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.Locale;
 
 import hm.orz.chaos114.android.slideviewer.R;
-import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao;
+import hm.orz.chaos114.android.slideviewer.infra.repository.TalkRepository;
 import timber.log.Timber;
 
 public final class AnalyticsManager {
+
     private static Context sAppContext = null;
     private static Tracker mTracker;
     private static FirebaseAnalytics mFirebaseAnalytics;
@@ -61,8 +62,8 @@ public final class AnalyticsManager {
             return;
         }
 
-        TalkDao dao = new TalkDao(sAppContext);
-        int count = dao.list().size();
+        TalkRepository talkRepository = new TalkRepository(sAppContext);
+        long count = talkRepository.count();
         mFirebaseAnalytics.setUserProperty("slide_count", String.format(Locale.getDefault(), "%d", count));
     }
 

@@ -16,22 +16,31 @@ import android.view.ViewGroup;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.android.AndroidInjection;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideListBinding;
 import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.infra.model.Slide;
 import hm.orz.chaos114.android.slideviewer.infra.model.Talk;
 import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData;
+import hm.orz.chaos114.android.slideviewer.infra.repository.TalkRepository;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.widget.SlideListRowView;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 
 public class SlideListActivity extends AppCompatActivity {
+
+    @Inject
+    TalkRepository talkRepository;
 
     private ActivitySlideListBinding binding;
     private SlideListAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_slide_list);
 
@@ -61,16 +70,18 @@ public class SlideListActivity extends AppCompatActivity {
         super.onResume();
         binding.adView.resume();
 
-        TalkDao dao = new TalkDao(this);
-        List<Talk> talks = dao.list();
-        if (talks.size() == 0) {
-            binding.emptyLayout.setVisibility(View.VISIBLE);
-            binding.list.setVisibility(View.GONE);
-        } else {
-            binding.emptyLayout.setVisibility(View.GONE);
-            binding.list.setVisibility(View.VISIBLE);
-        }
-        adapter.updateData(talks);
+        talkRepository.list()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(talks -> {
+                    if (talks.size() == 0) {
+                        binding.emptyLayout.setVisibility(View.VISIBLE);
+                        binding.list.setVisibility(View.GONE);
+                    } else {
+                        binding.emptyLayout.setVisibility(View.GONE);
+                        binding.list.setVisibility(View.VISIBLE);
+                    }
+                    adapter.updateData(talks);
+                });
     }
 
     @Override

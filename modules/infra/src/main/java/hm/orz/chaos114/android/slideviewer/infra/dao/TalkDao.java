@@ -22,7 +22,7 @@ public class TalkDao {
         mContext = context;
     }
 
-    public Talk findByUrl(String url) {
+    private Talk findByUrl(String url) {
         DatabaseHelper helper = new DatabaseHelper(mContext);
         try {
             Dao<Talk, Integer> dao = helper.getDao(Talk.class);
@@ -97,22 +97,6 @@ public class TalkDao {
             }
             talkMetaData.setTalk(talk);
             talkMetaDataDao.create(talkMetaData);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            helper.close();
-        }
-    }
-
-    public List<Talk> list() {
-        DatabaseHelper helper = new DatabaseHelper(mContext);
-        try {
-            Dao<Talk, Integer> dao = helper.getDao(Talk.class);
-            List<Talk> talks = dao.query(dao.queryBuilder().orderBy("id", false).limit(50L).prepare());
-            for (Talk talk : talks) {
-                setTalkInfo(talk);
-            }
-            return talks;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
