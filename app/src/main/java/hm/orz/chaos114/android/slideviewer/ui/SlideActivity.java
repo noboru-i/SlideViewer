@@ -45,6 +45,7 @@ import hm.orz.chaos114.android.slideviewer.infra.model.Slide;
 import hm.orz.chaos114.android.slideviewer.infra.model.Talk;
 import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData;
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository;
+import hm.orz.chaos114.android.slideviewer.infra.repository.TalkRepository;
 import hm.orz.chaos114.android.slideviewer.ocr.OcrUtil;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
@@ -52,7 +53,9 @@ import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
 import hm.orz.chaos114.android.slideviewer.util.SlideShareLoader;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
 import hm.orz.chaos114.android.slideviewer.widget.PickPageDialog;
+import io.reactivex.MaybeObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import timber.log.Timber;
 
@@ -61,6 +64,8 @@ public class SlideActivity extends AppCompatActivity {
 
     @Inject
     OcrUtil ocrUtil;
+    @Inject
+    TalkRepository talkRepository;
 
     private ActivitySlideBinding binding;
 
@@ -287,35 +292,56 @@ public class SlideActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
             dao.deleteByUrl(uri.toString());
         }
-        talk = dao.findByUrl(uri.toString());
-        if (talk != null) {
-            // DBにデータがある場合の描画処理
-            TalkMetaData talkMetaData = talk.getTalkMetaDataCollection().iterator().next();
-            binding.slideTitle.setText(talkMetaData.getTitle());
-            binding.slideUser.setText(talkMetaData.getUser());
-            setPageNumbers(1, talk.getSlides().size());
-            adapter.notifyDataSetChanged();
-            return;
-        }
-
-        loadingDialog.show(getFragmentManager(), null);
-
-        SlideShareLoader.load(getApplicationContext(), uri)
-                .subscribeOn(Schedulers.newThread())
+        talkRepository.findByUrl(uri.toString())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(talkMetaData -> {
-                    binding.slideTitle.setText(talkMetaData.getTitle());
-                    binding.slideUser.setText(talkMetaData.getUser());
-
-                    if (talkMetaData.getTalk() != null) {
-                        AnalyticsManager.sendStartEvent(TAG, talkMetaData.getTalk().getUrl());
-
-                        talk = talkMetaData.getTalk();
-                        loadingDialog.dismiss();
-                        setPageNumbers(1, talk.getSlides().size());
-                        adapter.notifyDataSetChanged();
+                .subscribe(new MaybeObserver<Talk>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        // no-op
                     }
-                }, throwable -> Toast.makeText(this, "failed.", Toast.LENGTH_SHORT).show());
+
+                    @Override
+                    public void onSuccess(Talk t) {
+                        talk = t;
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        // no-op
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        if (talk != null) {
+                            // DBにデータがある場合の描画処理
+                            TalkMetaData talkMetaData = talk.getTalkMetaDataCollection().iterator().next();
+                            binding.slideTitle.setText(talkMetaData.getTitle());
+                            binding.slideUser.setText(talkMetaData.getUser());
+                            setPageNumbers(1, talk.getSlides().size());
+                            adapter.notifyDataSetChanged();
+                            return;
+                        }
+
+                        loadingDialog.show(getFragmentManager(), null);
+
+                        SlideShareLoader.load(getApplicationContext(), uri)
+                                .subscribeOn(Schedulers.newThread())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(talkMetaData -> {
+                                    binding.slideTitle.setText(talkMetaData.getTitle());
+                                    binding.slideUser.setText(talkMetaData.getUser());
+
+                                    if (talkMetaData.getTalk() != null) {
+                                        AnalyticsManager.sendStartEvent(TAG, talkMetaData.getTalk().getUrl());
+
+                                        talk = talkMetaData.getTalk();
+                                        loadingDialog.dismiss();
+                                        setPageNumbers(1, talk.getSlides().size());
+                                        adapter.notifyDataSetChanged();
+                                    }
+                                }, throwable -> Toast.makeText(SlideActivity.this, "failed.", Toast.LENGTH_SHORT).show());
+                    }
+                });
     }
 
     /**
