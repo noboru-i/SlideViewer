@@ -54,6 +54,39 @@ public class TalkRepository {
         });
     }
 
+    public Flowable<List<Talk>> list() {
+        return Flowable.create(new FlowableOnSubscribe<List<Talk>>() {
+            @Override
+            public void subscribe(FlowableEmitter<List<Talk>> emitter) throws Exception {
+                DatabaseHelper helper = new DatabaseHelper(mContext);
+                try {
+                    Dao<Talk, Integer> dao = helper.getDao(Talk.class);
+                    List<Talk> talks = dao.query(dao.queryBuilder().orderBy("id", false).limit(50L).prepare());
+                    for (Talk talk : talks) {
+                        setTalkInfo(talk);
+                    }
+                    emitter.onNext(talks);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                } finally {
+                    helper.close();
+                }
+            }
+        }, BackpressureStrategy.LATEST);
+    }
+
+    public long count() {
+        DatabaseHelper helper = new DatabaseHelper(mContext);
+        try {
+            Dao<Talk, Integer> dao = helper.getDao(Talk.class);
+            return dao.countOf();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            helper.close();
+        }
+    }
+
     private void setTalkInfo(Talk talk) {
         CloseableIterator<Slide> iterator = talk.getSlideCollection().closeableIterator();
         try {
