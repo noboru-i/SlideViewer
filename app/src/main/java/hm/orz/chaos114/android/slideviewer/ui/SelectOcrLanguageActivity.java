@@ -17,7 +17,10 @@ import java.util.List;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySelectOcrLanguageBinding;
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository;
+import hm.orz.chaos114.android.slideviewer.ocr.LanguageDownloader;
 import hm.orz.chaos114.android.slideviewer.ocr.OcrUtil;
+import hm.orz.chaos114.android.slideviewer.ocr.model.Language;
+import hm.orz.chaos114.android.slideviewer.ocr.util.DirectorySettings;
 import hm.orz.chaos114.android.slideviewer.widget.RowSelectOcrLanguageView;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
@@ -30,20 +33,21 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
 
     private RowSelectOcrLanguageView.RowSelectOcrLanguageViewListener listener = new RowSelectOcrLanguageView.RowSelectOcrLanguageViewListener() {
         @Override
-        public void onChangeState(RowSelectOcrLanguageView view, OcrUtil.Language language, boolean isChecked) {
+        public void onChangeState(RowSelectOcrLanguageView view, Language language, boolean isChecked) {
             Timber.d("onChangeState: %b", isChecked);
             if (!isChecked) {
                 updatePrefs(null);
                 return;
             }
 
-            if (OcrUtil.hasFile(SelectOcrLanguageActivity.this, language)) {
+            if (DirectorySettings.hasFile(SelectOcrLanguageActivity.this, language)) {
                 updatePrefs(language);
                 return;
             }
 
             view.showLoading(true);
-            OcrUtil.download(SelectOcrLanguageActivity.this, language)
+            LanguageDownloader downloader = new LanguageDownloader();
+            downloader.download(SelectOcrLanguageActivity.this, language)
                     .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(file -> {
@@ -54,7 +58,7 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
                     });
         }
 
-        private void updatePrefs(@Nullable OcrUtil.Language language) {
+        private void updatePrefs(@Nullable Language language) {
             SettingsRepository settingsRepository = new SettingsRepository(SelectOcrLanguageActivity.this);
             settingsRepository.setSelectedLanguage(language != null ? language.getId() : null);
             adapter.notifyDataSetChanged();
@@ -85,12 +89,12 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
 
     private class Adapter extends BaseAdapter {
 
-        private List<OcrUtil.Language> rowDataList;
+        private List<Language> rowDataList;
 
         private Adapter() {
             rowDataList = new ArrayList<>();
-            rowDataList.add(new OcrUtil.Language("eng", "English", "https://github.com/tesseract-ocr/tessdata/blob/3.04.00/eng.traineddata?raw=true"));
-            rowDataList.add(new OcrUtil.Language("jpn", "Japanese", "https://github.com/tesseract-ocr/tessdata/blob/3.04.00/jpn.traineddata?raw=true"));
+            rowDataList.add(new Language("eng", "English", "https://github.com/tesseract-ocr/tessdata/blob/3.04.00/eng.traineddata?raw=true"));
+            rowDataList.add(new Language("jpn", "Japanese", "https://github.com/tesseract-ocr/tessdata/blob/3.04.00/jpn.traineddata?raw=true"));
         }
 
         @Override
@@ -99,7 +103,7 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
         }
 
         @Override
-        public OcrUtil.Language getItem(int position) {
+        public Language getItem(int position) {
             return rowDataList.get(position);
         }
 
@@ -117,7 +121,7 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
                 view = (RowSelectOcrLanguageView) convertView;
             }
 
-            OcrUtil.Language rowData = getItem(position);
+            Language rowData = getItem(position);
             view.setData(rowData);
             view.setListener(listener);
 

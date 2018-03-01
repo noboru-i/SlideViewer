@@ -7,6 +7,7 @@ buildscript {
                 buildTools  : "26.0.2",
                 minSdk      : 15,
                 targetSdk   : 27,
+                kotlin      : '1.2.21',
                 supportLib  : '27.0.2',
                 playServices: '11.8.0',
                 dagger      : '2.14.1',
@@ -25,6 +26,7 @@ buildscript {
         classpath 'com.google.gms:google-services:3.1.1'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
         classpath 'com.google.gms:oss-licenses:0.9.1'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
     }
 }
 

@@ -11,6 +11,8 @@ import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.RowSelectOcrLanguageBinding;
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository;
 import hm.orz.chaos114.android.slideviewer.ocr.OcrUtil;
+import hm.orz.chaos114.android.slideviewer.ocr.model.Language;
+import hm.orz.chaos114.android.slideviewer.ocr.util.DirectorySettings;
 import lombok.Setter;
 
 /**
@@ -19,7 +21,7 @@ import lombok.Setter;
 public class RowSelectOcrLanguageView extends LinearLayout {
 
     private RowSelectOcrLanguageBinding binding;
-    private OcrUtil.Language language;
+    private Language language;
     private boolean loading;
     @Setter
     private RowSelectOcrLanguageViewListener listener;
@@ -38,14 +40,14 @@ public class RowSelectOcrLanguageView extends LinearLayout {
         binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.row_select_ocr_language, this, true);
     }
 
-    public void setData(OcrUtil.Language language) {
+    public void setData(Language language) {
         this.language = language;
 
         binding.label.setText(language.getLabel());
         if (loading) {
             binding.status.setText(R.string.select_ocr_language_downloading);
         } else {
-            binding.status.setText(OcrUtil.hasFile(getContext(), language)
+            binding.status.setText(DirectorySettings.hasFile(getContext(), language)
                     ? R.string.select_ocr_language_downloaded
                     : R.string.select_ocr_language_not_downloaded);
         }
@@ -69,6 +71,6 @@ public class RowSelectOcrLanguageView extends LinearLayout {
     }
 
     public interface RowSelectOcrLanguageViewListener {
-        void onChangeState(RowSelectOcrLanguageView view, OcrUtil.Language language, boolean isChecked);
+        void onChangeState(RowSelectOcrLanguageView view, Language language, boolean isChecked);
     }
 }

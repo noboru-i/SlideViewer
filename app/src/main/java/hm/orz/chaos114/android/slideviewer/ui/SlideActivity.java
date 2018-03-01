@@ -303,6 +303,12 @@ public class SlideActivity extends AppCompatActivity {
                     @Override
                     public void onSuccess(Talk t) {
                         talk = t;
+                        // DBにデータがある場合の描画処理
+                        TalkMetaData talkMetaData = talk.getTalkMetaDataCollection().iterator().next();
+                        binding.slideTitle.setText(talkMetaData.getTitle());
+                        binding.slideUser.setText(talkMetaData.getUser());
+                        setPageNumbers(1, talk.getSlides().size());
+                        adapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -312,16 +318,6 @@ public class SlideActivity extends AppCompatActivity {
 
                     @Override
                     public void onComplete() {
-                        if (talk != null) {
-                            // DBにデータがある場合の描画処理
-                            TalkMetaData talkMetaData = talk.getTalkMetaDataCollection().iterator().next();
-                            binding.slideTitle.setText(talkMetaData.getTitle());
-                            binding.slideUser.setText(talkMetaData.getUser());
-                            setPageNumbers(1, talk.getSlides().size());
-                            adapter.notifyDataSetChanged();
-                            return;
-                        }
-
                         loadingDialog.show(getFragmentManager(), null);
 
                         SlideShareLoader.load(getApplicationContext(), uri)
