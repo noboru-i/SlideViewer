@@ -46,7 +46,7 @@ import hm.orz.chaos114.android.slideviewer.infra.model.Talk;
 import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData;
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository;
 import hm.orz.chaos114.android.slideviewer.infra.repository.TalkRepository;
-import hm.orz.chaos114.android.slideviewer.ocr.OcrUtil;
+import hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizer;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
@@ -63,7 +63,7 @@ public class SlideActivity extends AppCompatActivity {
     private static final String TAG = SlideActivity.class.getSimpleName();
 
     @Inject
-    OcrUtil ocrUtil;
+    OcrRecognizer ocrRecognizer;
     @Inject
     TalkRepository talkRepository;
 
@@ -166,7 +166,7 @@ public class SlideActivity extends AppCompatActivity {
         loadAd();
         startLoad(false);
 
-        ocrUtil.listen()
+        ocrRecognizer.listen()
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(ocrResult -> {
                     Timber.d("original is: %s", ocrResult.getUrl());
@@ -475,7 +475,7 @@ public class SlideActivity extends AppCompatActivity {
                                 Timber.d("onResourceReady: %d, contains and same position", position);
                                 return false;
                             }
-                            ocrUtil.recognize(slide.getOriginal(), resource);
+                            ocrRecognizer.recognize(slide.getOriginal(), resource);
                             return false;
                         }
                     })

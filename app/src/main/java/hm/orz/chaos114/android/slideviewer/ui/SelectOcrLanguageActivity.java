@@ -18,7 +18,6 @@ import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySelectOcrLanguageBinding;
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository;
 import hm.orz.chaos114.android.slideviewer.ocr.LanguageDownloader;
-import hm.orz.chaos114.android.slideviewer.ocr.OcrUtil;
 import hm.orz.chaos114.android.slideviewer.ocr.model.Language;
 import hm.orz.chaos114.android.slideviewer.ocr.util.DirectorySettings;
 import hm.orz.chaos114.android.slideviewer.widget.RowSelectOcrLanguageView;
