@@ -39,8 +39,8 @@ public class RowSelectOcrLanguageView extends LinearLayout {
         binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.row_select_ocr_language, this, true);
     }
 
-    public void setData(Language language) {
-        this.language = language;
+    public void setData(Language lang) {
+        this.language = lang;
 
         binding.label.setText(language.getLabel());
         if (loading) {

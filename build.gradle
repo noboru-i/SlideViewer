@@ -8,7 +8,7 @@ buildscript {
                 minSdk      : 15,
                 targetSdk   : 27,
                 kotlin      : '1.2.21',
-                supportLib  : '27.0.2',
+                supportLib  : '27.1.0',
                 playServices: '11.8.0',
                 dagger      : '2.14.1',
                 rxJava      : '2.1.9',
