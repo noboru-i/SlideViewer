@@ -47,7 +47,6 @@ public class SelectOcrLanguageActivity extends AppCompatActivity {
             view.showLoading(true);
             LanguageDownloader downloader = new LanguageDownloader();
             downloader.download(SelectOcrLanguageActivity.this, language)
-                    .subscribeOn(Schedulers.newThread())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(file -> {
                         Toast.makeText(SelectOcrLanguageActivity.this, "download succeeded.", Toast.LENGTH_SHORT).show();
