@@ -27,6 +27,7 @@ android {
         targetSdkVersion versions.targetSdk
         versionCode 13
         versionName "3.2.0"
+        multiDexEnabled true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -74,6 +75,7 @@ dependencies {
     implementation project(':infra')
     implementation project(':ocr')
 
+    implementation 'com.android.support:multidex:1.0.3'
     compile "com.android.support:support-v4:${versions.supportLib}"
     compile "com.android.support:appcompat-v7:${versions.supportLib}"
     compile "com.android.support:design:${versions.supportLib}"

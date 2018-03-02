@@ -1,4 +1,5 @@
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion versions.compileSdk
@@ -27,15 +28,12 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation project(':infra')
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
 
     implementation 'com.rmtheis:tess-two:8.0.0'
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
     implementation "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
     implementation "com.jakewharton.timber:timber:${versions.timber}"
-
-    // TODO remove in the future by Kotlin
-    provided 'org.projectlombok:lombok:1.16.18'
-    annotationProcessor 'org.projectlombok:lombok:1.16.18'
 
     testImplementation 'junit:junit:4.12'
 
