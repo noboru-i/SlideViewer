@@ -50,7 +50,7 @@ import hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizer;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
-import hm.orz.chaos114.android.slideviewer.util.SlideShareLoader;
+import hm.orz.chaos114.android.slideviewer.infra.network.SlideShareLoader;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
 import hm.orz.chaos114.android.slideviewer.widget.PickPageDialog;
 import io.reactivex.MaybeObserver;

@@ -1,4 +1,4 @@
-package hm.orz.chaos114.android.slideviewer.util;
+package hm.orz.chaos114.android.slideviewer.infra.network;
 
 import android.content.Context;
 import android.net.Uri;

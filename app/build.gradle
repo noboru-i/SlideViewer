@@ -81,19 +81,14 @@ dependencies {
     compile "com.android.support:design:${versions.supportLib}"
     compile "com.android.support:recyclerview-v7:${versions.supportLib}"
     compile "com.google.firebase:firebase-crash:${versions.playServices}"
-    compile 'com.google.code.gson:gson:2.8.2'
     compile 'com.github.bumptech.glide:glide:4.5.0'
     compile "com.google.android.gms:play-services-ads:${versions.playServices}"
     compile "com.google.android.gms:play-services-analytics:${versions.playServices}"
     implementation "com.google.android.gms:play-services-oss-licenses:${versions.playServices}"
     compile 'com.github.chrisbanes:PhotoView:2.1.3'
-    provided 'org.projectlombok:lombok:1.16.18'
-    annotationProcessor 'org.projectlombok:lombok:1.16.18'
     compile "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
     compile "io.reactivex.rxjava2:rxandroid:${versions.rxAndroid}"
     compile "com.jakewharton.timber:timber:${versions.timber}"
-    compile "com.squareup.okhttp3:okhttp:${versions.okhttp}"
-    compile 'org.jsoup:jsoup:1.10.3'
 
     // dagger
     implementation "com.google.dagger:dagger:${versions.dagger}"
