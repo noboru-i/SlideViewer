@@ -18,9 +18,11 @@ import java.util.regex.Pattern
 /**
  * Utility class for SlideShare.
  */
-object SlideShareLoader {
+class SlideShareLoader constructor(
+        private val applicationContext: Context
+) {
 
-    fun load(applicationContext: Context, uri: Uri): Observable<TalkMetaData> {
+    fun load(uri: Uri): Observable<TalkMetaData> {
         return Observable.create create@{ subscriber ->
 
             val client = OkHttpClient()
@@ -87,4 +89,4 @@ object SlideShareLoader {
             subscriber.onComplete()
         }
     }
-}// prevent instantiate.
+}

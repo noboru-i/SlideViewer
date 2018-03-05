@@ -67,6 +67,8 @@ public class SlideActivity extends AppCompatActivity {
     @Inject
     TalkRepository talkRepository;
 
+    SlideShareLoader loader;
+
     private ActivitySlideBinding binding;
 
     private Menu menu;
@@ -91,6 +93,7 @@ public class SlideActivity extends AppCompatActivity {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_slide);
+        loader = new SlideShareLoader(getApplicationContext());
 
         AnalyticsManager.sendScreenView(TAG);
 
@@ -320,7 +323,7 @@ public class SlideActivity extends AppCompatActivity {
                     public void onComplete() {
                         loadingDialog.show(getFragmentManager(), null);
 
-                        SlideShareLoader.INSTANCE.load(getApplicationContext(), uri)
+                        loader.load(uri)
                                 .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(talkMetaData -> {
