@@ -13,7 +13,7 @@ import hm.orz.chaos114.android.slideviewer.SlideViewerApplication;
 @Component(modules = {
         AndroidInjectionModule.class,
         OcrModule.class,
-        DatabaseModule.class,
+        InfraModule.class,
         AppModule.class,
         ActivityModule.class
 })

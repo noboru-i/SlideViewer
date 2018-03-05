@@ -21,7 +21,6 @@ import javax.inject.Inject;
 import dagger.android.AndroidInjection;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideListBinding;
-import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.infra.model.Slide;
 import hm.orz.chaos114.android.slideviewer.infra.model.Talk;
 import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData;
@@ -51,7 +50,7 @@ public class SlideListActivity extends AppCompatActivity {
         }
         binding.toolbar.setTitle(R.string.slide_list_title);
 
-        adapter = new SlideListAdapter();
+        adapter = new SlideListAdapter(talkRepository);
         binding.list.setAdapter(adapter);
         binding.list.setLayoutManager(new LinearLayoutManager(this));
         binding.emptyLayout.setOnClickListener(v -> openSpeakerDeck());
@@ -128,10 +127,11 @@ public class SlideListActivity extends AppCompatActivity {
     }
 
     private static class SlideListAdapter extends RecyclerView.Adapter<ViewHolder> {
+        private TalkRepository talkRepository;
         private List<Talk> mTalks;
 
-        private SlideListAdapter() {
-            // no-op
+        private SlideListAdapter(TalkRepository talkRepository) {
+            this.talkRepository = talkRepository;
         }
 
         @Override
@@ -145,8 +145,7 @@ public class SlideListActivity extends AppCompatActivity {
         public void onBindViewHolder(ViewHolder holder, int position) {
             Talk item = mTalks.get(position);
             List<Slide> slides = item.getSlides();
-            TalkDao dao = new TalkDao(holder.itemView.getContext());
-            TalkMetaData talkMetaData = dao.findMetaData(item);
+            TalkMetaData talkMetaData = talkRepository.findMetaData(item);
 
             ((SlideListRowView) holder.itemView).bind(slides, talkMetaData);
             holder.itemView.setTag(talkMetaData.getTalk());

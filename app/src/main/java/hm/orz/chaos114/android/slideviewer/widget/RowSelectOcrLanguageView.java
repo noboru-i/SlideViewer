@@ -12,7 +12,6 @@ import hm.orz.chaos114.android.slideviewer.databinding.RowSelectOcrLanguageBindi
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository;
 import hm.orz.chaos114.android.slideviewer.ocr.model.Language;
 import hm.orz.chaos114.android.slideviewer.ocr.util.DirectorySettings;
-import lombok.Setter;
 
 /**
  * List row of select ocr language.
@@ -22,7 +21,6 @@ public class RowSelectOcrLanguageView extends LinearLayout {
     private RowSelectOcrLanguageBinding binding;
     private Language language;
     private boolean loading;
-    @Setter
     private RowSelectOcrLanguageViewListener listener;
 
     public RowSelectOcrLanguageView(Context context) {
@@ -67,6 +65,10 @@ public class RowSelectOcrLanguageView extends LinearLayout {
 
         // update view
         setData(language);
+    }
+
+    public void setListener(RowSelectOcrLanguageViewListener listener) {
+        this.listener = listener;
     }
 
     public interface RowSelectOcrLanguageViewListener {

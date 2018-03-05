@@ -40,17 +40,16 @@ import javax.inject.Inject;
 import dagger.android.AndroidInjection;
 import hm.orz.chaos114.android.slideviewer.R;
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideBinding;
-import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao;
 import hm.orz.chaos114.android.slideviewer.infra.model.Slide;
 import hm.orz.chaos114.android.slideviewer.infra.model.Talk;
 import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData;
+import hm.orz.chaos114.android.slideviewer.infra.network.SlideShareLoader;
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository;
 import hm.orz.chaos114.android.slideviewer.infra.repository.TalkRepository;
 import hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizer;
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator;
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager;
 import hm.orz.chaos114.android.slideviewer.util.IntentUtil;
-import hm.orz.chaos114.android.slideviewer.util.SlideShareLoader;
 import hm.orz.chaos114.android.slideviewer.util.UrlHelper;
 import hm.orz.chaos114.android.slideviewer.widget.PickPageDialog;
 import io.reactivex.MaybeObserver;
@@ -66,6 +65,8 @@ public class SlideActivity extends AppCompatActivity {
     OcrRecognizer ocrRecognizer;
     @Inject
     TalkRepository talkRepository;
+    @Inject
+    SlideShareLoader loader;
 
     private ActivitySlideBinding binding;
 
@@ -286,11 +287,10 @@ public class SlideActivity extends AppCompatActivity {
     }
 
     private void startLoad(boolean refresh) {
-        TalkDao dao = new TalkDao(this);
         if (refresh) {
             talk = null;
             adapter.notifyDataSetChanged();
-            dao.deleteByUrl(uri.toString());
+            talkRepository.deleteByUrl(uri.toString());
         }
         talkRepository.findByUrl(uri.toString())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -320,7 +320,7 @@ public class SlideActivity extends AppCompatActivity {
                     public void onComplete() {
                         loadingDialog.show(getFragmentManager(), null);
 
-                        SlideShareLoader.load(getApplicationContext(), uri)
+                        loader.load(uri)
                                 .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(talkMetaData -> {
