@@ -2,16 +2,14 @@ package hm.orz.chaos114.android.slideviewer.ocr
 
 import android.content.Context
 import android.graphics.Bitmap
-
+import android.text.TextUtils
 import com.googlecode.tesseract.android.TessBaseAPI
-
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository
 import hm.orz.chaos114.android.slideviewer.ocr.model.OcrRequest
 import hm.orz.chaos114.android.slideviewer.ocr.model.OcrResult
 import hm.orz.chaos114.android.slideviewer.ocr.util.DirectorySettings
 import io.reactivex.Observable
 import io.reactivex.ObservableEmitter
-import io.reactivex.ObservableOnSubscribe
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
@@ -28,9 +26,9 @@ class OcrRecognizer(context: Context) {
         observable = subject
                 .observeOn(Schedulers.computation())
                 .flatMap { (url, bitmap) ->
-                    Observable.create(create@ { emitter: ObservableEmitter<OcrResult> ->
+                    Observable.create(create@{ emitter: ObservableEmitter<OcrResult> ->
                         val repository = SettingsRepository(context)
-                        if (!repository.enableOcr || repository.selectedLanguage == null) {
+                        if (!repository.enableOcr || TextUtils.isEmpty(repository.selectedLanguage)) {
                             emitter.onNext(OcrResult(url, ""))
                             return@create
                         }
