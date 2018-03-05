@@ -320,7 +320,7 @@ public class SlideActivity extends AppCompatActivity {
                     public void onComplete() {
                         loadingDialog.show(getFragmentManager(), null);
 
-                        SlideShareLoader.load(getApplicationContext(), uri)
+                        SlideShareLoader.INSTANCE.load(getApplicationContext(), uri)
                                 .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(talkMetaData -> {
