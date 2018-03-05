@@ -19,7 +19,7 @@ public class InfraModule {
 
     @Singleton
     @Provides
-    public SlideShareLoader provideSlideShareLoader(Application app) {
-        return new SlideShareLoader(app);
+    public SlideShareLoader provideSlideShareLoader(TalkRepository talkRepository) {
+        return new SlideShareLoader(talkRepository);
     }
 }

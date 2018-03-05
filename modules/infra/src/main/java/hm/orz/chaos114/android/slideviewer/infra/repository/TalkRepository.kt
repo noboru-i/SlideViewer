@@ -2,8 +2,10 @@ package hm.orz.chaos114.android.slideviewer.infra.repository
 
 import android.content.Context
 import com.j256.ormlite.dao.Dao
+import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao
 import hm.orz.chaos114.android.slideviewer.infra.model.Slide
 import hm.orz.chaos114.android.slideviewer.infra.model.Talk
+import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData
 import hm.orz.chaos114.android.slideviewer.infra.util.DatabaseHelper
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
@@ -66,6 +68,21 @@ class TalkRepository(private val mContext: Context) {
         } finally {
             helper.close()
         }
+    }
+
+    fun deleteByUrl(url: String) {
+        val dao = TalkDao(mContext)
+        dao.deleteByUrl(url)
+    }
+
+    fun findMetaData(talk: Talk): TalkMetaData? {
+        val dao = TalkDao(mContext)
+        return dao.findMetaData(talk)
+    }
+
+    fun saveIfNotExists(talk: Talk, slides: List<Slide>, talkMetaData: TalkMetaData) {
+        val dao = TalkDao(mContext)
+        dao.saveIfNotExists(talk, slides, talkMetaData)
     }
 
     private fun setTalkInfo(talk: Talk) {

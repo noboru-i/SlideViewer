@@ -1,12 +1,11 @@
 package hm.orz.chaos114.android.slideviewer.infra.network
 
-import android.content.Context
 import android.net.Uri
 import com.google.gson.FieldNamingPolicy
 import com.google.gson.GsonBuilder
-import hm.orz.chaos114.android.slideviewer.infra.dao.TalkDao
 import hm.orz.chaos114.android.slideviewer.infra.model.Talk
 import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData
+import hm.orz.chaos114.android.slideviewer.infra.repository.TalkRepository
 import io.reactivex.Observable
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -19,7 +18,7 @@ import java.util.regex.Pattern
  * Utility class for SlideShare.
  */
 class SlideShareLoader constructor(
-        private val applicationContext: Context
+        private val talkRepository: TalkRepository
 ) {
 
     fun load(uri: Uri): Observable<TalkMetaData> {
@@ -81,8 +80,7 @@ class SlideShareLoader constructor(
                 return@create
             }
 
-            val dao = TalkDao(applicationContext)
-            dao.saveIfNotExists(tmpTalk, tmpTalk.slides!!, talkMetaData)
+            talkRepository.saveIfNotExists(tmpTalk, tmpTalk.slides!!, talkMetaData)
 
             talkMetaData.talk = tmpTalk
             subscriber.onNext(talkMetaData)
