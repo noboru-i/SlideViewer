@@ -66,7 +66,7 @@ public class SlideActivity extends AppCompatActivity {
     OcrRecognizer ocrRecognizer;
     @Inject
     TalkRepository talkRepository;
-
+    @Inject
     SlideShareLoader loader;
 
     private ActivitySlideBinding binding;
@@ -93,7 +93,6 @@ public class SlideActivity extends AppCompatActivity {
         AndroidInjection.inject(this);
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_slide);
-        loader = new SlideShareLoader(getApplicationContext());
 
         AnalyticsManager.sendScreenView(TAG);
 
