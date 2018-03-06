@@ -51,6 +51,8 @@ class SlideActivity : AppCompatActivity() {
     lateinit var talkRepository: TalkRepository
     @Inject
     lateinit var loader: SlideShareLoader
+    @Inject
+    lateinit var adRequestGenerator: AdRequestGenerator
 
     private lateinit var binding: ActivitySlideBinding
 
@@ -254,13 +256,14 @@ class SlideActivity : AppCompatActivity() {
     }
 
     private fun loadAd() {
-        val adRequest = AdRequestGenerator.generate(this)
+        val adRequest = adRequestGenerator.generate()
         binding.slideAdView.loadAd(adRequest)
 
         // インタースティシャルを作成する。
-        interstitialAd = InterstitialAd(this)
-        interstitialAd!!.adUnitId = getString(R.string.admob_unit_id)
-        interstitialAd!!.loadAd(adRequest)
+        InterstitialAd(this).let {
+            it.adUnitId = getString(R.string.admob_unit_id)
+            it.loadAd(adRequest)
+        }
     }
 
     private fun startLoad(refresh: Boolean) {

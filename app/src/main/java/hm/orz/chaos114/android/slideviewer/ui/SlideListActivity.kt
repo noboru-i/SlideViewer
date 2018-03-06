@@ -25,6 +25,8 @@ class SlideListActivity : AppCompatActivity() {
 
     @Inject
     lateinit var talkRepository: TalkRepository
+    @Inject
+    lateinit var adRequestGenerator: AdRequestGenerator
 
     private lateinit var binding: ActivitySlideListBinding
     private var adapter: SlideListAdapter? = null
@@ -44,7 +46,7 @@ class SlideListActivity : AppCompatActivity() {
         binding.list.layoutManager = LinearLayoutManager(this)
         binding.emptyLayout.setOnClickListener { v -> openSpeakerDeck() }
 
-        binding.adView.loadAd(AdRequestGenerator.generate(this))
+        binding.adView.loadAd(adRequestGenerator.generate())
     }
 
     override fun onPause() {
