@@ -14,7 +14,7 @@ import hm.orz.chaos114.android.slideviewer.util.IntentUtil
 
 class AboutActivity : AppCompatActivity() {
 
-    private var binding: ActivityAboutBinding? = null
+    private lateinit var binding: ActivityAboutBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,38 +25,34 @@ class AboutActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             android.R.id.home -> {
                 finish()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
     private fun initToolbar() {
-        setSupportActionBar(binding!!.toolbar)
-        val bar = supportActionBar
-        if (bar != null) {
-            bar.setDisplayHomeAsUpEnabled(true)
-            bar.setDisplayShowHomeEnabled(true)
-            bar.setDisplayShowTitleEnabled(false)
-            bar.setHomeButtonEnabled(true)
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.let {
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setDisplayShowHomeEnabled(true)
+            it.setDisplayShowTitleEnabled(false)
+            it.setHomeButtonEnabled(true)
         }
     }
 
     private fun initActions() {
-        binding!!.aboutVersion.text = getString(R.string.about_version, BuildConfig.VERSION_NAME)
-        binding!!.aboutGitHub.setOnClickListener { _ -> IntentUtil.browse(this, "https://github.com/noboru-i/SlideViewer") }
-        binding!!.aboutOtherApp.setOnClickListener { _ -> IntentUtil.browse(this, "https://play.google.com/store/apps/developer?id=noboru") }
-        binding!!.aboutLicense.setOnClickListener { _ -> startActivity(Intent(this, OssLicensesMenuActivity::class.java)) }
+        binding.aboutVersion.text = getString(R.string.about_version, BuildConfig.VERSION_NAME)
+        binding.aboutGitHub.setOnClickListener { _ -> IntentUtil.browse(this, "https://github.com/noboru-i/SlideViewer") }
+        binding.aboutOtherApp.setOnClickListener { _ -> IntentUtil.browse(this, "https://play.google.com/store/apps/developer?id=noboru") }
+        binding.aboutLicense.setOnClickListener { _ -> startActivity(Intent(this, OssLicensesMenuActivity::class.java)) }
     }
 
     companion object {
 
-        fun start(context: Context) {
-            val intent = Intent(context, AboutActivity::class.java)
-            context.startActivity(intent)
-        }
+        fun start(context: Context) = context.startActivity(Intent(context, AboutActivity::class.java))
     }
 }

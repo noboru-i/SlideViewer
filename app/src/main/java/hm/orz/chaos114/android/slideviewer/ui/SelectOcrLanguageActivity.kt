@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Toast
+import dagger.android.AndroidInjection
 import hm.orz.chaos114.android.slideviewer.R
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySelectOcrLanguageBinding
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository
@@ -19,11 +20,15 @@ import hm.orz.chaos114.android.slideviewer.widget.RowSelectOcrLanguageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import timber.log.Timber
 import java.util.ArrayList
+import javax.inject.Inject
 
 class SelectOcrLanguageActivity : AppCompatActivity() {
 
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
+
     private lateinit var binding: ActivitySelectOcrLanguageBinding
-    private var adapter: BaseAdapter? = null
+    private lateinit var adapter: BaseAdapter
 
     private val listener = object : RowSelectOcrLanguageView.RowSelectOcrLanguageViewListener {
         override fun onChangeState(view: RowSelectOcrLanguageView, language: Language, isChecked: Boolean) {
@@ -33,43 +38,43 @@ class SelectOcrLanguageActivity : AppCompatActivity() {
                 return
             }
 
-            if (DirectorySettings.hasFile(this@SelectOcrLanguageActivity, language)) {
+            val context = this@SelectOcrLanguageActivity
+            if (DirectorySettings.hasFile(context, language)) {
                 updatePrefs(language)
                 return
             }
 
             view.showLoading(true)
             val downloader = LanguageDownloader()
-            downloader.download(this@SelectOcrLanguageActivity, language)
+            downloader.download(context, language)
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe { _ ->
-                        Toast.makeText(this@SelectOcrLanguageActivity, "download succeeded.", Toast.LENGTH_SHORT).show()
-                        adapter!!.notifyDataSetChanged()
+                        Toast.makeText(context, "download succeeded.", Toast.LENGTH_SHORT).show()
+                        adapter.notifyDataSetChanged()
                         updatePrefs(language)
                         view.showLoading(false)
                     }
         }
 
         private fun updatePrefs(language: Language?) {
-            val settingsRepository = SettingsRepository(this@SelectOcrLanguageActivity)
             settingsRepository.selectedLanguage = language?.id!!
-            adapter!!.notifyDataSetChanged()
+            adapter.notifyDataSetChanged()
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_select_ocr_language)
+        adapter = Adapter()
 
         setSupportActionBar(binding.toolbar)
-        if (supportActionBar == null) {
-            throw AssertionError("getSupportActionBar() needs non-null.")
+        supportActionBar?.let {
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setDisplayShowHomeEnabled(true)
+            it.setDisplayShowTitleEnabled(false)
         }
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setDisplayShowHomeEnabled(true)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
 
-        adapter = Adapter()
         binding.languageList.adapter = adapter
     }
 
@@ -96,15 +101,13 @@ class SelectOcrLanguageActivity : AppCompatActivity() {
         }
 
         override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-            val view: RowSelectOcrLanguageView
-            if (convertView == null) {
-                view = RowSelectOcrLanguageView(this@SelectOcrLanguageActivity)
+            val view = if (convertView == null) {
+                RowSelectOcrLanguageView(this@SelectOcrLanguageActivity)
             } else {
-                view = convertView as RowSelectOcrLanguageView
+                convertView as RowSelectOcrLanguageView
             }
 
-            val rowData = getItem(position)
-            view.setData(rowData)
+            view.setData(getItem(position))
             view.setListener(listener)
 
             return view
@@ -113,9 +116,7 @@ class SelectOcrLanguageActivity : AppCompatActivity() {
 
     companion object {
 
-        fun start(context: Context) {
-            val intent = Intent(context, SelectOcrLanguageActivity::class.java)
-            context.startActivity(intent)
-        }
+        fun start(context: Context) =
+                context.startActivity(Intent(context, SelectOcrLanguageActivity::class.java))
     }
 }

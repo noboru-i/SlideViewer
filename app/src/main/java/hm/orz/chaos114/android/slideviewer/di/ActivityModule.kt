@@ -2,6 +2,7 @@ package hm.orz.chaos114.android.slideviewer.di
 
 import dagger.Module
 import dagger.android.ContributesAndroidInjector
+import hm.orz.chaos114.android.slideviewer.ui.SelectOcrLanguageActivity
 import hm.orz.chaos114.android.slideviewer.ui.SettingActivity
 import hm.orz.chaos114.android.slideviewer.ui.SlideActivity
 import hm.orz.chaos114.android.slideviewer.ui.SlideListActivity
@@ -16,4 +17,7 @@ abstract class ActivityModule {
 
     @ContributesAndroidInjector
     abstract fun contributeSettingActivityInjector(): SettingActivity
+
+    @ContributesAndroidInjector
+    abstract fun contributeSelectOcrLanguageActivityInjector(): SelectOcrLanguageActivity
 }

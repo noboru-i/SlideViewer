@@ -29,19 +29,18 @@ class SlideListActivity : AppCompatActivity() {
     lateinit var adRequestGenerator: AdRequestGenerator
 
     private lateinit var binding: ActivitySlideListBinding
-    private var adapter: SlideListAdapter? = null
+    private lateinit var adapter: SlideListAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_slide_list)
+        adapter = SlideListAdapter(talkRepository)
 
         setSupportActionBar(binding.toolbar)
-        val bar = supportActionBar
-        bar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
         binding.toolbar.setTitle(R.string.slide_list_title)
 
-        adapter = SlideListAdapter(talkRepository)
         binding.list.adapter = adapter
         binding.list.layoutManager = LinearLayoutManager(this)
         binding.emptyLayout.setOnClickListener { _ -> openSpeakerDeck() }
@@ -68,7 +67,7 @@ class SlideListActivity : AppCompatActivity() {
                         binding.emptyLayout.visibility = View.GONE
                         binding.list.visibility = View.VISIBLE
                     }
-                    adapter!!.updateData(talks)
+                    adapter.updateData(talks)
                 }
     }
 
@@ -117,7 +116,7 @@ class SlideListActivity : AppCompatActivity() {
     private class SlideListAdapter constructor(
             private val talkRepository: TalkRepository
     ) : RecyclerView.Adapter<ViewHolder>() {
-        private var mTalks: List<Talk>? = null
+        private var mTalks: List<Talk> = ArrayList()
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = SlideListRowView(parent.context)
@@ -126,7 +125,7 @@ class SlideListActivity : AppCompatActivity() {
         }
 
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val item = mTalks!![position]
+            val item = mTalks[position]
             val slides = item.slides
             val talkMetaData = talkRepository.findMetaData(item)
 
@@ -139,9 +138,7 @@ class SlideListActivity : AppCompatActivity() {
         }
 
         override fun getItemCount(): Int {
-            return if (mTalks == null) {
-                0
-            } else mTalks!!.size
+            return mTalks.size
         }
 
         internal fun updateData(talks: List<Talk>) {

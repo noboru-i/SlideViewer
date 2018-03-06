@@ -16,9 +16,11 @@ class CrashReportingTree : Timber.Tree() {
             FirebaseCrash.log(message)
             return
         }
-        var throwable = t
-        if (throwable == null && !TextUtils.isEmpty(message)) {
-            throwable = Exception(message)
+
+        val throwable = if (t == null && !TextUtils.isEmpty(message)) {
+            Exception(message)
+        } else {
+            t
         }
         FirebaseCrash.report(throwable)
     }

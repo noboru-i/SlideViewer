@@ -54,12 +54,11 @@ class WebViewActivity : AppCompatActivity() {
 
     private fun init() {
         setSupportActionBar(binding.toolbar)
-        val bar = supportActionBar
-        if (bar != null) {
-            bar.setDisplayHomeAsUpEnabled(true)
-            bar.setDisplayShowHomeEnabled(true)
-            bar.setDisplayShowTitleEnabled(false)
-            bar.setHomeButtonEnabled(true)
+        supportActionBar?.let {
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setDisplayShowHomeEnabled(true)
+            it.setDisplayShowTitleEnabled(false)
+            it.setHomeButtonEnabled(true)
         }
 
         binding.webView.webViewClient = object : WebViewClient() {
@@ -78,19 +77,20 @@ class WebViewActivity : AppCompatActivity() {
                 binding.toolbar.title = view.title
             }
         }
-        binding.webView.settings.javaScriptEnabled = true
-        binding.webView.settings.builtInZoomControls = true
-        binding.webView.settings.loadWithOverviewMode = true
-        binding.webView.settings.useWideViewPort = true
+        binding.webView.settings.let {
+            it.javaScriptEnabled = true
+            it.builtInZoomControls = true
+            it.loadWithOverviewMode = true
+            it.useWideViewPort = true
+        }
     }
 
     companion object {
-        val EXTRA_URL = "extra_url"
+        const val EXTRA_URL = "extra_url"
 
-        internal fun start(context: Context, url: String) {
-            val intent = Intent(context, WebViewActivity::class.java)
-            intent.putExtra(EXTRA_URL, url)
-            context.startActivity(intent)
-        }
+        internal fun start(context: Context, url: String) =
+                context.startActivity(Intent(context, WebViewActivity::class.java).also {
+                    it.putExtra(EXTRA_URL, url)
+                })
     }
 }
