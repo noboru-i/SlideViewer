@@ -14,8 +14,12 @@ import hm.orz.chaos114.android.slideviewer.R
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySettingBinding
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager
+import javax.inject.Inject
 
 class SettingActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var analyticsManager: AnalyticsManager
 
     private lateinit var binding: ActivitySettingBinding
 
@@ -23,7 +27,7 @@ class SettingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_setting)
 
-        AnalyticsManager.sendScreenView(TAG)
+        analyticsManager.sendScreenView(TAG)
 
         setSupportActionBar(binding.toolbar)
         if (supportActionBar == null) {

@@ -5,11 +5,9 @@ import android.databinding.DataBindingUtil
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.widget.SeekBar
-
-import java.util.Locale
-
 import hm.orz.chaos114.android.slideviewer.R
 import hm.orz.chaos114.android.slideviewer.databinding.DialogPickPageBinding
+import java.util.Locale
 
 /**
  * Show dialog for pick page.
@@ -39,7 +37,7 @@ object PickPageDialog {
         })
         AlertDialog.Builder(context)
                 .setTitle("Select page")
-                .setPositiveButton(android.R.string.ok) { dialog, which -> listener.onPickPage(binding.seekBar.progress) }
+                .setPositiveButton(android.R.string.ok) { _, _ -> listener.onPickPage(binding.seekBar.progress) }
                 .setNegativeButton(android.R.string.cancel, null)
                 .setCancelable(true)
                 .setView(binding.root)

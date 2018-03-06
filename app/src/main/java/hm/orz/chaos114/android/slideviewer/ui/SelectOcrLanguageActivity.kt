@@ -18,7 +18,7 @@ import hm.orz.chaos114.android.slideviewer.ocr.util.DirectorySettings
 import hm.orz.chaos114.android.slideviewer.widget.RowSelectOcrLanguageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import timber.log.Timber
-import java.util.*
+import java.util.ArrayList
 
 class SelectOcrLanguageActivity : AppCompatActivity() {
 

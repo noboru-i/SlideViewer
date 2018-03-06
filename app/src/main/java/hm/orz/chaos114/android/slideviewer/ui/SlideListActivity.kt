@@ -44,7 +44,7 @@ class SlideListActivity : AppCompatActivity() {
         adapter = SlideListAdapter(talkRepository)
         binding.list.adapter = adapter
         binding.list.layoutManager = LinearLayoutManager(this)
-        binding.emptyLayout.setOnClickListener { v -> openSpeakerDeck() }
+        binding.emptyLayout.setOnClickListener { _ -> openSpeakerDeck() }
 
         binding.adView.loadAd(adRequestGenerator.generate())
     }
@@ -121,7 +121,7 @@ class SlideListActivity : AppCompatActivity() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = SlideListRowView(parent.context)
-            view.setOnClickListener { v -> onClick(parent.context, view.tag as Talk) }
+            view.setOnClickListener { _ -> onClick(parent.context, view.tag as Talk) }
             return ViewHolder(view)
         }
 

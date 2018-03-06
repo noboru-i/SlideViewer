@@ -34,7 +34,6 @@ class ViewPagerFixed : ViewPager {
     }
 
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-        var heightMeasureSpec = heightMeasureSpec
         val heightSize = View.MeasureSpec.getSize(heightMeasureSpec)
         var height = 0
         for (i in 0 until childCount) {
@@ -46,8 +45,8 @@ class ViewPagerFixed : ViewPager {
             }
         }
 
-        heightMeasureSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
+        val newHeightMeasureSpec = View.MeasureSpec.makeMeasureSpec(height, View.MeasureSpec.EXACTLY)
 
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+        super.onMeasure(widthMeasureSpec, newHeightMeasureSpec)
     }
 }
