@@ -9,6 +9,7 @@ import android.support.v7.widget.SwitchCompat
 import android.text.TextUtils
 import android.view.MenuItem
 import android.widget.Toast
+import dagger.android.AndroidInjection
 
 import hm.orz.chaos114.android.slideviewer.R
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySettingBinding
@@ -24,6 +25,7 @@ class SettingActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_setting)
 

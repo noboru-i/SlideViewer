@@ -17,37 +17,37 @@ import hm.orz.chaos114.android.slideviewer.ocr.util.DirectorySettings
 /**
  * List row of select ocr language.
  */
-class RowSelectOcrLanguageView @JvmOverloads constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0) : LinearLayout(context, attrs, defStyleAttr) {
+class RowSelectOcrLanguageView @JvmOverloads constructor(
+        context: Context,
+        attrs: AttributeSet? = null,
+        defStyleAttr: Int = 0
+) : LinearLayout(context, attrs, defStyleAttr) {
 
     private val binding: RowSelectOcrLanguageBinding
+            = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.row_select_ocr_language, this, true)
+
     private var language: Language? = null
     private var loading: Boolean = false
     private var listener: RowSelectOcrLanguageViewListener? = null
 
-    init {
-
-        binding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.row_select_ocr_language, this, true)
-    }
-
-    fun setData(lang: Language?) {
+    fun setData(lang: Language) {
         this.language = lang
 
-        binding.label.text = language!!.label
-        if (loading) {
-            binding.status.setText(R.string.select_ocr_language_downloading)
-        } else {
-            binding.status.setText(if (DirectorySettings.hasFile(context, language!!))
+        binding.label.text = lang.label
+        binding.status.setText(when {
+            loading ->
+                R.string.select_ocr_language_downloading
+            DirectorySettings.hasFile(context, lang) ->
                 R.string.select_ocr_language_downloaded
-            else
-                R.string.select_ocr_language_not_downloaded)
-        }
+            else ->
+                R.string.select_ocr_language_not_downloaded
+        })
+        // TODO inject by Dagger?
         val settingsRepository = SettingsRepository(context)
-        binding.languageSwitch.isChecked = language!!.id == settingsRepository.selectedLanguage
+        binding.languageSwitch.isChecked = lang.id == settingsRepository.selectedLanguage
 
         binding.languageSwitch.setOnClickListener { v ->
-            if (listener != null) {
-                listener!!.onChangeState(this, language!!, (v as SwitchCompat).isChecked)
-            }
+            listener?.onChangeState(this, lang, (v as SwitchCompat).isChecked)
         }
         binding.languageSwitch.visibility = if (loading) View.GONE else View.VISIBLE
         binding.progress.visibility = if (loading) View.VISIBLE else View.GONE
@@ -57,7 +57,7 @@ class RowSelectOcrLanguageView @JvmOverloads constructor(context: Context, attrs
         this.loading = loading
 
         // update view
-        setData(language)
+        setData(language!!)
     }
 
     fun setListener(listener: RowSelectOcrLanguageViewListener) {

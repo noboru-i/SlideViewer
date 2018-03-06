@@ -16,7 +16,7 @@ object PickPageDialog {
 
     fun show(context: Context, currentPage: Int, maxPage: Int, listener: OnPickPageListener) {
         val binding = DataBindingUtil.inflate<DialogPickPageBinding>(LayoutInflater.from(context), R.layout.dialog_pick_page, null, false)
-        binding.maxPageView.setText(String.format(Locale.getDefault(), "%d / %d", currentPage + 1, maxPage))
+        binding.maxPageView.text = String.format(Locale.getDefault(), "%d / %d", currentPage + 1, maxPage)
         binding.seekBar.max = maxPage - 1
         binding.seekBar.progress = currentPage
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -24,7 +24,7 @@ object PickPageDialog {
                 if (!fromUser) {
                     return
                 }
-                binding.maxPageView.setText(String.format(Locale.getDefault(), "%d / %d", progress + 1, maxPage))
+                binding.maxPageView.text = String.format(Locale.getDefault(), "%d / %d", progress + 1, maxPage)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -47,4 +47,4 @@ object PickPageDialog {
     interface OnPickPageListener {
         fun onPickPage(page: Int)
     }
-}// prevent
+}

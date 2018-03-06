@@ -15,11 +15,11 @@ class BottomBarBehavior(context: Context, attrs: AttributeSet) : CoordinatorLayo
         return dependency is AppBarLayout
     }
 
-    override fun onDependentViewChanged(parent: CoordinatorLayout?, bottomBar: View?, dependency: View?): Boolean {
+    override fun onDependentViewChanged(parent: CoordinatorLayout?, bottomBar: View, dependency: View): Boolean {
         if (defaultDependencyTop == -1) {
-            defaultDependencyTop = dependency!!.top
+            defaultDependencyTop = dependency.top
         }
-        ViewCompat.setTranslationY(bottomBar!!, (-dependency!!.top + defaultDependencyTop).toFloat())
+        ViewCompat.setTranslationY(bottomBar, (-dependency.top + defaultDependencyTop).toFloat())
         return true
     }
 }

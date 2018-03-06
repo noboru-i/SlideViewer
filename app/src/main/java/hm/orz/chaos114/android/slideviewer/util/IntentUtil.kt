@@ -11,9 +11,10 @@ object IntentUtil {
     }
 
     fun browse(context: Context, uri: Uri) {
-        val intent = Intent()
-        intent.action = Intent.ACTION_VIEW
-        intent.data = uri
-        context.startActivity(intent)
+        Intent().let {
+            it.action = Intent.ACTION_VIEW
+            it.data = uri
+            context.startActivity(it)
+        }
     }
-}// no-op
+}
