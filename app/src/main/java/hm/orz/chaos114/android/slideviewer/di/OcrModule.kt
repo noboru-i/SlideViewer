@@ -1,12 +1,10 @@
 package hm.orz.chaos114.android.slideviewer.di
 
 import android.app.Application
-
-import javax.inject.Singleton
-
 import dagger.Module
 import dagger.Provides
 import hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizer
+import javax.inject.Singleton
 
 @Module
 class OcrModule {

@@ -5,11 +5,9 @@ import android.databinding.DataBindingUtil
 import android.support.v7.app.AlertDialog
 import android.view.LayoutInflater
 import android.widget.SeekBar
-
-import java.util.Locale
-
 import hm.orz.chaos114.android.slideviewer.R
 import hm.orz.chaos114.android.slideviewer.databinding.DialogPickPageBinding
+import java.util.Locale
 
 /**
  * Show dialog for pick page.
@@ -18,7 +16,7 @@ object PickPageDialog {
 
     fun show(context: Context, currentPage: Int, maxPage: Int, listener: OnPickPageListener) {
         val binding = DataBindingUtil.inflate<DialogPickPageBinding>(LayoutInflater.from(context), R.layout.dialog_pick_page, null, false)
-        binding.maxPageView.setText(String.format(Locale.getDefault(), "%d / %d", currentPage + 1, maxPage))
+        binding.maxPageView.text = String.format(Locale.getDefault(), "%d / %d", currentPage + 1, maxPage)
         binding.seekBar.max = maxPage - 1
         binding.seekBar.progress = currentPage
         binding.seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
@@ -26,7 +24,7 @@ object PickPageDialog {
                 if (!fromUser) {
                     return
                 }
-                binding.maxPageView.setText(String.format(Locale.getDefault(), "%d / %d", progress + 1, maxPage))
+                binding.maxPageView.text = String.format(Locale.getDefault(), "%d / %d", progress + 1, maxPage)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar) {
@@ -39,7 +37,7 @@ object PickPageDialog {
         })
         AlertDialog.Builder(context)
                 .setTitle("Select page")
-                .setPositiveButton(android.R.string.ok) { dialog, which -> listener.onPickPage(binding.seekBar.progress) }
+                .setPositiveButton(android.R.string.ok) { _, _ -> listener.onPickPage(binding.seekBar.progress) }
                 .setNegativeButton(android.R.string.cancel, null)
                 .setCancelable(true)
                 .setView(binding.root)
@@ -49,4 +47,4 @@ object PickPageDialog {
     interface OnPickPageListener {
         fun onPickPage(page: Int)
     }
-}// prevent
+}

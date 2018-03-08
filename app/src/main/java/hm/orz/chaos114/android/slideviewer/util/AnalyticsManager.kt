@@ -1,34 +1,28 @@
 package hm.orz.chaos114.android.slideviewer.util
 
-import android.content.Context
+import android.app.Application
 import android.net.Uri
 import android.os.Bundle
-
 import com.google.android.gms.analytics.GoogleAnalytics
 import com.google.android.gms.analytics.HitBuilders
 import com.google.android.gms.analytics.Tracker
 import com.google.firebase.analytics.FirebaseAnalytics
-
-import java.util.Locale
-
 import hm.orz.chaos114.android.slideviewer.R
 import hm.orz.chaos114.android.slideviewer.infra.repository.TalkRepository
 import timber.log.Timber
+import java.util.Locale
+import javax.inject.Inject
 
-object AnalyticsManager {
+class AnalyticsManager @Inject constructor(
+        private val app: Application
+) {
 
-    private var sAppContext: Context? = null
-    private var mTracker: Tracker? = null
-    private var mFirebaseAnalytics: FirebaseAnalytics? = null
+    private val mTracker: Tracker = GoogleAnalytics.getInstance(app).newTracker(R.xml.global_tracker)
+    private val mFirebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(app)
 
     fun sendScreenView(screenName: String) {
-        if (!canSend()) {
-            Timber.d("Screen View NOT recorded (analytics disabled or not ready).")
-            return
-        }
-
-        mTracker!!.setScreenName(screenName)
-        mTracker!!.send(HitBuilders.AppViewBuilder().build())
+        mTracker.setScreenName(screenName)
+        mTracker.send(HitBuilders.AppViewBuilder().build())
         Timber.d("Screen View recorded: %s", screenName)
     }
 
@@ -53,39 +47,14 @@ object AnalyticsManager {
     }
 
     fun updateUserProperty() {
-        if (!canSend()) {
-            Timber.d("Analytics update user property ignored (analytics disabled or not ready).")
-            return
-        }
-
-        val talkRepository = TalkRepository(sAppContext!!)
+        val talkRepository = TalkRepository(app)
         val count = talkRepository.count()
-        mFirebaseAnalytics!!.setUserProperty("slide_count", String.format(Locale.getDefault(), "%d", count))
+        mFirebaseAnalytics.setUserProperty("slide_count", String.format(Locale.getDefault(), "%d", count))
     }
 
-
-    @Synchronized
-    fun initializeAnalyticsTracker(context: Context) {
-        sAppContext = context
-        if (mTracker == null) {
-            mTracker = GoogleAnalytics.getInstance(context).newTracker(R.xml.global_tracker)
-        }
-        if (mFirebaseAnalytics == null) {
-            mFirebaseAnalytics = FirebaseAnalytics.getInstance(context)
-        }
-    }
-
-    private fun canSend(): Boolean {
-        return sAppContext != null && mTracker != null
-    }
 
     private fun sendEvent(category: String, action: String, label: String) {
-        if (!canSend()) {
-            Timber.d("Analytics event ignored (analytics disabled or not ready).")
-            return
-        }
-
-        mTracker!!.send(HitBuilders.EventBuilder()
+        mTracker.send(HitBuilders.EventBuilder()
                 .setCategory(category)
                 .setAction(action)
                 .setLabel(label)
@@ -94,11 +63,11 @@ object AnalyticsManager {
     }
 
     private fun sendFirebaseEvent(event: String, bundle: Bundle) {
-        mFirebaseAnalytics!!.logEvent(event, bundle)
+        mFirebaseAnalytics.logEvent(event, bundle)
     }
 
     private fun getPath(url: String): String {
         val uri = Uri.parse(url)
         return uri.path
     }
-}// no-op
+}

@@ -9,7 +9,12 @@ import android.os.Bundle
 import android.support.v4.view.PagerAdapter
 import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
-import android.view.*
+import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
@@ -40,7 +45,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import java.util.*
+import java.util.HashMap
 import javax.inject.Inject
 
 class SlideActivity : AppCompatActivity() {
@@ -51,6 +56,10 @@ class SlideActivity : AppCompatActivity() {
     lateinit var talkRepository: TalkRepository
     @Inject
     lateinit var loader: SlideShareLoader
+    @Inject
+    lateinit var adRequestGenerator: AdRequestGenerator
+    @Inject
+    lateinit var analyticsManager: AnalyticsManager
 
     private lateinit var binding: ActivitySlideBinding
 
@@ -69,7 +78,7 @@ class SlideActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_slide)
 
-        AnalyticsManager.sendScreenView(TAG)
+        analyticsManager.sendScreenView(TAG)
 
         recognizeTextMap = HashMap()
 
@@ -95,7 +104,7 @@ class SlideActivity : AppCompatActivity() {
             override fun onPageSelected(position: Int) {
                 val page = position + 1
                 setPageNumbers(page, talk!!.slides!!.size)
-                AnalyticsManager.sendChangePageEvent(TAG, talk!!.url!!, page)
+                analyticsManager.sendChangePageEvent(TAG, talk!!.url!!, page)
 
                 setRecognizedText()
             }
@@ -254,13 +263,14 @@ class SlideActivity : AppCompatActivity() {
     }
 
     private fun loadAd() {
-        val adRequest = AdRequestGenerator.generate(this)
+        val adRequest = adRequestGenerator.generate()
         binding.slideAdView.loadAd(adRequest)
 
         // インタースティシャルを作成する。
-        interstitialAd = InterstitialAd(this)
-        interstitialAd!!.adUnitId = getString(R.string.admob_unit_id)
-        interstitialAd!!.loadAd(adRequest)
+        InterstitialAd(this).let {
+            it.adUnitId = getString(R.string.admob_unit_id)
+            it.loadAd(adRequest)
+        }
     }
 
     private fun startLoad(refresh: Boolean) {
@@ -301,14 +311,14 @@ class SlideActivity : AppCompatActivity() {
                                     binding.slideUser.text = user
 
                                     if (talk1 != null) {
-                                        AnalyticsManager.sendStartEvent(TAG, talk1.url!!)
+                                        analyticsManager.sendStartEvent(TAG, talk1.url!!)
 
                                         talk = talk1
                                         loadingDialog!!.dismiss()
                                         setPageNumbers(1, talk!!.slides!!.size)
                                         adapter!!.notifyDataSetChanged()
                                     }
-                                }) { throwable -> Toast.makeText(this@SlideActivity, "failed.", Toast.LENGTH_SHORT).show() }
+                                }) { _ -> Toast.makeText(this@SlideActivity, "failed.", Toast.LENGTH_SHORT).show() }
                     }
                 })
     }

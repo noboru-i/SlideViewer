@@ -9,47 +9,53 @@ import android.support.v7.widget.SwitchCompat
 import android.text.TextUtils
 import android.view.MenuItem
 import android.widget.Toast
+import dagger.android.AndroidInjection
 
 import hm.orz.chaos114.android.slideviewer.R
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySettingBinding
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager
+import javax.inject.Inject
 
 class SettingActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var analyticsManager: AnalyticsManager
+    @Inject
+    lateinit var settingsRepository: SettingsRepository
 
     private lateinit var binding: ActivitySettingBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_setting)
 
-        AnalyticsManager.sendScreenView(TAG)
+        analyticsManager.sendScreenView(TAG)
 
         setSupportActionBar(binding.toolbar)
-        if (supportActionBar == null) {
-            throw AssertionError("getSupportActionBar() needs non-null.")
+        supportActionBar?.let {
+            it.setDisplayHomeAsUpEnabled(true)
+            it.setDisplayShowHomeEnabled(true)
+            it.setDisplayShowTitleEnabled(false)
         }
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        supportActionBar!!.setDisplayShowHomeEnabled(true)
-        supportActionBar!!.setDisplayShowTitleEnabled(false)
 
         init()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
+        return when (item.itemId) {
             android.R.id.home -> {
                 finish()
-                return true
+                true
             }
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
 
     // TODO move to ViewModel
     private fun init() {
-        val settingsRepository = SettingsRepository(this)
         binding.settingSwitch.isChecked = settingsRepository.enableOcr
 
         binding.settingSwitch.setOnClickListener listener@{ v ->
@@ -68,9 +74,7 @@ class SettingActivity : AppCompatActivity() {
     companion object {
         private val TAG = SettingActivity::class.java.getSimpleName()
 
-        fun start(context: Context) {
-            val intent = Intent(context, SettingActivity::class.java)
-            context.startActivity(intent)
-        }
+        fun start(context: Context) =
+                context.startActivity(Intent(context, SettingActivity::class.java))
     }
 }
