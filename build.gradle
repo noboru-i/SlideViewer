@@ -4,12 +4,11 @@ buildscript {
     ext {
         versions = [
                 compileSdk  : 27,
-                buildTools  : "26.0.2",
+                buildTools  : "27.0.3",
                 minSdk      : 15,
                 targetSdk   : 27,
-                kotlin      : '1.2.30',
-                supportLib  : '27.1.0',
-                playServices: '11.8.0',
+                kotlin      : '1.2.41',
+                supportLib  : '27.1.1',
                 dagger      : '2.14.1',
                 rxJava      : '2.1.9',
                 rxAndroid   : '2.0.1',
@@ -22,10 +21,10 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.1'
-        classpath 'com.google.gms:google-services:3.1.1'
+        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.google.gms:google-services:3.2.1'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
-        classpath 'com.google.gms:oss-licenses:0.9.1'
+        classpath 'com.google.gms:oss-licenses:0.9.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${versions.kotlin}"
     }
 }
