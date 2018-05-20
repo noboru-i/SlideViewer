@@ -7,7 +7,7 @@ buildscript {
                 buildTools  : "27.0.3",
                 minSdk      : 15,
                 targetSdk   : 27,
-                kotlin      : '1.2.30',
+                kotlin      : '1.2.41',
                 supportLib  : '27.1.1',
                 dagger      : '2.14.1',
                 rxJava      : '2.1.9',
