@@ -1,5 +1,3 @@
-include ':app', ':infra', ':ocr'
-def moduleDir = new File('modules')
-
-project(':infra').projectDir = new File(moduleDir, 'infra')
-project(':ocr').projectDir = new File(moduleDir, 'ocr')
+include ':app',
+        ':modules:infra',
+        ':modules:ocr'

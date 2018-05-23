@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Toast
-import dagger.android.AndroidInjection
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository
 import hm.orz.chaos114.android.slideviewer.ocr.LanguageDownloader
 import hm.orz.chaos114.android.slideviewer.ocr.R
@@ -20,11 +19,9 @@ import hm.orz.chaos114.android.slideviewer.ocr.widget.RowSelectOcrLanguageView
 import io.reactivex.android.schedulers.AndroidSchedulers
 import timber.log.Timber
 import java.util.*
-import javax.inject.Inject
 
 class SelectOcrLanguageActivity : AppCompatActivity() {
 
-    @Inject
     lateinit var settingsRepository: SettingsRepository
 
     private lateinit var binding: ActivitySelectOcrLanguageBinding
@@ -63,10 +60,11 @@ class SelectOcrLanguageActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_select_ocr_language)
         adapter = Adapter()
+
+        settingsRepository = SettingsRepository(applicationContext)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.let {

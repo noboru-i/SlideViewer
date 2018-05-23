@@ -70,11 +70,11 @@ android {
     lintOptions {
         abortOnError false
     }
-    dynamicFeatures = [":ocr"]
+    dynamicFeatures = [":modules:ocr"]
 }
 
 dependencies {
-    api project(':infra')
+    api project(':modules:infra')
 
     api 'com.android.support:multidex:1.0.3'
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"

@@ -10,12 +10,13 @@ import android.text.TextUtils
 import android.view.MenuItem
 import android.widget.Toast
 import dagger.android.AndroidInjection
-
 import hm.orz.chaos114.android.slideviewer.R
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySettingBinding
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager
 import javax.inject.Inject
+
+private const val selectOcrLanguageActivityClassname = "hm.orz.chaos114.android.slideviewer.ocr.ui.SelectOcrLanguageActivity"
 
 class SettingActivity : AppCompatActivity() {
 
@@ -68,7 +69,12 @@ class SettingActivity : AppCompatActivity() {
             }
             settingsRepository.enableOcr = isChecked
         }
-//        binding.selectLanguageLayout.setOnClickListener { _ -> SelectOcrLanguageActivity.start(this) }
+        binding.selectLanguageLayout.setOnClickListener { _ ->
+            Intent().setClassName(packageName, selectOcrLanguageActivityClassname)
+                    .also {
+                        startActivity(it)
+                    }
+        }
     }
 
     companion object {

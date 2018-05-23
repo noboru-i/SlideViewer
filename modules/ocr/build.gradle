@@ -17,25 +17,47 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    signingConfigs {
+        debug {
+            storeFile rootProject.file("debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
+        }
+        releaseConfig {
+            storeFile file("keystore")
+            storePassword System.getenv("STORE_PASSWORD")
+            keyAlias "chaos114"
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
+    }
+    buildTypes {
+        debug {
+            minifyEnabled false
+            shrinkResources false
+            debuggable true
+            zipAlignEnabled true
+            applicationIdSuffix '.debug'
+            signingConfig signingConfigs.debug
+        }
+        release {
+            minifyEnabled true
+            shrinkResources false
+            debuggable false
+            zipAlignEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseConfig
+        }
+    }
 }
 
 dependencies {
     implementation project(':app')
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
-
     kapt 'androidx.databinding:databinding-compiler:3.2.0-alpha15'
-    implementation "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
-    implementation "io.reactivex.rxjava2:rxandroid:${versions.rxAndroid}"
-    implementation "com.android.support:appcompat-v7:${versions.supportLib}"
-    implementation "com.google.dagger:dagger:${versions.dagger}"
-    implementation "com.google.dagger:dagger-android:${versions.dagger}"
-    implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 
     implementation 'com.rmtheis:tess-two:8.0.0'
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
-    implementation "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
-    implementation "com.jakewharton.timber:timber:${versions.timber}"
 }
