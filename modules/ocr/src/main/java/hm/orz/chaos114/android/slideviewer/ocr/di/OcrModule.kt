@@ -1,4 +1,4 @@
-package hm.orz.chaos114.android.slideviewer.di
+package hm.orz.chaos114.android.slideviewer.ocr.di
 
 import android.app.Application
 import dagger.Module

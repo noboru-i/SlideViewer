@@ -1,4 +1,4 @@
-package hm.orz.chaos114.android.slideviewer.widget
+package hm.orz.chaos114.android.slideviewer.ocr.widget
 
 import android.content.Context
 import android.databinding.DataBindingUtil

@@ -34,7 +34,7 @@ import hm.orz.chaos114.android.slideviewer.infra.model.Talk
 import hm.orz.chaos114.android.slideviewer.infra.network.SlideShareLoader
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository
 import hm.orz.chaos114.android.slideviewer.infra.repository.TalkRepository
-import hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizer
+//import hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizer
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager
 import hm.orz.chaos114.android.slideviewer.util.IntentUtil
@@ -50,8 +50,8 @@ import javax.inject.Inject
 
 class SlideActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var ocrRecognizer: OcrRecognizer
+//    @Inject
+//    lateinit var ocrRecognizer: OcrRecognizer
     @Inject
     lateinit var talkRepository: TalkRepository
     @Inject
@@ -154,14 +154,14 @@ class SlideActivity : AppCompatActivity() {
         loadAd()
         startLoad(false)
 
-        ocrRecognizer.listen()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { (url, recognizedText) ->
-                    Timber.d("original is: %s", url)
-                    Timber.d("text is recognized: %s", recognizedText)
-                    recognizeTextMap!![url] = recognizedText
-                    setRecognizedText()
-                }
+//        ocrRecognizer.listen()
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe { (url, recognizedText) ->
+//                    Timber.d("original is: %s", url)
+//                    Timber.d("text is recognized: %s", recognizedText)
+//                    recognizeTextMap!![url] = recognizedText
+//                    setRecognizedText()
+//                }
     }
 
     override fun onPause() {
@@ -448,7 +448,7 @@ class SlideActivity : AppCompatActivity() {
                                 Timber.d("onResourceReady: %d, contains and same position", position)
                                 return false
                             }
-                            ocrRecognizer.recognize(slide.original!!, resource)
+//                            ocrRecognizer.recognize(slide.original!!, resource)
                             return false
                         }
                     })

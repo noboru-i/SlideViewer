@@ -46,7 +46,6 @@
         <activity android:name=".ui.AboutActivity" />
         <activity android:name=".ui.WebViewActivity" />
         <activity android:name=".ui.SettingActivity" />
-        <activity android:name=".ui.SelectOcrLanguageActivity" />
         <activity
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"

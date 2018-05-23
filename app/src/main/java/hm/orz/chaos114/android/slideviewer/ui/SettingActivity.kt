@@ -68,7 +68,7 @@ class SettingActivity : AppCompatActivity() {
             }
             settingsRepository.enableOcr = isChecked
         }
-        binding.selectLanguageLayout.setOnClickListener { _ -> SelectOcrLanguageActivity.start(this) }
+//        binding.selectLanguageLayout.setOnClickListener { _ -> SelectOcrLanguageActivity.start(this) }
     }
 
     companion object {

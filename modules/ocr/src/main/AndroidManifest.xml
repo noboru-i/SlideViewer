@@ -1,2 +1,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ocr" />
+    xmlns:dist="http://schemas.android.com/apk/distribution"
+    package="hm.orz.chaos114.android.slideviewer.ocr"
+    split="ocr">
+
+    <dist:module
+        dist:onDemand="true"
+        dist:title="@string/module_name_ocr">
+        <dist:fusing include="true" />
+    </dist:module>
+
+    <application>
+        <activity android:name=".ui.SelectOcrLanguageActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
