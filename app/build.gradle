@@ -27,8 +27,8 @@ android {
         applicationId "hm.orz.chaos114.android.slideviewer"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 14
-        versionName "3.3.0"
+        versionCode 15
+        versionName "3.4.0"
         multiDexEnabled true
     }
     compileOptions {
