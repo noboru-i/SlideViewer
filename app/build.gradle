@@ -93,6 +93,7 @@ dependencies {
     api "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
     api "io.reactivex.rxjava2:rxandroid:${versions.rxAndroid}"
     api "com.jakewharton.timber:timber:${versions.timber}"
+    implementation 'com.google.android.play:core:1.2.0'
 
     // dagger
     api "com.google.dagger:dagger:${versions.dagger}"
