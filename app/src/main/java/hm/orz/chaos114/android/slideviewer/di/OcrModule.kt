@@ -3,6 +3,7 @@ package hm.orz.chaos114.android.slideviewer.di
 import android.app.Application
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import dagger.Module
 import dagger.Provides
 import hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizer
@@ -21,6 +22,7 @@ class OcrModule {
             val constructor = clazz.getConstructor(Context::class.java)
             return constructor.newInstance(app) as OcrRecognizer
         } catch (e: Exception) {
+            Log.d("OcrModule", "OcrModule cannot load.", e);
             // return blank
             return object : OcrRecognizer(app) {
                 override fun recognize(url: String, bitmap: Bitmap) {
