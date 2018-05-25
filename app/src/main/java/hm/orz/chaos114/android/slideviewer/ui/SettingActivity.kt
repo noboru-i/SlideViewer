@@ -124,10 +124,8 @@ class SettingActivity : AppCompatActivity() {
     }
 
     private fun displayLoadingState(message: String) {
-        loadingDialog?.let {
-            if (it.isVisible) {
-                return
-            }
+        if (loadingDialog == null) {
+            return
         }
         loadingDialog = LoadingDialogFragment.newInstance()
         loadingDialog!!.show(fragmentManager, null)
@@ -135,6 +133,7 @@ class SettingActivity : AppCompatActivity() {
 
     private fun onSuccessfulLoad() {
         loadingDialog?.dismiss()
+        loadingDialog = null
 
         Intent().setClassName(packageName, selectOcrLanguageActivityClassname)
                 .also {
