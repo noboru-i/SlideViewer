@@ -18,7 +18,7 @@ import timber.log.Timber
  * Util class for OCR.
  * use https://github.com/rmtheis/tess-two
  */
-class OcrRecognizer(context: Context) {
+class OcrRecognizerImpl(context: Context) : OcrRecognizer(context) {
     private val subject = BehaviorSubject.create<OcrRequest>()
     private val observable: Observable<OcrResult>
 
@@ -45,11 +45,11 @@ class OcrRecognizer(context: Context) {
                 }
     }
 
-    fun recognize(url: String, bitmap: Bitmap) {
+    override fun recognize(url: String, bitmap: Bitmap) {
         subject.onNext(OcrRequest(url, bitmap))
     }
 
-    fun listen(): Observable<OcrResult> {
+    override fun listen(): Observable<OcrResult> {
         return observable
     }
 }
