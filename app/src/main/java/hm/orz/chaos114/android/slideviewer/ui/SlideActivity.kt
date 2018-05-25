@@ -45,7 +45,6 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import java.util.HashMap
 import javax.inject.Inject
 
 class SlideActivity : AppCompatActivity() {
@@ -327,8 +326,10 @@ class SlideActivity : AppCompatActivity() {
      * インタースティシャルを表示する準備が出来ていたら表示する。
      */
     fun displayInterstitial() {
-        if (interstitialAd!!.isLoaded) {
-            interstitialAd!!.show()
+        interstitialAd?.let {
+            if (it.isLoaded) {
+                it.show()
+            }
         }
     }
 

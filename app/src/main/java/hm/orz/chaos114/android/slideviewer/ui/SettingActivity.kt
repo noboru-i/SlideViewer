@@ -124,6 +124,11 @@ class SettingActivity : AppCompatActivity() {
     }
 
     private fun displayLoadingState(message: String) {
+        loadingDialog?.let {
+            if (it.isVisible) {
+                return
+            }
+        }
         loadingDialog = LoadingDialogFragment.newInstance()
         loadingDialog!!.show(fragmentManager, null)
     }
