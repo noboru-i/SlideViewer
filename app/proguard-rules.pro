@@ -41,3 +41,6 @@
 -dontwarn com.j256.ormlite.android.**
 -dontwarn com.j256.ormlite.logger.**
 -dontwarn com.j256.ormlite.misc.**
+
+# Dynamic class load by reflection
+-keep public class * extends hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizer
