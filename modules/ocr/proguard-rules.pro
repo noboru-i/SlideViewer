@@ -1,0 +1,1 @@
+-keep class hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizerImpl { *; }
