@@ -32,7 +32,6 @@ class OcrRecognizerImpl(context: Context) : OcrRecognizer(context) {
                         val repository = SettingsRepository(context)
                         if (!repository.enableOcr || TextUtils.isEmpty(repository.selectedLanguage)) {
                             Log.d("OcrModule", "return blank, " + repository.enableOcr + " , " + repository.selectedLanguage)
-                            emitter.onNext(OcrResult(url, ""))
                             return@create
                         }
                         val converted = bitmap.copy(Bitmap.Config.ARGB_8888, false)

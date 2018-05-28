@@ -35,6 +35,7 @@ import hm.orz.chaos114.android.slideviewer.infra.network.SlideShareLoader
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository
 import hm.orz.chaos114.android.slideviewer.infra.repository.TalkRepository
 import hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizer
+import hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizerFactory
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager
 import hm.orz.chaos114.android.slideviewer.util.IntentUtil
@@ -42,6 +43,7 @@ import hm.orz.chaos114.android.slideviewer.util.UrlHelper
 import hm.orz.chaos114.android.slideviewer.widget.PickPageDialog
 import io.reactivex.MaybeObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
@@ -49,8 +51,6 @@ import javax.inject.Inject
 
 class SlideActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var ocrRecognizer: OcrRecognizer
     @Inject
     lateinit var talkRepository: TalkRepository
     @Inject
@@ -61,6 +61,9 @@ class SlideActivity : AppCompatActivity() {
     lateinit var analyticsManager: AnalyticsManager
 
     private lateinit var binding: ActivitySlideBinding
+    private lateinit var ocrRecognizer: OcrRecognizer
+
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
     private var menu: Menu? = null
     private var adapter: SlideAdapter? = null
@@ -152,19 +155,11 @@ class SlideActivity : AppCompatActivity() {
 
         loadAd()
         startLoad(false)
-
-        ocrRecognizer.listen()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { (url, recognizedText) ->
-                    Timber.d("original is: %s", url)
-                    Timber.d("text is recognized: %s", recognizedText)
-                    recognizeTextMap!![url] = recognizedText
-                    setRecognizedText()
-                }
     }
 
     override fun onPause() {
         binding.slideAdView.pause()
+        compositeDisposable.dispose()
         super.onPause()
     }
 
@@ -185,6 +180,17 @@ class SlideActivity : AppCompatActivity() {
         }
         setRecognizedText()
         adapter!!.notifyDataSetChanged()
+
+        ocrRecognizer = OcrRecognizerFactory(applicationContext).create()
+        compositeDisposable.add(
+                ocrRecognizer.listen()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { (url, recognizedText) ->
+                            Timber.d("original is: %s", url)
+                            Timber.d("text is recognized: %s", recognizedText)
+                            recognizeTextMap!![url] = recognizedText
+                            setRecognizedText()
+                        })
     }
 
     override fun onDestroy() {
