@@ -43,7 +43,7 @@ android {
             keyPassword "android"
         }
         releaseConfig {
-            storeFile file("keystore")
+            storeFile rootProject.file("keystore")
             storePassword System.getenv("STORE_PASSWORD")
             keyAlias "chaos114"
             keyPassword System.getenv("KEY_PASSWORD")

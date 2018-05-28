@@ -12,6 +12,7 @@ android {
     defaultConfig {
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
+        consumerProguardFiles 'proguard-rules.pro'
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -25,7 +26,7 @@ android {
             keyPassword "android"
         }
         releaseConfig {
-            storeFile file("keystore")
+            storeFile rootProject.file("keystore")
             storePassword System.getenv("STORE_PASSWORD")
             keyAlias "chaos114"
             keyPassword System.getenv("KEY_PASSWORD")
@@ -33,19 +34,9 @@ android {
     }
     buildTypes {
         debug {
-            minifyEnabled false
-            shrinkResources false
-            debuggable true
-            zipAlignEnabled true
-            applicationIdSuffix '.debug'
             signingConfig signingConfigs.debug
         }
         release {
-            minifyEnabled true
-            shrinkResources false
-            debuggable false
-            zipAlignEnabled true
-            consumerProguardFiles 'proguard-rules.pro'
             signingConfig signingConfigs.releaseConfig
         }
     }
