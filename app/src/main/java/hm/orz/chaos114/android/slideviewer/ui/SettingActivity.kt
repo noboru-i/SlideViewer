@@ -9,7 +9,6 @@ import android.support.v7.widget.SwitchCompat
 import android.text.TextUtils
 import android.view.MenuItem
 import android.widget.Toast
-import com.google.android.play.core.splitinstall.SplitInstallHelper
 import com.google.android.play.core.splitinstall.SplitInstallManager
 import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
 import com.google.android.play.core.splitinstall.SplitInstallRequest
@@ -135,12 +134,6 @@ class SettingActivity : AppCompatActivity() {
     private fun onSuccessfulLoad() {
         loadingDialog?.dismiss()
         loadingDialog = null
-
-        val newContext = createPackageContext(getPackageName(), 0)
-        SplitInstallHelper.loadLibrary(newContext, "jpgt");
-        SplitInstallHelper.loadLibrary(newContext, "pngt");
-        SplitInstallHelper.loadLibrary(newContext, "lept");
-        SplitInstallHelper.loadLibrary(newContext, "tess");
 
         Intent().setClassName(packageName, selectOcrLanguageActivityClassname)
                 .also {
