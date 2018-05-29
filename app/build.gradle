@@ -27,7 +27,7 @@ android {
         applicationId "hm.orz.chaos114.android.slideviewer"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 26
+        versionCode 27
         versionName "3.4.0"
         multiDexEnabled true
     }
@@ -94,6 +94,7 @@ dependencies {
     api "io.reactivex.rxjava2:rxandroid:${versions.rxAndroid}"
     api "com.jakewharton.timber:timber:${versions.timber}"
     api 'com.google.android.play:core:1.2.0'
+    implementation 'com.jakewharton:process-phoenix:2.0.0'
 
     // dagger
     api "com.google.dagger:dagger:${versions.dagger}"

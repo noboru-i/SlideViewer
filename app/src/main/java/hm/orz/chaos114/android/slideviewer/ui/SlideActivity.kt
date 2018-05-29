@@ -26,6 +26,8 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.chrisbanes.photoview.PhotoView
 import com.google.android.gms.ads.InterstitialAd
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
+import com.jakewharton.processphoenix.ProcessPhoenix
 import dagger.android.AndroidInjection
 import hm.orz.chaos114.android.slideviewer.R
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideBinding
@@ -74,6 +76,8 @@ class SlideActivity : AppCompatActivity() {
     private var talk: Talk? = null
     private var recognizeTextMap: MutableMap<String, String>? = null
     private var currentLanguageId: String? = null
+
+    private var isOcrModuleInstalled: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -167,6 +171,15 @@ class SlideActivity : AppCompatActivity() {
         super.onResume()
         binding.slideAdView.resume()
 
+        val splitInstallManager = SplitInstallManagerFactory.create(this);
+        val isInstalled = splitInstallManager.installedModules.contains("ocr")
+        isOcrModuleInstalled?.let {
+            if (isOcrModuleInstalled != isInstalled) {
+                ProcessPhoenix.triggerRebirth(this, intent);
+                return
+            }
+        }
+        isOcrModuleInstalled = isInstalled
 
         // reset text if language is changed.
         val settingsRepository = SettingsRepository(this)
