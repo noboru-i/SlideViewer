@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.Toast
-import com.google.android.play.core.splitinstall.SplitInstallHelper
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository
 import hm.orz.chaos114.android.slideviewer.ocr.LanguageDownloader
 import hm.orz.chaos114.android.slideviewer.ocr.R
@@ -62,12 +61,6 @@ class SelectOcrLanguageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        SplitInstallHelper.loadLibrary(this, "jpgt");
-        SplitInstallHelper.loadLibrary(this, "pngt");
-        SplitInstallHelper.loadLibrary(this, "lept");
-        SplitInstallHelper.loadLibrary(this, "tess");
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_select_ocr_language)
         adapter = Adapter()
 
