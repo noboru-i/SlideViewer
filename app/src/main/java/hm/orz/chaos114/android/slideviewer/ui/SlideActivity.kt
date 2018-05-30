@@ -37,7 +37,6 @@ import hm.orz.chaos114.android.slideviewer.infra.network.SlideShareLoader
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository
 import hm.orz.chaos114.android.slideviewer.infra.repository.TalkRepository
 import hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizer
-import hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizerFactory
 import hm.orz.chaos114.android.slideviewer.util.AdRequestGenerator
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager
 import hm.orz.chaos114.android.slideviewer.util.IntentUtil
@@ -54,6 +53,8 @@ import javax.inject.Inject
 class SlideActivity : AppCompatActivity() {
 
     @Inject
+    lateinit var ocrRecognizer: OcrRecognizer
+    @Inject
     lateinit var talkRepository: TalkRepository
     @Inject
     lateinit var loader: SlideShareLoader
@@ -63,7 +64,6 @@ class SlideActivity : AppCompatActivity() {
     lateinit var analyticsManager: AnalyticsManager
 
     private lateinit var binding: ActivitySlideBinding
-    private lateinit var ocrRecognizer: OcrRecognizer
 
     private val compositeDisposable: CompositeDisposable = CompositeDisposable()
 
@@ -163,7 +163,7 @@ class SlideActivity : AppCompatActivity() {
 
     override fun onPause() {
         binding.slideAdView.pause()
-        compositeDisposable.dispose()
+        compositeDisposable.clear()
         super.onPause()
     }
 
@@ -184,7 +184,7 @@ class SlideActivity : AppCompatActivity() {
         // reset text if language is changed.
         val settingsRepository = SettingsRepository(this)
         binding.recognizeText.visibility = if (settingsRepository.enableOcr) View.VISIBLE else View.GONE
-        if (!settingsRepository.enableOcr
+        if (settingsRepository.enableOcr
                 || currentLanguageId == null
                 || currentLanguageId != settingsRepository.selectedLanguage) {
             currentLanguageId = settingsRepository.selectedLanguage
@@ -194,7 +194,6 @@ class SlideActivity : AppCompatActivity() {
         setRecognizedText()
         adapter!!.notifyDataSetChanged()
 
-        ocrRecognizer = OcrRecognizerFactory(applicationContext).create()
         compositeDisposable.add(
                 ocrRecognizer.listen()
                         .observeOn(AndroidSchedulers.mainThread())

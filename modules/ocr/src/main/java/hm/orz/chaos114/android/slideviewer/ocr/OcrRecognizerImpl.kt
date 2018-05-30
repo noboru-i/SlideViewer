@@ -10,7 +10,6 @@ import hm.orz.chaos114.android.slideviewer.ocr.model.OcrRequest
 import hm.orz.chaos114.android.slideviewer.ocr.model.OcrResult
 import hm.orz.chaos114.android.slideviewer.ocr.util.DirectorySettings
 import io.reactivex.Observable
-import io.reactivex.ObservableEmitter
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.BehaviorSubject
 import timber.log.Timber
@@ -26,26 +25,30 @@ class OcrRecognizerImpl(context: Context) : OcrRecognizer(context) {
     init {
         observable = subject
                 .observeOn(Schedulers.computation())
-                .flatMap { (url, bitmap) ->
-                    Observable.create(create@{ emitter: ObservableEmitter<OcrResult> ->
-                        Log.d("OcrModule", "Observable.create")
-                        val repository = SettingsRepository(context)
-                        if (!repository.enableOcr || TextUtils.isEmpty(repository.selectedLanguage)) {
-                            Log.d("OcrModule", "return blank, " + repository.enableOcr + " , " + repository.selectedLanguage)
-                            return@create
-                        }
-                        val converted = bitmap.copy(Bitmap.Config.ARGB_8888, false)
-                        Timber.d("start recognize: %s", url)
-                        Log.d("OcrModule", "start recognize: " + url)
-                        val baseApi = TessBaseAPI()
-                        baseApi.init(DirectorySettings.getTessdataDir(context).parentFile.absolutePath, repository.selectedLanguage)
-                        baseApi.setImage(converted)
-                        val recognizedText = baseApi.utF8Text
-                        baseApi.end()
-                        Timber.d("end recognize: %s", url)
-                        Log.d("OcrModule", "end recognize: " + url)
-                        emitter.onNext(OcrResult(url, recognizedText))
-                    }).subscribeOn(Schedulers.computation())
+                .filter { (_, _) ->
+                    Log.d("OcrModule", "filter")
+                    val repository = SettingsRepository(context)
+                    if (!repository.enableOcr || TextUtils.isEmpty(repository.selectedLanguage)) {
+                        Log.d("OcrModule", "return blank, " + repository.enableOcr + " , " + repository.selectedLanguage)
+                        false
+                    } else {
+                        true
+                    }
+                }
+                .map { (url, bitmap) ->
+                    Log.d("OcrModule", "map")
+                    val converted = bitmap.copy(Bitmap.Config.ARGB_8888, false)
+                    Timber.d("start recognize: %s", url)
+                    Log.d("OcrModule", "start recognize: " + url)
+                    val baseApi = TessBaseAPI()
+                    val repository = SettingsRepository(context)
+                    baseApi.init(DirectorySettings.getTessdataDir(context).parentFile.absolutePath, repository.selectedLanguage)
+                    baseApi.setImage(converted)
+                    val recognizedText = baseApi.utF8Text
+                    baseApi.end()
+                    Timber.d("end recognize: %s", url)
+                    Log.d("OcrModule", "end recognize: " + url)
+                    OcrResult(url, recognizedText)
                 }
     }
 
