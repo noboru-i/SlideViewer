@@ -26,6 +26,3 @@
 
 # dagger2
 -dontwarn com.google.errorprone.annotations.*
-
-# Dynamic class load by reflection
--keep public class hm.orz.chaos114.android.slideviewer.ocr.OcrRecognizer { *; }

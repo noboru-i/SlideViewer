@@ -21,11 +21,13 @@ class SlideListRowView @JvmOverloads constructor(
 
     private val binding: ViewSlideListRowBinding = DataBindingUtil.inflate(LayoutInflater.from(context), R.layout.view_slide_list_row, this, true)
 
-    fun bind(slides: List<Slide>, talkMetaData: TalkMetaData?) {
-        Glide.with(context).load(slides[0].preview).into(binding.slideListRowImage)
-        if (talkMetaData != null) {
-            binding.slideListRowTitle.text = talkMetaData.title
-            binding.slideListRowUser.text = context.getString(R.string.slide_list_author, talkMetaData.user)
+    fun bind(slides: List<Slide>?, talkMetaData: TalkMetaData?) {
+        slides?.let {
+            Glide.with(context).load(it[0].preview).into(binding.slideListRowImage)
+        }
+        talkMetaData?.let {
+            binding.slideListRowTitle.text = it.title
+            binding.slideListRowUser.text = context.getString(R.string.slide_list_author, it.user)
         }
     }
 }

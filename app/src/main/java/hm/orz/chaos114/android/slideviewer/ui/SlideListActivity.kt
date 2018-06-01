@@ -129,8 +129,8 @@ class SlideListActivity : AppCompatActivity() {
             val slides = item.slides
             val talkMetaData = talkRepository.findMetaData(item)
 
-            (holder.itemView as SlideListRowView).bind(slides!!, talkMetaData)
-            holder.itemView.setTag(talkMetaData!!.talk)
+            (holder.itemView as SlideListRowView).bind(slides, talkMetaData)
+            holder.itemView.setTag(talkMetaData?.talk)
         }
 
         override fun getItemId(position: Int): Long {
