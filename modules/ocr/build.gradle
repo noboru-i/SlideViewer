@@ -45,7 +45,6 @@ android {
 dependencies {
     implementation project(':app')
 
-    kapt 'androidx.databinding:databinding-compiler:3.2.0-alpha15'
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 

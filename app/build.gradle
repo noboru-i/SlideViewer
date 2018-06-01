@@ -78,7 +78,6 @@ dependencies {
 
     api 'com.android.support:multidex:1.0.3'
     api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
-    kapt 'androidx.databinding:databinding-compiler:3.2.0-alpha15'
     api "com.android.support:support-v4:${versions.supportLib}"
     api "com.android.support:customtabs:${versions.supportLib}"
     api "com.android.support:appcompat-v7:${versions.supportLib}"
