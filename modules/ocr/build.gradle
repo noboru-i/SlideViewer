@@ -48,6 +48,6 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 
-    implementation 'com.rmtheis:tess-two:8.0.0'
+    implementation 'com.rmtheis:tess-two:9.0.0'
     implementation "com.squareup.okhttp3:okhttp:${versions.okhttp}"
 }
