@@ -62,7 +62,7 @@ class SelectOcrLanguageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = ActivitySelectOcrLanguageBinding.inflate(layoutInflater) ?: throw RuntimeException("Cannot inflate by ActivitySelectOcrLanguageBinding")
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_select_ocr_language)
         setContentView(binding.root)
         adapter = Adapter()
 
