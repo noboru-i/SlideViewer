@@ -9,15 +9,42 @@ import android.support.v7.widget.SwitchCompat
 import android.text.TextUtils
 import android.view.MenuItem
 import android.widget.Toast
+import com.google.android.play.core.splitinstall.SplitInstallManager
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
+import com.google.android.play.core.splitinstall.SplitInstallRequest
+import com.google.android.play.core.splitinstall.SplitInstallStateUpdatedListener
+import com.google.android.play.core.splitinstall.model.SplitInstallSessionStatus
 import dagger.android.AndroidInjection
-
 import hm.orz.chaos114.android.slideviewer.R
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySettingBinding
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository
 import hm.orz.chaos114.android.slideviewer.util.AnalyticsManager
 import javax.inject.Inject
 
+private const val selectOcrLanguageActivityClassname = "hm.orz.chaos114.android.slideviewer.ocr.ui.SelectOcrLanguageActivity"
+
 class SettingActivity : AppCompatActivity() {
+
+    private val listener = SplitInstallStateUpdatedListener { state ->
+        state.moduleNames().forEach { name ->
+            when (state.status()) {
+                SplitInstallSessionStatus.DOWNLOADING -> {
+                    displayLoadingState("Downloading $name")
+                }
+
+                SplitInstallSessionStatus.REQUIRES_USER_CONFIRMATION -> {
+                    startIntentSender(state.resolutionIntent().intentSender, null, 0, 0, 0)
+                }
+
+                SplitInstallSessionStatus.INSTALLED -> {
+                    onSuccessfulLoad()
+                }
+
+                SplitInstallSessionStatus.INSTALLING -> displayLoadingState("Installing $name")
+            }
+        }
+    }
+
 
     @Inject
     lateinit var analyticsManager: AnalyticsManager
@@ -25,11 +52,14 @@ class SettingActivity : AppCompatActivity() {
     lateinit var settingsRepository: SettingsRepository
 
     private lateinit var binding: ActivitySettingBinding
+    private lateinit var splitInstallManager: SplitInstallManager
+    private var loadingDialog: LoadingDialogFragment? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_setting)
+        splitInstallManager = SplitInstallManagerFactory.create(this)
 
         analyticsManager.sendScreenView(TAG)
 
@@ -41,6 +71,16 @@ class SettingActivity : AppCompatActivity() {
         }
 
         init()
+    }
+
+    override fun onResume() {
+        splitInstallManager.registerListener(listener)
+        super.onResume()
+    }
+
+    override fun onPause() {
+        splitInstallManager.unregisterListener(listener)
+        super.onPause()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -68,7 +108,37 @@ class SettingActivity : AppCompatActivity() {
             }
             settingsRepository.enableOcr = isChecked
         }
-        binding.selectLanguageLayout.setOnClickListener { _ -> SelectOcrLanguageActivity.start(this) }
+        binding.selectLanguageLayout.setOnClickListener listener@{ _ ->
+            val name = "ocr"
+            if (splitInstallManager.installedModules.contains(name)) {
+                onSuccessfulLoad()
+                return@listener
+            }
+
+            val request = SplitInstallRequest.newBuilder()
+                    .addModule(name)
+                    .build()
+            splitInstallManager.startInstall(request)
+            displayLoadingState("Starting install for $name")
+        }
+    }
+
+    private fun displayLoadingState(message: String) {
+        if (loadingDialog != null) {
+            return
+        }
+        loadingDialog = LoadingDialogFragment.newInstance()
+        loadingDialog!!.show(fragmentManager, null)
+    }
+
+    private fun onSuccessfulLoad() {
+        loadingDialog?.dismiss()
+        loadingDialog = null
+
+        Intent().setClassName(packageName, selectOcrLanguageActivityClassname)
+                .also {
+                    startActivity(it)
+                }
     }
 
     companion object {

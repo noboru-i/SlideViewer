@@ -27,8 +27,8 @@ android {
         applicationId "hm.orz.chaos114.android.slideviewer"
         minSdkVersion versions.minSdk
         targetSdkVersion versions.targetSdk
-        versionCode 14
-        versionName "3.3.0"
+        versionCode 32
+        versionName "3.4.0"
         multiDexEnabled true
     }
     compileOptions {
@@ -43,7 +43,7 @@ android {
             keyPassword "android"
         }
         releaseConfig {
-            storeFile file("keystore")
+            storeFile rootProject.file("keystore")
             storePassword System.getenv("STORE_PASSWORD")
             keyAlias "chaos114"
             keyPassword System.getenv("KEY_PASSWORD")
@@ -60,7 +60,7 @@ android {
         }
         release {
             minifyEnabled true
-            shrinkResources true
+            shrinkResources false
             debuggable false
             zipAlignEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
@@ -70,34 +70,35 @@ android {
     lintOptions {
         abortOnError false
     }
+    dynamicFeatures = [":modules:ocr"]
 }
 
 dependencies {
-    implementation project(':infra')
-    implementation project(':ocr')
+    api project(':modules:infra')
 
-    implementation 'com.android.support:multidex:1.0.3'
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
-    kapt 'com.android.databinding:compiler:3.1.2'
-    implementation "com.android.support:support-v4:${versions.supportLib}"
-    implementation "com.android.support:customtabs:${versions.supportLib}"
-    implementation "com.android.support:appcompat-v7:${versions.supportLib}"
-    implementation "com.android.support:design:${versions.supportLib}"
-    implementation "com.android.support:recyclerview-v7:${versions.supportLib}"
-    implementation 'com.google.firebase:firebase-crash:15.0.2'
-    implementation 'com.google.firebase:firebase-ads:15.0.1'
-    implementation 'com.github.bumptech.glide:glide:4.5.0'
-    implementation 'com.google.android.gms:play-services-analytics:15.0.2'
-    implementation 'com.google.android.gms:play-services-oss-licenses:15.0.1'
-    implementation 'com.github.chrisbanes:PhotoView:2.1.3'
-    implementation "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
-    implementation "io.reactivex.rxjava2:rxandroid:${versions.rxAndroid}"
-    implementation "com.jakewharton.timber:timber:${versions.timber}"
+    api 'com.android.support:multidex:1.0.3'
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${versions.kotlin}"
+    api "com.android.support:support-v4:${versions.supportLib}"
+    api "com.android.support:customtabs:${versions.supportLib}"
+    api "com.android.support:appcompat-v7:${versions.supportLib}"
+    api "com.android.support:design:${versions.supportLib}"
+    api "com.android.support:recyclerview-v7:${versions.supportLib}"
+    api 'com.google.firebase:firebase-crash:15.0.2'
+    api 'com.google.firebase:firebase-ads:15.0.1'
+    api 'com.github.bumptech.glide:glide:4.5.0'
+    api 'com.google.android.gms:play-services-analytics:15.0.2'
+    api 'com.google.android.gms:play-services-oss-licenses:15.0.1'
+    api 'com.github.chrisbanes:PhotoView:2.1.3'
+    api "io.reactivex.rxjava2:rxjava:${versions.rxJava}"
+    api "io.reactivex.rxjava2:rxandroid:${versions.rxAndroid}"
+    api "com.jakewharton.timber:timber:${versions.timber}"
+    api 'com.google.android.play:core:1.2.0'
+    implementation 'com.jakewharton:process-phoenix:2.0.0'
 
     // dagger
-    implementation "com.google.dagger:dagger:${versions.dagger}"
-    implementation "com.google.dagger:dagger-android:${versions.dagger}"
-    implementation "com.google.dagger:dagger-android-support:${versions.dagger}"
+    api "com.google.dagger:dagger:${versions.dagger}"
+    api "com.google.dagger:dagger-android:${versions.dagger}"
+    api "com.google.dagger:dagger-android-support:${versions.dagger}"
     kapt "com.google.dagger:dagger-compiler:${versions.dagger}"
     kapt "com.google.dagger:dagger-android-processor:${versions.dagger}"
 

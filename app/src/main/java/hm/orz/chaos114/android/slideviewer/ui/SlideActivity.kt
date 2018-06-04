@@ -26,6 +26,8 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.github.chrisbanes.photoview.PhotoView
 import com.google.android.gms.ads.InterstitialAd
+import com.google.android.play.core.splitinstall.SplitInstallManagerFactory
+import com.jakewharton.processphoenix.ProcessPhoenix
 import dagger.android.AndroidInjection
 import hm.orz.chaos114.android.slideviewer.R
 import hm.orz.chaos114.android.slideviewer.databinding.ActivitySlideBinding
@@ -42,10 +44,10 @@ import hm.orz.chaos114.android.slideviewer.util.UrlHelper
 import hm.orz.chaos114.android.slideviewer.widget.PickPageDialog
 import io.reactivex.MaybeObserver
 import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import java.util.HashMap
 import javax.inject.Inject
 
 class SlideActivity : AppCompatActivity() {
@@ -63,6 +65,8 @@ class SlideActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivitySlideBinding
 
+    private val compositeDisposable: CompositeDisposable = CompositeDisposable()
+
     private var menu: Menu? = null
     private var adapter: SlideAdapter? = null
     private var loadingDialog: LoadingDialogFragment? = null
@@ -72,6 +76,8 @@ class SlideActivity : AppCompatActivity() {
     private var talk: Talk? = null
     private var recognizeTextMap: MutableMap<String, String>? = null
     private var currentLanguageId: String? = null
+
+    private var isOcrModuleInstalled: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         AndroidInjection.inject(this)
@@ -153,19 +159,11 @@ class SlideActivity : AppCompatActivity() {
 
         loadAd()
         startLoad(false)
-
-        ocrRecognizer.listen()
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe { (url, recognizedText) ->
-                    Timber.d("original is: %s", url)
-                    Timber.d("text is recognized: %s", recognizedText)
-                    recognizeTextMap!![url] = recognizedText
-                    setRecognizedText()
-                }
     }
 
     override fun onPause() {
         binding.slideAdView.pause()
+        compositeDisposable.clear()
         super.onPause()
     }
 
@@ -173,11 +171,20 @@ class SlideActivity : AppCompatActivity() {
         super.onResume()
         binding.slideAdView.resume()
 
+        val splitInstallManager = SplitInstallManagerFactory.create(this);
+        val isInstalled = splitInstallManager.installedModules.contains("ocr")
+        isOcrModuleInstalled?.let {
+            if (isOcrModuleInstalled != isInstalled) {
+                ProcessPhoenix.triggerRebirth(this, intent);
+                return
+            }
+        }
+        isOcrModuleInstalled = isInstalled
 
         // reset text if language is changed.
         val settingsRepository = SettingsRepository(this)
         binding.recognizeText.visibility = if (settingsRepository.enableOcr) View.VISIBLE else View.GONE
-        if (!settingsRepository.enableOcr
+        if (settingsRepository.enableOcr
                 || currentLanguageId == null
                 || currentLanguageId != settingsRepository.selectedLanguage) {
             currentLanguageId = settingsRepository.selectedLanguage
@@ -186,6 +193,16 @@ class SlideActivity : AppCompatActivity() {
         }
         setRecognizedText()
         adapter!!.notifyDataSetChanged()
+
+        compositeDisposable.add(
+                ocrRecognizer.listen()
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe { (url, recognizedText) ->
+                            Timber.d("original is: %s", url)
+                            Timber.d("text is recognized: %s", recognizedText)
+                            recognizeTextMap!![url] = recognizedText
+                            setRecognizedText()
+                        })
     }
 
     override fun onDestroy() {
@@ -327,8 +344,10 @@ class SlideActivity : AppCompatActivity() {
      * インタースティシャルを表示する準備が出来ていたら表示する。
      */
     fun displayInterstitial() {
-        if (interstitialAd!!.isLoaded) {
-            interstitialAd!!.show()
+        interstitialAd?.let {
+            if (it.isLoaded) {
+                it.show()
+            }
         }
     }
 

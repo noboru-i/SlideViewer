@@ -1,4 +1,4 @@
-package hm.orz.chaos114.android.slideviewer.widget
+package hm.orz.chaos114.android.slideviewer.ocr.widget
 
 import android.content.Context
 import android.databinding.DataBindingUtil
@@ -7,10 +7,9 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
-
-import hm.orz.chaos114.android.slideviewer.R
-import hm.orz.chaos114.android.slideviewer.databinding.RowSelectOcrLanguageBinding
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository
+import hm.orz.chaos114.android.slideviewer.ocr.R
+import hm.orz.chaos114.android.slideviewer.ocr.databinding.RowSelectOcrLanguageBinding
 import hm.orz.chaos114.android.slideviewer.ocr.model.Language
 import hm.orz.chaos114.android.slideviewer.ocr.util.DirectorySettings
 
