@@ -2,8 +2,7 @@ package hm.orz.chaos114.android.slideviewer.ui
 
 import android.text.TextUtils
 import android.util.Log
-
-import com.google.firebase.crash.FirebaseCrash
+import com.crashlytics.android.Crashlytics
 
 import timber.log.Timber
 
@@ -13,7 +12,7 @@ class CrashReportingTree : Timber.Tree() {
             return
         }
         if (priority != Log.ERROR) {
-            FirebaseCrash.log(message)
+            Crashlytics.log(message)
             return
         }
 
@@ -22,6 +21,6 @@ class CrashReportingTree : Timber.Tree() {
         } else {
             t
         }
-        FirebaseCrash.report(throwable)
+        Crashlytics.logException(throwable)
     }
 }
