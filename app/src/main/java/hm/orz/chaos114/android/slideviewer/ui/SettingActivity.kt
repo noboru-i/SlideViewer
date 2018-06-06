@@ -47,8 +47,6 @@ class SettingActivity : AppCompatActivity() {
 
 
     @Inject
-    lateinit var analyticsManager: AnalyticsManager
-    @Inject
     lateinit var settingsRepository: SettingsRepository
 
     private lateinit var binding: ActivitySettingBinding
@@ -60,8 +58,6 @@ class SettingActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_setting)
         splitInstallManager = SplitInstallManagerFactory.create(this)
-
-        analyticsManager.sendScreenView(TAG)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.let {

@@ -3,13 +3,8 @@ package hm.orz.chaos114.android.slideviewer.util
 import android.app.Application
 import android.net.Uri
 import android.os.Bundle
-import com.google.android.gms.analytics.GoogleAnalytics
-import com.google.android.gms.analytics.HitBuilders
-import com.google.android.gms.analytics.Tracker
 import com.google.firebase.analytics.FirebaseAnalytics
-import hm.orz.chaos114.android.slideviewer.R
 import hm.orz.chaos114.android.slideviewer.infra.repository.TalkRepository
-import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
 
@@ -17,18 +12,9 @@ class AnalyticsManager @Inject constructor(
         private val app: Application
 ) {
 
-    private val mTracker: Tracker = GoogleAnalytics.getInstance(app).newTracker(R.xml.global_tracker)
     private val mFirebaseAnalytics: FirebaseAnalytics = FirebaseAnalytics.getInstance(app)
 
-    fun sendScreenView(screenName: String) {
-        mTracker.setScreenName(screenName)
-        mTracker.send(HitBuilders.AppViewBuilder().build())
-        Timber.d("Screen View recorded: %s", screenName)
-    }
-
-    fun sendChangePageEvent(category: String, url: String, page: Int) {
-        sendEvent(category, "CHANGE_PAGE", Integer.toString(page))
-
+    fun sendChangePageEvent(url: String, page: Int) {
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, getPath(url))
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "slide")
@@ -37,9 +23,7 @@ class AnalyticsManager @Inject constructor(
         sendFirebaseEvent(FirebaseAnalytics.Event.VIEW_ITEM, bundle)
     }
 
-    fun sendStartEvent(category: String, url: String) {
-        sendEvent(category, "START", url)
-
+    fun sendStartEvent(url: String) {
         val bundle = Bundle()
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "slide")
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, getPath(url))
@@ -50,16 +34,6 @@ class AnalyticsManager @Inject constructor(
         val talkRepository = TalkRepository(app)
         val count = talkRepository.count()
         mFirebaseAnalytics.setUserProperty("slide_count", String.format(Locale.getDefault(), "%d", count))
-    }
-
-
-    private fun sendEvent(category: String, action: String, label: String) {
-        mTracker.send(HitBuilders.EventBuilder()
-                .setCategory(category)
-                .setAction(action)
-                .setLabel(label)
-                .setValue(0)
-                .build())
     }
 
     private fun sendFirebaseEvent(event: String, bundle: Bundle) {
