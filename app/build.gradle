@@ -5,6 +5,7 @@ apply plugin: 'com.google.gms.oss.licenses.plugin'
 apply plugin: 'io.fabric'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
+apply plugin: "org.jlleitschuh.gradle.ktlint"
 
 // CI
 def isCi = "true".equals(System.getenv("CI"))
@@ -71,6 +72,12 @@ android {
         abortOnError false
     }
     dynamicFeatures = [":modules:ocr"]
+}
+
+ktlint {
+    android = true
+    reporters = org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE
+    ignoreFailures = true
 }
 
 dependencies {

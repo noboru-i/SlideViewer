@@ -11,6 +11,9 @@ warn('a large PR') if git.lines_of_code > 300
 
 checkstyle_format.base_path = Dir.pwd
 
+# ktlint
+checkstyle_format.report "app/build/reports/ktlint/ktlint-release.xml"
+
 # Android Lint
 require 'android_lint_translate_checkstyle_format'
 android_lint_xml = ::AndroidLintTranslateCheckstyleFormat::Script.translate(File.read('app/build/reports/lint-results.xml'))
