@@ -84,8 +84,6 @@ class SlideActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_slide)
 
-        analyticsManager.sendScreenView(TAG)
-
         recognizeTextMap = HashMap()
 
         setSupportActionBar(binding.toolbar)
@@ -110,7 +108,7 @@ class SlideActivity : AppCompatActivity() {
             override fun onPageSelected(position: Int) {
                 val page = position + 1
                 setPageNumbers(page, talk!!.slides!!.size)
-                analyticsManager.sendChangePageEvent(TAG, talk!!.url!!, page)
+                analyticsManager.sendChangePageEvent(talk!!.url!!, page)
 
                 setRecognizedText()
             }
@@ -328,7 +326,7 @@ class SlideActivity : AppCompatActivity() {
                                     binding.slideUser.text = user
 
                                     if (talk1 != null) {
-                                        analyticsManager.sendStartEvent(TAG, talk1.url!!)
+                                        analyticsManager.sendStartEvent(talk1.url!!)
 
                                         talk = talk1
                                         loadingDialog!!.dismiss()
@@ -476,8 +474,6 @@ class SlideActivity : AppCompatActivity() {
     }
 
     companion object {
-        private val TAG = SlideActivity::class.java.getSimpleName()
-
         internal fun start(context: Context, url: String) {
             val intent = Intent(context, SlideActivity::class.java)
             intent.action = Intent.ACTION_VIEW

@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.text.TextUtils
 import android.util.Log
+import com.google.firebase.perf.metrics.AddTrace
 import com.googlecode.tesseract.android.TessBaseAPI
 import hm.orz.chaos114.android.slideviewer.infra.repository.SettingsRepository
 import hm.orz.chaos114.android.slideviewer.ocr.model.OcrRequest
@@ -18,7 +19,7 @@ import timber.log.Timber
  * Util class for OCR.
  * use https://github.com/rmtheis/tess-two
  */
-class OcrRecognizerImpl(context: Context) : OcrRecognizer(context) {
+class OcrRecognizerImpl(val context: Context) : OcrRecognizer(context) {
     private val subject = BehaviorSubject.create<OcrRequest>()
     private val observable: Observable<OcrResult>
 
@@ -40,12 +41,7 @@ class OcrRecognizerImpl(context: Context) : OcrRecognizer(context) {
                     val converted = bitmap.copy(Bitmap.Config.ARGB_8888, false)
                     Timber.d("start recognize: %s", url)
                     Log.d("OcrModule", "start recognize: " + url)
-                    val baseApi = TessBaseAPI()
-                    val repository = SettingsRepository(context)
-                    baseApi.init(DirectorySettings.getTessdataDir(context).parentFile.absolutePath, repository.selectedLanguage)
-                    baseApi.setImage(converted)
-                    val recognizedText = baseApi.utF8Text
-                    baseApi.end()
+                    val recognizedText = recognize(converted)
                     Timber.d("end recognize: %s", url)
                     Log.d("OcrModule", "end recognize: " + url)
                     OcrResult(url, recognizedText)
@@ -59,5 +55,16 @@ class OcrRecognizerImpl(context: Context) : OcrRecognizer(context) {
 
     override fun listen(): Observable<OcrResult> {
         return observable
+    }
+
+    @AddTrace(name = "recognize")
+    private fun recognize(bitmap: Bitmap): String {
+        val baseApi = TessBaseAPI()
+        val repository = SettingsRepository(context)
+        baseApi.init(DirectorySettings.getTessdataDir(context).parentFile.absolutePath, repository.selectedLanguage)
+        baseApi.setImage(bitmap)
+        val recognizedText = baseApi.utF8Text
+        baseApi.end()
+        return recognizedText
     }
 }
