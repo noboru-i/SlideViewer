@@ -22,7 +22,6 @@ class OcrModule {
             val constructor = clazz.getConstructor(Context::class.java)
             return constructor.newInstance(app) as OcrRecognizer
         } catch (e: Exception) {
-            Log.d("OcrModule", "OcrModule cannot load.", e)
             // return blank
             return object : OcrRecognizer(app) {
                 override fun recognize(url: String, bitmap: Bitmap) {
