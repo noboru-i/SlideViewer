@@ -333,7 +333,12 @@ class SlideActivity : AppCompatActivity() {
                                         setPageNumbers(1, talk!!.slides!!.size)
                                         adapter!!.notifyDataSetChanged()
                                     }
-                                }) { _ -> Toast.makeText(this@SlideActivity, "failed.", Toast.LENGTH_SHORT).show() }
+                                }) { throwable ->
+                                    run {
+                                        Timber.d(throwable)
+                                        Toast.makeText(this@SlideActivity, "failed.", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
                     }
                 })
     }
