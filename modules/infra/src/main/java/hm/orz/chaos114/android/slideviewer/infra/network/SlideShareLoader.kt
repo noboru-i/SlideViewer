@@ -1,8 +1,7 @@
 package hm.orz.chaos114.android.slideviewer.infra.network
 
 import android.net.Uri
-import com.google.gson.FieldNamingPolicy
-import com.google.gson.GsonBuilder
+import hm.orz.chaos114.android.slideviewer.infra.model.Slide
 import hm.orz.chaos114.android.slideviewer.infra.model.Talk
 import hm.orz.chaos114.android.slideviewer.infra.model.TalkMetaData
 import hm.orz.chaos114.android.slideviewer.infra.repository.TalkRepository
@@ -12,7 +11,6 @@ import okhttp3.Request
 import org.jsoup.Jsoup
 import timber.log.Timber
 import java.io.IOException
-import java.util.regex.Pattern
 
 /**
  * Utility class for SlideShare.
@@ -36,15 +34,16 @@ class SlideShareLoader constructor(
                 return@create
             }
             val document = Jsoup.parse(response.body()!!.string())
+            Timber.d("document = %s", document)
             response.close()
 
             val dataId = document.select("div.speakerdeck-embed")[0].attr("data-id")
             Timber.d("dataId = %s", dataId)
             val url = "https://speakerdeck.com/player/$dataId?"
             Timber.d("src = %s", url)
-            val title = document.select("#talk-details header h1")[0].text()
+            val title = document.select("h1")[0].text()
             Timber.d("title = %s", title)
-            val user = document.select("#talk-details header h2 a")[0].text()
+            val user = document.select("h4 .text-dark")[0].text()
             Timber.d("user = %s", user)
 
             val talkMetaData = TalkMetaData()
@@ -62,27 +61,18 @@ class SlideShareLoader constructor(
                 subscriber.onError(IOException("onFailure 2")) // TODO
                 return@create
             }
-            val tmpTalk: Talk
-            val responseString = response2.body()!!.string()
+            val document2 = Jsoup.parse(response2.body()!!.string())
             response2.close()
-            val pattern = Pattern.compile("var talk = ([^;]*)")
-            val matcher = pattern.matcher(responseString)
-            if (matcher.find()) {
-                Timber.d("group = %s", matcher.group(1))
-                val gson = GsonBuilder()
-                        .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
-                        .create()
-                tmpTalk = gson.fromJson(matcher.group(1), Talk::class.java)
-                Timber.d("talkObject = %s", tmpTalk)
-            } else {
-                Timber.d("not match")
-                subscriber.onError(RuntimeException("not match. " + responseString))
-                return@create
+
+            val slideList = document2.select(".js-sd-player-slides")[0].children().map {
+                Slide(original = it.dataset().get("url"), preview = it.dataset().get("preview-url"))
             }
+            Timber.d("slideList = %s", slideList)
+            val talk = Talk(url = uri.toString(), slides = slideList)
 
-            talkRepository.saveIfNotExists(tmpTalk, tmpTalk.slides!!, talkMetaData)
+            talkRepository.saveIfNotExists(talk, slideList, talkMetaData)
 
-            talkMetaData.talk = tmpTalk
+            talkMetaData.talk = talk
             subscriber.onNext(talkMetaData)
             subscriber.onComplete()
         }
